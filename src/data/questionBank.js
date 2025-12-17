@@ -1,0 +1,3382 @@
+const QUESTION_BANK = {};
+
+const slugify = (value = '') =>
+    value
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9 ]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+const DEFAULT_EXAMS = ['geral', 'camara dos deputados', 'policia penal mg', 'pmdf', 'detran df'];
+
+const buildOptions = (options) => options.map(([id, text]) => ({ id, text }));
+
+const ensureOptionExplanations = (question) => {
+    const explanations = { ...(question.optionExplanations || {}) };
+    question.options.forEach((option) => {
+        if (!explanations[option.id]) {
+            explanations[option.id] =
+                option.id === question.correctId
+                    ? question.explanation
+                    : `Incorreto: essa alternativa conflita com a regra destacada na explicacao principal (${question.explanation}).`;
+        }
+    });
+    return explanations;
+};
+
+const enhanceQuestion = (question, slug, index) => {
+    const examSlugs = (question.exams && question.exams.length ? question.exams : DEFAULT_EXAMS).map(
+        (examName) => slugify(examName) || 'geral'
+    );
+    return {
+        ...question,
+        id: question.id || `${slug}-${index + 1}`,
+        examSlugs,
+        optionExplanations: ensureOptionExplanations(question),
+    };
+};
+
+function registerQuestions(aliases, questions) {
+    aliases.forEach((alias) => {
+        const slug = slugify(alias) || 'geral';
+        QUESTION_BANK[slug] = questions.map((question, index) => enhanceQuestion(question, slug, index));
+    });
+}
+
+const withFeedback = (question, optionFeedback) => ({
+    ...question,
+    optionExplanations: optionFeedback,
+});
+
+registerQuestions(['Lingua Portuguesa', 'LÃ­ngua Portuguesa'], [
+    withFeedback(
+        {
+            id: 'lp-1',
+            text: 'Assinale a frase que respeita as normas de regencia e concordancia.',
+            options: buildOptions([
+                ['a', 'Assistimos o filme que estreou ontem.'],
+                ['b', 'Prefiro mais estudar do que ler.'],
+                ['c', 'Obedeceram Ã s ordens prontamente.'],
+                ['d', 'Informaram a diretora que os alunos chegou.'],
+                ['e', 'Houveram diversos incidentes naquele dia.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O verbo obedecer exige preposicao a. As demais opcoes trazem erros de regencia ou concordancia.',
+        },
+        {
+            a: 'Errado: o verbo assistir, no sentido de ver, exige preposicao: assistimos ao filme.',
+            b: 'Errado: preferir ja implica comparacao: prefiro estudar a ler.',
+            c: 'Correta: ha preposicao em "Ã s ordens" e concordancia adequada.',
+            d: 'Errado: falta concordancia e ha problema de regencia em "informaram a diretora".',
+            e: 'Errado: o verbo haver impessoal nao vai ao plural.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-2',
+            text: 'No periodo "Embora estivesse cansado, continuou estudando", a oracao subordinada exerce funcao de:',
+            options: buildOptions([
+                ['a', 'Causal.'],
+                ['b', 'Condicional.'],
+                ['c', 'Final.'],
+                ['d', 'Concessiva.'],
+                ['e', 'Proporcional.'],
+            ]),
+            correctId: 'd',
+            explanation:
+                'A conjuncao "embora" introduz oracao subordinada concessiva, mostrando oposicao a ideia principal.',
+        },
+        {
+            a: 'Errado: nao ha ideia de causa.',
+            b: 'Errado: nao se trata de condicao.',
+            c: 'Errado: a oracao nao indica finalidade.',
+            d: 'Correta: "embora" introduz oposicao entre as ideias.',
+            e: 'Errado: nao ha proporcionalidade nessa construcao.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-3',
+            exams: ['camara dos deputados'],
+            text: 'Texto adaptado (FGV/2022): "Com o teletrabalho, setores publicos passaram a medir entregas por resultados e nao por horas conectadas. Ainda assim, algumas chefias solicitam capturas de tela periodicas." Qual inferencia e coerente com o trecho?',
+            options: buildOptions([
+                ['a', 'O autor defende fiscalizacao constante das telas para manter a produtividade.'],
+                ['b', 'O teletrabalho elimina a necessidade de avaliar desempenho.'],
+                ['c', 'A avaliacao por entregas e mais logica do que vigiar conexoes.'],
+                ['d', 'Os servidores rejeitam a autonomia do teletrabalho.'],
+                ['e', 'Teletrabalho significa ausencia de metas e prazos.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O texto contrasta o controle por presenca virtual com a avaliacao por resultados, indicando preferencia pela segunda alternativa.',
+        },
+        {
+            a: 'Errado: o texto critica a vigilia formal das conexoes.',
+            b: 'Errado: o trecho reforca que desempenho continua sendo medido.',
+            c: 'Correta: a melhor pratica descrita e acompanhar entregas.',
+            d: 'Errado: nao ha mencao a resistencia dos servidores.',
+            e: 'Errado: metas continuam necessarias mesmo em regime remoto.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-4',
+            exams: ['policia penal mg', 'pmdf'],
+            text: 'Em qual alternativa o "se" funciona como indice de indeterminacao do sujeito?',
+            options: buildOptions([
+                ['a', 'Precisa-se de agentes para as novas unidades.'],
+                ['b', 'Vendem-se apartamentos no centro administrativo.'],
+                ['c', 'Feriu-se durante o teste de aptidao fisica.'],
+                ['d', 'Cumpre-se integralmente o regulamento.'],
+                ['e', 'Percebe-se o compromisso dos veteranos.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'O indice de indeterminacao ocorre com verbos intransitivos ou transitivos indiretos; "precisa-se de agentes" enquadra-se nessa regra.',
+        },
+        {
+            a: 'Correta: verbo transitivo indireto com "se" indetermina o sujeito.',
+            b: 'Errado: ha sujeito expresso ("apartamentos").',
+            c: 'Errado: trata-se de pronome reflexivo.',
+            d: 'Errado: o verbo transitivo direto admite particula apassivadora.',
+            e: 'Errado: a estrutura apresenta sujeito determinado.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-5',
+            exams: ['camara dos deputados'],
+            text: 'Um diretor da Camara enviara oficio a um Ministro de Estado solicitando apoio logistico. Segundo o Manual de Redacao oficial, qual combinacao de vocativo e fecho esta correta?',
+            options: buildOptions([
+                ['a', 'Senhor Ministro, Atenciosamente.'],
+                ['b', 'Excelentissimo Senhor Ministro de Estado, Respeitosamente.'],
+                ['c', 'Carissimo Ministro, Abracos cordiais.'],
+                ['d', 'Vossa Senhoria Ministro, Cordialmente.'],
+                ['e', 'Ilustrissimo Senhor Ministro, Saudacoes respeitosas.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Autoridades superiores recebem o tratamento "Excelentissimo Senhor Ministro de Estado" e o fecho "Respeitosamente".',
+        },
+        {
+            a: 'Errado: falta o tratamento devido a autoridade superior.',
+            b: 'Correta: corresponde ao modelo aplicado a ministros.',
+            c: 'Errado: termos coloquiais fogem ao padrao oficial.',
+            d: 'Errado: ministros nao sao tratados por Vossa Senhoria.',
+            e: 'Errado: "Ilustrissimo" destina-se a autoridades de menor hierarquia.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-6',
+            exams: ['policia penal mg', 'pmdf'],
+            text: 'Assinale a alternativa em que a colocacao pronominal atende Ã s normas cultas.',
+            options: buildOptions([
+                ['a', 'Me disseram que o edital sairia em breve.'],
+                ['b', 'Entrevistaram-me ontem sobre o concurso.'],
+                ['c', 'Nos precisamos nos dedicar mais.'],
+                ['d', 'Sejamos sinceros: se aprova estudando.'],
+                ['e', 'Nao se deve-se revisar apenas uma vez.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Com verbo no pretÃ©rito perfeito iniciado por palavra sem atrativo, a enclise Ã© obrigatoria: Entrevistaram-me.',
+        },
+        {
+            a: 'Errado: pronome atono nao inicia frase sem atrativo.',
+            b: 'Correta: enclise apos verbo no pretÃ©rito perfeito Ã© a forma culta.',
+            c: 'Errado: ha repeticao indevida do pronome.',
+            d: 'Errado: "aprova-se" exigiria verbo na forma pronominal.',
+            e: 'Errado: duplicaÃ§ao de "se".',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-7',
+            exams: ['camara dos deputados'],
+            text: 'Em redacao oficial, qual alternativa mantem o padrao de impessoalidade e correcao?',
+            options: buildOptions([
+                ['a', 'Informo-te que liberamos a verba requisitada.'],
+                ['b', 'Comuniquei a todos que nos concluimos o processo.'],
+                ['c', 'Informa-se que o processo SEI n 1234/2025 foi encaminhado Ã  analise juridica.'],
+                ['d', 'Peco desculpas pessoais pelo atraso desta nota tecnica.'],
+                ['e', 'Fico feliz em dizer que aprovamos o projeto.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'Redacoes oficiais usam construcoes impessoais; a alternativa C conserva a formalidade exigida.',
+        },
+        {
+            a: 'Errado: tratamento na segunda pessoa quebra o padrao.',
+            b: 'Errado: uso desnecessario de "nos" compromete impessoalidade.',
+            c: 'Correta: estrutura impessoal e objetiva.',
+            d: 'Errado: manifestacoes pessoais devem ser evitadas.',
+            e: 'Errado: tom subjetivo foge ao padrao oficial.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-8',
+            text: 'No trecho "O candidato revisou atento cada paragrafo, pois sabia que uma virgula poderia comprometer o argumento", a palavra "pois" equivale a:',
+            options: buildOptions([
+                ['a', 'Conjuncao adversativa.'],
+                ['b', 'Conjuncao explicativa, podendo ser substituida por "porque".'],
+                ['c', 'Conjuncao consecutiva.'],
+                ['d', 'Conjuncao condicional.'],
+                ['e', 'Adverbio de modo.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                '"Pois" em posicao medial liga duas oracoes indicando explicacao/motivo, assim como "porque".',
+        },
+        {
+            a: 'Errado: nao ha oposicao entre ideias.',
+            b: 'Correta: o periodo justifica a acao anterior.',
+            c: 'Errado: nao expressa consequencia.',
+            d: 'Errado: nao ha hipotese.',
+            e: 'Errado: trata-se de conjuncao.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-9',
+            text: 'Em qual alternativa o uso da crase esta correto conforme o padrao oficial?',
+            options: buildOptions([
+                ['a', 'Dirigi-me a aquele servidor para solicitar informacao.'],
+                ['b', 'Comparecemos Ã  audiencia publica convocada pela Mesa.'],
+                ['c', 'O relatorio foi entregue Ã  todos os chefes.'],
+                ['d', 'Enviei o oficio Ã  Vossa Senhoria.'],
+                ['e', 'Encaminhou-se copia Ã  ela sem registro.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A crase ocorre na combinacao da preposicao a com o artigo feminino; audiencia publica determinada exige o acento.',
+        },
+        {
+            a: 'Errado: o correto seria "Ã quele".',
+            b: 'Correta: ha artigo feminino diante de "audiencia".',
+            c: 'Errado: pronomes indefinidos como "todos" nao admitem artigo.',
+            d: 'Errado: tratamentos iniciados por Vossa nao recebem artigo.',
+            e: 'Errado: pronomes pessoais nao admitem crase.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-10',
+            text: 'Assinale a frase cuja pontuacao atende Ã s normas da lingua escrita formal.',
+            options: buildOptions([
+                ['a', 'Os deputados analisaram, e aprovaram o parecer.'],
+                ['b', 'Caso surjam duvidas, encaminhe-as imediatamente ao relator.'],
+                ['c', 'O servidor explicou: que ja havia cumprido a diligencia.'],
+                ['d', 'As emendas foram, entretanto acolhidas sem resistencia.'],
+                ['e', 'Esperamos, voces concluirem o estudo.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Oracoes adverbiais antepostas devem ser separadas por virgula; a alternativa B traz a pontuacao adequada.',
+        },
+        {
+            a: 'Errado: virgula antes de conjuncao coordenativa e indevida.',
+            b: 'Correta: a virgula marca a oracao condicional deslocada.',
+            c: 'Errado: o dois-pontos nao separa verbo e complemento.',
+            d: 'Errado: "entretanto" deve ficar isolado por duas virgulas.',
+            e: 'Errado: o sujeito nao pode ser separado do verbo por virgula.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-11',
+            text: 'Trecho: "Para reduzir retrabalho, o setor determinou que toda demanda seja registrada no SEI antes de qualquer despacho. Assim, pedidos telefonicos voltam sem analise." Qual inferencia esta coerente com o trecho?',
+            options: buildOptions([
+                ['a', 'A unidade proibiu o uso do SEI.'],
+                ['b', 'Os telefonemas dispensam formalizacao porque agilizam o fluxo.'],
+                ['c', 'A formalizacao previa e requisito para iniciar a analise.'],
+                ['d', 'Demandas telefonicas receberam prioridade absoluta.'],
+                ['e', 'Nenhuma demanda precisa ser registrada.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O texto afirma que so apos o registro as demandas seguem para despacho; pedidos sem formalizacao retornam.',
+        },
+        {
+            a: 'Errado: o setor reforca o uso do SEI.',
+            b: 'Errado: pedidos apenas telefonicos sao devolvidos.',
+            c: 'Correta: o registro e condicao para dar andamento.',
+            d: 'Errado: telefonemas sem registro sao recusados.',
+            e: 'Errado: toda demanda precisa ser registrada.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lp-12',
+            exams: ['camara dos deputados'],
+            text: 'Qual reescrita elimina a redundancia de "Os servidores planejaram antecipadamente o cronograma" mantendo o sentido e o tom formal?',
+            options: buildOptions([
+                ['a', 'Os servidores planejaram previamente o cronograma.'],
+                ['b', 'Os servidores improvisaram o cronograma na hora.'],
+                ['c', 'Os servidores elaboraram o cronograma com antecedencia.'],
+                ['d', 'Os servidores fizeram o cronograma depois da execucao.'],
+                ['e', 'Os servidores planejaram o cronograma sem prazo.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O verbo planejar ja implica acao antecipada; a reescrita substitui por "elaboraram" e explicita "com antecedencia", removendo a redundancia.',
+        },
+        {
+            a: 'Errado: mantem a redundancia entre planejar e previamente.',
+            b: 'Errado: altera o sentido ao mencionar improviso.',
+            c: 'Correta: preserva a ideia de preparacao anterior sem redundancia.',
+            d: 'Errado: inverte o sentido temporal.',
+            e: 'Errado: gera contradicao com a nocao de planejamento.',
+        }
+    ),
+]);
+
+// =====================================================
+// RACIOCINIO LOGICO-MATEMATICO
+// =====================================================
+registerQuestions(['Raciocinio Logico', 'Matematica e Raciocinio Logico', 'Raciocinio Logico-Matematico'], [
+    {
+        id: 'rl-1',
+        text: 'Considere P: "O parecer foi homologado" e Q: "O contrato e assinado". Em qual cenario a condicional P -> Q e falsa?',
+        options: buildOptions([
+            ['a', 'P falsa e Q verdadeira.'],
+            ['b', 'P falsa e Q falsa.'],
+            ['c', 'P verdadeira e Q falsa.'],
+            ['d', 'P verdadeira e Q verdadeira.'],
+            ['e', 'Qualquer caso em que Q seja verdadeira.'],
+        ]),
+        correctId: 'c',
+        explanation: 'A proposicao condicional so e falsa quando o antecedente e verdadeiro e o consequente falso, isto e, Q nao ocorreu apesar de P ter ocorrido.',
+    },
+    {
+        id: 'rl-2',
+        text: 'A negacao correta de "Todos os processos foram revisados e nenhuma pendencia permaneceu" e:',
+        options: buildOptions([
+            ['a', 'Nenhum processo foi revisado e nenhuma pendencia permaneceu.'],
+            ['b', 'Algum processo nao foi revisado ou alguma pendencia permaneceu.'],
+            ['c', 'Algum processo foi revisado e alguma pendencia permaneceu.'],
+            ['d', 'Nenhum processo foi revisado ou nenhuma pendencia permaneceu.'],
+            ['e', 'Todos os processos foram revisados ou todas as pendencias permaneceram.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Nega-se uma conjuncao universal invertendo quantificador e trocando E por OU: pelo menos um processo escapou da revisao ou restou pendencia.',
+    },
+    {
+        id: 'rl-3',
+        text: 'A proposicao "Se o laudo nao estiver assinado, entao o recurso nao sera conhecido" tem contrapositiva equivalente a:',
+        options: buildOptions([
+            ['a', 'Se o recurso for conhecido, entao o laudo estava assinado.'],
+            ['b', 'Se o laudo estiver assinado, o recurso nao sera conhecido.'],
+            ['c', 'Se o recurso nao for conhecido, o laudo esta assinado.'],
+            ['d', 'O recurso so sera conhecido se o laudo estiver assinado.'],
+            ['e', 'O laudo assinado e condicao suficiente para conhecimento.'],
+        ]),
+        correctId: 'a',
+        explanation: 'A contrapositiva troca antecedente e consequente e nega ambos: (nao A -> nao B) equivale a (B -> A).',
+    },
+    {
+        id: 'rl-4',
+        text: 'Oito servidores digitalizam 400 prontuarios em cinco dias. Para produzir 640 prontuarios em quatro dias, quantos servidores com o mesmo rendimento sao necessarios?',
+        options: buildOptions([
+            ['a', '10'],
+            ['b', '12'],
+            ['c', '14'],
+            ['d', '16'],
+            ['e', '20'],
+        ]),
+        correctId: 'd',
+        explanation: 'A quantidade de trabalho e proporcional ao produto servidores x dias. Logo S2 = (8 * 5 * 640) / (4 * 400) = 16 servidores.',
+    },
+    {
+        id: 'rl-5',
+        text: 'Uma caixa possui 4 processos regulares e 3 com pendencia. Retiram-se dois processos sem reposicao. Qual a probabilidade de ambos apresentarem pendencia?',
+        options: buildOptions([
+            ['a', '1/21'],
+            ['b', '1/14'],
+            ['c', '1/7'],
+            ['d', '3/7'],
+            ['e', '9/14'],
+        ]),
+        correctId: 'c',
+        explanation: 'Escolher 2 com pendencia entre 3: C(3,2)=3. Total de pares = C(7,2)=21. Probabilidade = 3/21 = 1/7.',
+    },
+    {
+        id: 'rl-6',
+        text: 'A sequencia 2, 5, 11, 23, ... segue a regra "multiplicar por 2 e somar 1". Qual sera o proximo termo?',
+        options: buildOptions([
+            ['a', '33'],
+            ['b', '35'],
+            ['c', '45'],
+            ['d', '47'],
+            ['e', '55'],
+        ]),
+        correctId: 'd',
+        explanation: 'Aplicando a regra: 23 * 2 + 1 = 47.',
+    },
+    {
+        id: 'rl-7',
+        text: 'Uma escala diaria exige designar comandante, motorista e radio-operador distintos escolhidos entre 6 policiais. Quantas combinacoes possiveis existem?',
+        options: buildOptions([
+            ['a', '36'],
+            ['b', '60'],
+            ['c', '90'],
+            ['d', '120'],
+            ['e', '360'],
+        ]),
+        correctId: 'd',
+        explanation: 'Ha arranjo simples A(6,3) = 6 * 5 * 4 = 120 combinacoes com funcoes distintas.',
+    },
+]);
+
+// =====================================================
+// NOCOES DE INFORMATICA
+// =====================================================
+registerQuestions(['Nocoes de Informatica', 'Informatica'], [
+    {
+        id: 'info-1',
+        exams: ['camara dos deputados'],
+        text: 'Em planilhas Excel/Calc, qual funcao retorna valores de uma tabela vertical utilizando chave de busca na primeira coluna?',
+        options: buildOptions([
+            ['a', 'SOMASE'],
+            ['b', 'DESLOC'],
+            ['c', 'PROCV'],
+            ['d', 'CORRESP'],
+            ['e', 'CONT.SE'],
+        ]),
+        correctId: 'c',
+        explanation: 'PROCV procura um valor na primeira coluna e devolve o conteudo da coluna indicada na mesma linha.',
+    },
+    {
+        id: 'info-2',
+        exams: ['camara dos deputados'],
+        text: 'No Microsoft Word, o recurso "Estilos" permite:',
+        options: buildOptions([
+            ['a', 'Aplicar formatacao consistente a titulos e paragrafos com um clique.'],
+            ['b', 'Executar macros gravadas em VBA.'],
+            ['c', 'Compartilhar documentos automaticamente na nuvem.'],
+            ['d', 'Converter texto em colunas de planilha.'],
+            ['e', 'Apagar comentarios de revisores.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Estilos armazenam conjuntos padronizados de fonte, tamanho e espaco, facilitando a formatacao uniforme de documentos oficiais.',
+    },
+    {
+        id: 'info-3',
+        text: 'Em sistemas Windows 10/11, qual painel exibe processos ativos, uso de CPU e permite finalizar tarefas travadas?',
+        options: buildOptions([
+            ['a', 'Painel de Controle'],
+            ['b', 'Monitor de Confianca'],
+            ['c', 'Gerenciador de Tarefas'],
+            ['d', 'PowerShell'],
+            ['e', 'Editor do Registro'],
+        ]),
+        correctId: 'c',
+        explanation: 'O Gerenciador de Tarefas centraliza o monitoramento de desempenho e a finalizacao de aplicativos sem resposta.',
+    },
+    {
+        id: 'info-4',
+        text: 'Em redes corporativas, o protocolo HTTPS adiciona qual camada de seguranca em relacao ao HTTP?',
+        options: buildOptions([
+            ['a', 'Apenas compressao de dados.'],
+            ['b', 'Criptografia TLS/SSL do canal de comunicacao.'],
+            ['c', 'Envio automatico de backups.'],
+            ['d', 'Prioridade de banda para video.'],
+            ['e', 'Bloqueio de scripts em paginas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'HTTPS encapsula o trafego HTTP dentro de conexoes TLS/SSL, garantindo confidencialidade e autenticidade.',
+    },
+    {
+        id: 'info-5',
+        text: 'Qual recurso nativo do Windows 10/11 permite criptografar unidades inteiras para proteger dados sigilosos?',
+        options: buildOptions([
+            ['a', 'Desfragmentador de Disco.'],
+            ['b', 'Restauracao do Sistema.'],
+            ['c', 'BitLocker.'],
+            ['d', 'Prompt de Comando.'],
+            ['e', 'Gerenciador de Tarefas.'],
+        ]),
+        correctId: 'c',
+        explanation: 'O BitLocker aplica criptografia de volume e exige autenticacao para liberar o conteudo do disco.',
+    },
+    {
+        id: 'info-6',
+        text: 'Sobre protocolos de e-mail, assinale a afirmativa correta.',
+        options: buildOptions([
+            ['a', 'POP3 mantem as mensagens apenas no servidor.'],
+            ['b', 'IMAP permite sincronizacao com multiplos dispositivos mantendo mensagens no servidor.'],
+            ['c', 'SMTP e usado para leitura de mensagens.'],
+            ['d', 'HTTP substituiu integralmente POP e IMAP.'],
+            ['e', 'IMAP exige apagar mensagens locais para enviar e-mails.'],
+        ]),
+        correctId: 'b',
+        explanation: 'IMAP foi concebido para sincronizar pastas remotas e locais, permitindo acesso simultaneo em varios dispositivos.',
+    },
+    {
+        id: 'info-7',
+        text: 'Segundo a LGPD, qual principio deve orientar a coleta de dados pessoais em sistemas governamentais?',
+        options: buildOptions([
+            ['a', 'Manter bancos com qualquer dado disponivel para usos futuros indeterminados.'],
+            ['b', 'Coletar apenas dados adequados, pertinentes e limitados a finalidade declarada.'],
+            ['c', 'Compartilhar automaticamente com parceiros privados.'],
+            ['d', 'Pressupor consentimento tacito em todo tratamento.'],
+            ['e', 'Excluir registros sempre que houver solicitacao informal.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O principio da necessidade/minimizacao impõe que apenas dados indispensaveis ao proposito informado sejam coletados.',
+    },
+]);
+
+// =====================================================
+// ETICA NO SERVICO PUBLICO
+// =====================================================
+registerQuestions(['Etica no Servico Publico', 'Etica'], [
+    {
+        id: 'etica-1',
+        text: 'O Codigo de Etica do Servidor Federal (Dec. 1171/1994) determina que o agente publico deve priorizar:',
+        options: buildOptions([
+            ['a', 'Conveniencias pessoais e de seus superiores imediatos.'],
+            ['b', 'O interesse publico, com cortesia e lealdade institucional.'],
+            ['c', 'Somente a letra fria da lei, sem dialogo com o cidadao.'],
+            ['d', 'A rapidez mesmo que sem transparencia.'],
+            ['e', 'Acoes promocionais para valorizar a imagem individual.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O codigo enfatiza supremacia do interesse publico, trato cortes e transparencia como pilares da conduta etica.',
+    },
+    {
+        id: 'etica-2',
+        text: 'Configura conflito de interesses, nos termos da Lei 12.813/2013:',
+        options: buildOptions([
+            ['a', 'Participar de curso custeado pelo orgao.'],
+            ['b', 'Exercer atividade privada que guarde relacao com sua area, sem comunicacao previa.'],
+            ['c', 'Informar relatorio tecnico em que atuou diretamente.'],
+            ['d', 'Recusar-se a revelar informacoes sigilosas apos deixar o cargo.'],
+            ['e', 'Comunicar impedimento por motivo de foro intimo.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A lei exige previa autorizacao para atividade privada relacionada ao cargo a fim de evitar vantagem indevida.',
+    },
+    {
+        id: 'etica-3',
+        text: 'Segundo o Codigo de Etica, como o servidor deve agir ao receber presente de valor significativo?',
+        options: buildOptions([
+            ['a', 'Aceitar e declarar apenas se o doador solicitar recibo.'],
+            ['b', 'Recusar ou, se impossivel devolver, entregar o bem ao patrimonio publico.'],
+            ['c', 'Aceitar e dividir com a equipe.'],
+            ['d', 'Aceitar desde que relacionado ao aniversario.'],
+            ['e', 'Aceitar e registrar em agenda pessoal.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Presentes devem ser recusados; se nao houver como, encaminham-se ao patrimonio para evitar favorecimento.',
+    },
+    {
+        id: 'etica-4',
+        text: 'Sobre nepotismo segundo Sumula Vinculante 13, e vedado:',
+        options: buildOptions([
+            ['a', 'Contratar empresa em que o servidor seja socio minoritario.'],
+            ['b', 'Nomear conjuge ou parente ate terceiro grau para cargo em comissao na mesma esfera administrativa.'],
+            ['c', 'Designar servidor efetivo para funcao gratificada.'],
+            ['d', 'Nomear especialista externo em situacao temporaria.'],
+            ['e', 'Remover servidor para unidade diversa.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A Sumula 13 veda nomeacao de parentes ate o terceiro grau para cargos comissionados na mesma unidade federativa.',
+    },
+    {
+        id: 'etica-5',
+        text: 'Os programas de integridade recomendados pela CGU buscam:',
+        options: buildOptions([
+            ['a', 'Substituir os codigos de etica existentes.'],
+            ['b', 'Estruturar mecanismos de prevencao, deteccao e remediacao de desvios.'],
+            ['c', 'Exigir juramento anual dos servidores.'],
+            ['d', 'Delegar a etica ao setor de comunicacao.'],
+            ['e', 'Reduzir a participacao social.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Integridade envolve padroes claros, canais de denuncia, treinamento e resposta rapida a violacoes.',
+    },
+]);
+
+// =====================================================
+// DIREITO CONSTITUCIONAL
+// =====================================================
+registerQuestions(['Direito Constitucional'], [
+    {
+        id: 'const-1',
+        text: 'Quais sao fundamentos da Republica Federativa do Brasil segundo o art. 1 da CF?',
+        options: buildOptions([
+            ['a', 'Soberania, cidadania, dignidade da pessoa humana, valores sociais do trabalho e da livre iniciativa, e pluralismo politico.'],
+            ['b', 'Ordem, progresso, probidade e moralidade.'],
+            ['c', 'Soberania, independencia nacional e desenvolvimento.'],
+            ['d', 'Direitos sociais, educacao e seguranca.'],
+            ['e', 'Moralidade, publicidade e eficiencia.'],
+        ]),
+        correctId: 'a',
+        explanation: 'O art. 1 enumera os cinco fundamentos conhecidos pelo mnemônico SO-CI-DI-VA-PLU.',
+    },
+    {
+        id: 'const-2',
+        text: 'Todo poder emana do povo, que o exerce:',
+        options: buildOptions([
+            ['a', 'Apenas por meio de representantes eleitos.'],
+            ['b', 'Por representantes eleitos ou diretamente, nos termos da Constituicao.'],
+            ['c', 'Somente mediante plebiscitos anuais.'],
+            ['d', 'Exclusivamente pelo Poder Executivo.'],
+            ['e', 'Por meio de conselhos comunitarios.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O art. 1 paragrafo unico consagra democracia semidireta com mecanismos representativos e participativos.',
+    },
+    {
+        id: 'const-3',
+        text: 'Sobre os direitos fundamentais, assinale a afirmativa correta.',
+        options: buildOptions([
+            ['a', 'Sao absolutos e ilimitados.'],
+            ['b', 'Nao vinculam particulares.'],
+            ['c', 'Sao relativos e podem sofrer restricoes legais proporcionais.'],
+            ['d', 'Nao se aplicam a estrangeiros residentes.'],
+            ['e', 'Somente protegem brasileiros natos.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Direitos fundamentais admitem limitacoes razoaveis para harmonizar interesses coletivos, preservando o nucleo essencial.',
+    },
+    {
+        id: 'const-4',
+        text: 'O habeas corpus destina-se a proteger:',
+        options: buildOptions([
+            ['a', 'Qualquer direito liquido e certo.'],
+            ['b', 'Direito de acesso a informacoes pessoais.'],
+            ['c', 'Liberdade de locomocao ameacada por ilegalidade ou abuso de poder.'],
+            ['d', 'Acesso a registros publicos de terceiros.'],
+            ['e', 'Direito a nomeacao em concurso.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Remedio constitucional exclusivo para tutelar ir e vir.',
+    },
+    {
+        id: 'const-5',
+        text: 'A pena de morte no Brasil e admitida:',
+        options: buildOptions([
+            ['a', 'Em crimes hediondos.'],
+            ['b', 'Em caso de guerra declarada, nos termos do art. 84 XIX.'],
+            ['c', 'Para trafico de drogas.'],
+            ['d', 'Para traicao em tempo de paz.'],
+            ['e', 'Nunca.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 5 XLVII permite pena de morte apenas em guerra declarada.',
+    },
+    {
+        id: 'const-6',
+        text: 'A casa e asilo inviolavel, nao podendo nela penetrar sem consentimento, salvo:',
+        options: buildOptions([
+            ['a', 'Durante o dia, com mandado judicial.'],
+            ['b', 'Durante a noite para prestar socorro.'],
+            ['c', 'Em qualquer horario para inspeção administrativa.'],
+            ['d', 'Durante o dia por ordem do delegado.'],
+            ['e', 'Para fiscalizacao tributaria noturna.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A CF admite ingresso sem mandado em flagrante, desastre ou socorro, inclusive a noite.',
+    },
+    {
+        id: 'const-7',
+        text: 'Sao principios expressos da administracao publica (art. 37 caput):',
+        options: buildOptions([
+            ['a', 'Legalidade, impessoalidade, moralidade, publicidade e eficiencia.'],
+            ['b', 'Supremacia, indisponibilidade e continuidade apenas.'],
+            ['c', 'Finalidade, razoabilidade e motivacao.'],
+            ['d', 'Seguranca juridica e proporcionalidade.'],
+            ['e', 'Probidade, tempestividade e igualdade.'],
+        ]),
+        correctId: 'a',
+        explanation: 'O mnemônico LIMPE sintetiza os principios constitucionais explicitos.',
+    },
+    {
+        id: 'const-8',
+        text: 'O prazo de validade do concurso publico sera de ate:',
+        options: buildOptions([
+            ['a', '12 meses, prorrogavel indefinidamente.'],
+            ['b', '2 anos, prorrogavel uma vez por igual periodo.'],
+            ['c', '3 anos, improrrogavel.'],
+            ['d', '4 anos, prorrogavel duas vezes.'],
+            ['e', '5 anos, irrestrito.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 37 III fixa ate dois anos, prorrogavel uma unica vez por igual periodo.',
+    },
+    {
+        id: 'const-9',
+        text: 'Segundo o art. 144 da CF, a seguranca publica e:',
+        options: buildOptions([
+            ['a', 'Dever exclusivo do Estado.'],
+            ['b', 'Dever do Estado e responsabilidade de todos.'],
+            ['c', 'Competencia exclusiva dos municipios.'],
+            ['d', 'Atividade privada.'],
+            ['e', 'Apenas obrigacao das Forcas Armadas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O caput afirma que e dever do Estado, direito e responsabilidade de todos.',
+    },
+    {
+        id: 'const-10',
+        text: 'Compete as Policias Militares:',
+        options: buildOptions([
+            ['a', 'Apurar infracoes penais comuns.'],
+            ['b', 'Executar policia ostensiva e preservar a ordem publica.'],
+            ['c', 'Atuar como policia judiciaria da Uniao.'],
+            ['d', 'Julgar crimes militares.'],
+            ['e', 'Expedir licencas ambientais.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 144 paragrafo 5 determina a competencia ostentiva das PMs.',
+    },
+    {
+        id: 'const-11',
+        text: 'Quais entes federativos sao autonomos segundo a Constituicao?',
+        options: buildOptions([
+            ['a', 'Uniao e Estados.'],
+            ['b', 'Uniao, Estados e Territorios.'],
+            ['c', 'Uniao, Estados, Distrito Federal e Municipios.'],
+            ['d', 'Apenas a Uniao.'],
+            ['e', 'Estados e Municipios.'],
+        ]),
+        correctId: 'c',
+        explanation: 'O art. 18 estabelece federacao composta por quatro entes autonomos.',
+    },
+    {
+        id: 'const-12',
+        text: 'O Supremo Tribunal Federal exerce controle concentrado por meio de:',
+        options: buildOptions([
+            ['a', 'Recurso especial.'],
+            ['b', 'Acao direta de inconstitucionalidade.'],
+            ['c', 'Mandado de injuncao coletivo.'],
+            ['d', 'Sindicancia parlamentar.'],
+            ['e', 'Procedimento administrativo disciplinar.'],
+        ]),
+        correctId: 'b',
+        explanation: 'ADI e uma das acoes do art. 102 I para controle abstrato de constitucionalidade.',
+    },
+]);
+
+// =====================================================
+// DIREITO ADMINISTRATIVO
+// =====================================================
+registerQuestions(['Direito Administrativo'], [
+    {
+        id: 'adm-1',
+        text: 'Os principios implicitos da administracao, como supremacia e indisponibilidade do interesse publico, significam que:',
+        options: buildOptions([
+            ['a', 'O administrador pode agir livremente sem lei.'],
+            ['b', 'A administracao pode afastar a lei para atender a coletividade.'],
+            ['c', 'O interesse coletivo prevalece e bens/competencias nao podem ser livremente alienados.'],
+            ['d', 'Nao ha hierarquia entre normas.'],
+            ['e', 'O servidor pode recusar motivacao.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Supremacia autoriza atos restritivos, enquanto indisponibilidade impede livre dispor do patrimonio e competencias publicas.',
+    },
+    {
+        id: 'adm-2',
+        text: 'O poder hierarquico permite:',
+        options: buildOptions([
+            ['a', 'Delegar competencia legislativa.'],
+            ['b', 'Distribuir e escalonar funcoes, fiscalizar subordinados e rever atos.'],
+            ['c', 'Aplicar sancoes penais.'],
+            ['d', 'Revogar leis.'],
+            ['e', 'Celebrar tratados.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Hierarquia organiza a estrutura interna, possibilitando ordenacao e controle de atividades.',
+    },
+    {
+        id: 'adm-3',
+        text: 'Atos administrativos vinculados caracterizam-se por:',
+        options: buildOptions([
+            ['a', 'Margem ampla de escolha quanto ao merito.'],
+            ['b', 'Liberdade para desconsiderar a lei.'],
+            ['c', 'Obrigatoriedade de pratica quando presentes os pressupostos legais.'],
+            ['d', 'Impossibilidade de controle judicial.'],
+            ['e', 'Natureza sempre politica.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Nos atos vinculados, a lei define todos os elementos; comprovados requisitos, o ato deve ser praticado.',
+    },
+    {
+        id: 'adm-4',
+        text: 'A autotutela administrativa permite que a administracao:',
+        options: buildOptions([
+            ['a', 'Revogue leis contrarias aos seus interesses.'],
+            ['b', 'Anule atos ilegais e revogue atos inconvenientes sem provocacao judicial.'],
+            ['c', 'Substitua decisao judicial transitada.'],
+            ['d', 'Perdoe crimes.'],
+            ['e', 'Assuma competencias de outros poderes.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Sumula 473/STF: a administracao pode anular atos ilegais e revogar os inconvenientes, respeitados direitos adquiridos.',
+    },
+    {
+        id: 'adm-5',
+        text: 'Descentralizacao administrativa ocorre quando:',
+        options: buildOptions([
+            ['a', 'A Uniao distribui tarefas entre seus ministerios.'],
+            ['b', 'Um orgao central delega competencias internamente.'],
+            ['c', 'O Estado transfere titularidade ou execucao de servico a outra pessoa juridica.'],
+            ['d', 'Um servidor recebe funcao gratificada.'],
+            ['e', 'Ha desconcentracao entre secretarias.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Descentralizacao envolve transferencia para entidade distinta (autarquia, empresa publica ou concessionaria).',
+    },
+    {
+        id: 'adm-6',
+        text: 'Na Lei 14.133/2021, qual modalidade e utilizada para bens e servicos comuns com disputa por maior desconto?',
+        options: buildOptions([
+            ['a', 'Concorrencia.'],
+            ['b', 'Dialogo competitivo.'],
+            ['c', 'Leilao.'],
+            ['d', 'Pregao.'],
+            ['e', 'Credenciamento.'],
+        ]),
+        correctId: 'd',
+        explanation: 'O pregão, preferencialmente eletronico, busca maior desconto para bens e serviços comuns.',
+    },
+    {
+        id: 'adm-7',
+        text: 'Sobre contratos administrativos, e correto afirmar que:',
+        options: buildOptions([
+            ['a', 'Nao admitem alteracoes unilaterais.'],
+            ['b', 'A administracao pode alterar unilateralmente para melhor adequacao ao interesse publico dentro dos limites legais.'],
+            ['c', 'Nao ha clausulas exorbitantes.'],
+            ['d', 'Prazos nao podem ser prorrogados.'],
+            ['e', 'A contratada pode suspender execucao sem comunicacao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A lei permite alteracao qualitativa/quantitativa dentro dos limites de 25% ou 50% em reformas.',
+    },
+    {
+        id: 'adm-8',
+        text: 'A improbidade por violacao a principios (art. 11 da Lei 8.429, apos Lei 14.230) exige:',
+        options: buildOptions([
+            ['a', 'Dolo especifico em violar principios basicos.'],
+            ['b', 'Culpa simples.'],
+            ['c', 'Prejuizo ao erario comprovado.'],
+            ['d', 'Enriquecimento ilicito.'],
+            ['e', 'Beneficio direto ao agente.'],
+        ]),
+        correctId: 'a',
+        explanation: 'A nova lei exige dolo e ofensa aos principios como honestidade, imparcialidade e lealdade.',
+    },
+]);
+
+// =====================================================
+// ADMINISTRACAO PUBLICA
+// =====================================================
+registerQuestions(['Administracao Publica'], [
+    {
+        id: 'ap-1',
+        exams: ['camara dos deputados'],
+        text: 'O modelo burocratico weberiano destaca-se por:',
+        options: buildOptions([
+            ['a', 'Personalizacao nas decisoes.'],
+            ['b', 'Hierarquia clara, normas impessoais e carreiras profissionais.'],
+            ['c', 'Flexibilidade total e foco em resultados.'],
+            ['d', 'Gestao por contratos de desempenho apenas.'],
+            ['e', 'Ausencia de qualquer controle.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Burocracia busca previsibilidade com regras, especializacao e profissionalizacao.',
+    },
+    {
+        id: 'ap-2',
+        text: 'A administracao gerencial brasileira, a partir do PDRAE/1995, enfatiza:',
+        options: buildOptions([
+            ['a', 'Processos detalhados e formalismo.'],
+            ['b', 'Resultados, controle por desempenho e descentralizacao.'],
+            ['c', 'Centralizacao e hierarquia rigida.'],
+            ['d', 'Extincao de contratos de gestao.'],
+            ['e', 'Eliminacao da accountability.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A reforma gerencial introduziu contratos de gestao, metas e foco no cidadao-cliente.',
+    },
+    {
+        id: 'ap-3',
+        text: 'Segundo o Decreto 9203/2017, governanca publica inclui:',
+        options: buildOptions([
+            ['a', 'Controle apenas financeiro.'],
+            ['b', 'Lideranca, estrategia e controle para entregar resultados.'],
+            ['c', 'Desvinculacao de riscos.'],
+            ['d', 'Abandono da transparencia.'],
+            ['e', 'Exclusao da participacao social.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Governanca combina mecanismos de lideranca, estrategia e controle voltados a avaliacao e monitoramento.',
+    },
+    {
+        id: 'ap-4',
+        text: 'Indicadores de desempenho devem ser preferencialmente:',
+        options: buildOptions([
+            ['a', 'Baseados em percepcao subjetiva.'],
+            ['b', 'Especificos, mensuraveis, alcancaveis, relevantes e temporais (SMART).'],
+            ['c', 'Exclusivos para atividades finalisticas.'],
+            ['d', 'Restritos a custos financeiros.'],
+            ['e', 'Secretos para evitar comparacoes.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Boa pratica recomenda indicadores SMART para monitorar entregas com clareza e transparencia.',
+    },
+    {
+        id: 'ap-5',
+        text: 'Accountability na administracao publica envolve:',
+        options: buildOptions([
+            ['a', 'Prestar contas somente a superiores hierarquicos.'],
+            ['b', 'Transparencia, prestacao de contas e responsabilidade perante sociedade e orgaos de controle.'],
+            ['c', 'Eliminar controles externos.'],
+            ['d', 'Divulgar informacoes apenas sob ordem judicial.'],
+            ['e', 'Manter sigilo de todos os atos administrativos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Accountability combina dimensoes de informacao, justificativa e consequencias diante dos stakeholders.',
+    },
+]);
+
+// =====================================================
+// ADMINISTRACAO FINANCEIRA E ORCAMENTARIA
+// =====================================================
+registerQuestions(['Administracao Financeira e Orcamentaria', 'AFO'], [
+    {
+        id: 'afo-1',
+        text: 'PPA, LDO e LOA relacionam-se respectivamente com:',
+        options: buildOptions([
+            ['a', 'Metas quadrienais, prioridades anuais e detalhamento da arrecadacao/despesa do exercicio.'],
+            ['b', 'Controle externo, auditoria interna e licitacoes.'],
+            ['c', 'Planejamento estrategico, participacao popular e transparencia.'],
+            ['d', 'Execucao, avaliacao e controle.'],
+            ['e', 'Somente investimentos federais.'],
+        ]),
+        correctId: 'a',
+        explanation: 'O PPA define programas quadrienais; a LDO estabelece prioridades anuais e orienta a LOA, que fixa receitas e despesas do ano.',
+    },
+    {
+        id: 'afo-2',
+        text: 'O principio da universalidade determina que:',
+        options: buildOptions([
+            ['a', 'Cada orgao possua orcamento secreto.'],
+            ['b', 'Todas as receitas e despesas do ente constem da LOA.'],
+            ['c', 'Nao haja vinculacao legal.'],
+            ['d', 'Estatais independentes sejam excluidas.'],
+            ['e', 'Apenas despesas de investimento sejam registradas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Universalidade impõe registrar no orcamento geral todas as receitas e despesas do ente.',
+    },
+    {
+        id: 'afo-3',
+        text: 'Sao despesas de capital, na classificacao economica:',
+        options: buildOptions([
+            ['a', 'Pessoal e encargos.'],
+            ['b', 'Custeio de material de consumo.'],
+            ['c', 'Investimentos, inversoes financeiras e amortizacao da divida.'],
+            ['d', 'Servicos de terceiros PF.'],
+            ['e', 'Tarifas bancarias.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Despesas de capital aumentam o patrimonio ou reduzem passivos: investimentos, inversoes e amortizacao.',
+    },
+    {
+        id: 'afo-4',
+        text: 'Receitas originarias derivam de:',
+        options: buildOptions([
+            ['a', 'Tributos e multas.'],
+            ['b', 'Exploracao do patrimonio estatal ou prestacao de servicos.'],
+            ['c', 'Transferencias constitucionais.'],
+            ['d', 'Operacoes de credito.'],
+            ['e', 'Multas de transito.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Originarias advem da atividade economica do Estado (aluguéis, tarifas, venda de bens). Derivadas sao tributos e multas.',
+    },
+    {
+        id: 'afo-5',
+        text: 'Restos a pagar nao processados correspondem a:',
+        options: buildOptions([
+            ['a', 'Despesas liquidadas e nao pagas.'],
+            ['b', 'Despesas empenhadas ate 31/12 sem liquidacao.'],
+            ['c', 'Receitas inscritas e nao arrecadadas.'],
+            ['d', 'Operacoes de credito extraordinarias.'],
+            ['e', 'Despesas excluidas do orcamento.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Restos nao processados sao empenhos sem liquidacao ao fim do exercicio.',
+    },
+    {
+        id: 'afo-6',
+        text: 'A Lei de Responsabilidade Fiscal estabelece que o limite de gasto total com pessoal dos estados e:',
+        options: buildOptions([
+            ['a', '40% da Receita Corrente Liquida.'],
+            ['b', '50% da Receita Corrente Liquida.'],
+            ['c', '60% da Receita Corrente Liquida.'],
+            ['d', '70% da Receita Corrente Liquida.'],
+            ['e', '80% da Receita Corrente Liquida.'],
+        ]),
+        correctId: 'c',
+        explanation: 'O art. 20 da LRF fixa limite global de 60% da RCL para os estados.',
+    },
+]);
+
+// =====================================================
+// REGIMENTO INTERNO DA CAMARA DOS DEPUTADOS
+// =====================================================
+registerQuestions(['Regimento Interno da Camara dos Deputados', 'Regimento Camara'], [
+    {
+        id: 'ricd-1',
+        exams: ['camara dos deputados'],
+        text: 'A Mesa Diretora da Camara e eleita para mandato de:',
+        options: buildOptions([
+            ['a', 'Dois anos, vedada reconducao para o mesmo cargo na mesma legislatura.'],
+            ['b', 'Quatro anos, permitida reconducao imediata.'],
+            ['c', 'Doze meses, permitida reconducao.'],
+            ['d', 'Dois anos, com reconducao ilimitada.'],
+            ['e', 'Mandato coincidente com o Executivo federal.'],
+        ]),
+        correctId: 'a',
+        explanation: 'O art. 5 do RICD fixa mandato de dois anos e proibe reconducao ao mesmo cargo dentro da legislatura.',
+    },
+    {
+        id: 'ricd-2',
+        text: 'Compete ao Presidente da Camara, entre outras atribuicoes:',
+        options: buildOptions([
+            ['a', 'Julgar deputados.'],
+            ['b', 'Dirigir os trabalhos do Plenario e manter a ordem.'],
+            ['c', 'Vetar projetos de lei.'],
+            ['d', 'Designar ministros de Estado.'],
+            ['e', 'Emitir parecer nas comissoes.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O Presidente conduz as sessoes e garante observancia do regimento, cabendo-lhe manter a ordem e decidir questoes de ordem.',
+    },
+    {
+        id: 'ricd-3',
+        text: 'As Comissoes Permanentes podem apreciar conclusivamente proposicoes quando:',
+        options: buildOptions([
+            ['a', 'Nao for materia reservada ao Plenario nem houver recurso subscrito por 1/10 dos deputados.'],
+            ['b', 'Se tratar de PEC.'],
+            ['c', 'Sempre que desejarem.'],
+            ['d', 'Houver requerimento de regime de urgencia.'],
+            ['e', 'Se tratar de credito extraordinario.'],
+        ]),
+        correctId: 'a',
+        explanation: 'O art. 24 permite apreciacao conclusiva salvo materias especificas ou recurso de 51 deputados ao Plenario.',
+    },
+    {
+        id: 'ricd-4',
+        text: 'O regime de urgencia urgentissima pode ser requerido por:',
+        options: buildOptions([
+            ['a', 'Apenas pelo Presidente da Republica.'],
+            ['b', 'Lider com apoio da maioria absoluta ou por um terco dos deputados.'],
+            ['c', 'Apenas por membros da Mesa.'],
+            ['d', 'Qualquer cidadao.'],
+            ['e', 'Somente pela CCJ.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O art. 152 admite urgencia urgentissima por requerimento assinado pela maioria absoluta ou por lideres com esse apoio.',
+    },
+    {
+        id: 'ricd-5',
+        text: 'Nas votacoes nominais, o quorum para aprovar projeto de lei complementar e:',
+        options: buildOptions([
+            ['a', 'Maioria simples dos presentes.'],
+            ['b', 'Maioria absoluta dos membros (257 deputados).'],
+            ['c', '3/5 dos membros.'],
+            ['d', '2/3 dos presentes.'],
+            ['e', 'Unanimidade.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Leis complementares exigem maioria absoluta, conforme art. 69 da CF e disposicoes regimentais.',
+    },
+    {
+        id: 'ricd-6',
+        text: 'O Diario da Camara dos Deputados:',
+        options: buildOptions([
+            ['a', 'Nao possui valor oficial.'],
+            ['b', 'E veiculo oficial que registra atos, pareceres e extratos de deliberacoes.'],
+            ['c', 'Publica apenas contratos administrativos.'],
+            ['d', 'Pode ser substituido por redes sociais privadas.'],
+            ['e', 'Nao publica pareceres.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O Diario confere publicidade formal a deliberacoes, atos administrativos e pareceres.',
+    },
+]);
+
+// =====================================================
+// LEGISLACAO PENAL ESPECIAL
+// =====================================================
+registerQuestions(['Legislacao Penal Especial'], [
+    {
+        id: 'lpe-1',
+        exams: ['policia penal mg', 'pmdf'],
+        text: 'No art. 28 da Lei 11.343/2006, o porte de drogas para consumo pessoal:',
+        options: buildOptions([
+            ['a', 'Gera pena de reclusao de 1 a 3 anos.'],
+            ['b', 'Recebe medidas educativas, advertencia ou prestacao de servicos.'],
+            ['c', 'Deixa de ser crime.'],
+            ['d', 'Permite detencao em flagrante sem lavratura de termo.'],
+            ['e', 'Resulta em multa de 100 salarios minimos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O art. 28 preve penas alternativas: advertencia, prestacao de servicos e curso educativo.',
+    },
+    {
+        id: 'lpe-2',
+        text: 'O trafico privilegiado (art. 33 §4) admite reducao quando:',
+        options: buildOptions([
+            ['a', 'O agente for reincidente especifico.'],
+            ['b', 'O agente for primario, de bons antecedentes e nao se dedique a atividades criminosas.'],
+            ['c', 'Houver violencia.'],
+            ['d', 'A droga apreendida for maconha.'],
+            ['e', 'Se tratar de crime hediondo.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A redutora varia de 1/6 a 2/3 para primario que nao participa de organizacao criminosa.',
+    },
+    {
+        id: 'lpe-3',
+        text: 'Segundo a Lei 8.072/1990, sao hediondos:',
+        options: buildOptions([
+            ['a', 'Homicidio culposo.'],
+            ['b', 'Latrocinio e estupro.'],
+            ['c', 'Dano qualificado.'],
+            ['d', 'Calunia.'],
+            ['e', 'Lesao corporal leve.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O rol inclui crimes como latrocinio, extorsao mediante sequestro e estupro.',
+    },
+    {
+        id: 'lpe-4',
+        text: 'A Lei 12.850/2013 define organizacao criminosa como associacao de quatro ou mais pessoas:',
+        options: buildOptions([
+            ['a', 'Sem estrutura definida.'],
+            ['b', 'Com objetivo de cometer crimes com pena maxima superior a 4 anos ou transnacionais.'],
+            ['c', 'Apenas para contravencoes.'],
+            ['d', 'Somente com armas de fogo.'],
+            ['e', 'Somente com participacao de agentes publicos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Ha necessidade de estrutura ordenada e divisao de tarefas para crimes graves ou transnacionais.',
+    },
+    {
+        id: 'lpe-5',
+        text: 'No Estatuto do Desarmamento, o porte ilegal de arma de fogo de uso permitido tem pena de:',
+        options: buildOptions([
+            ['a', 'Detencao de 6 meses a 1 ano.'],
+            ['b', 'Reclusao de 2 a 4 anos e multa.'],
+            ['c', 'Reclusao de 6 a 20 anos.'],
+            ['d', 'Advertencia.'],
+            ['e', 'Pena restritiva de direitos apenas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O art. 14 fixa reclusao de 2 a 4 anos e multa.',
+    },
+    {
+        id: 'lpe-6',
+        text: 'A Lei 9.455/1997 conceitua tortura como:',
+        options: buildOptions([
+            ['a', 'Conduta exclusiva de agente publico.'],
+            ['b', 'Constranger alguem com violencia para obter informacao, castigar ou discriminar, podendo ser praticada por particular.'],
+            ['c', 'Conduta apenas em situacoes carcerarias.'],
+            ['d', 'Apenas quando resulta morte.'],
+            ['e', 'Atos cometidos unicamente por policiais militares.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A lei alcanca agentes publicos e particulares que causem sofrimento com finalidades especificas.',
+    },
+]);
+
+registerQuestions(['Legislacao de Transito', 'Codigo de Transito Brasileiro'], [
+    withFeedback(
+        {
+            id: 'transito-1',
+            exams: ['detran df'],
+            text: 'Segundo a Lei 14.071/2020, por quanto tempo vale a CNH de um condutor entre 18 e 50 anos antes de precisar renová-la?',
+            options: buildOptions([
+                ['a', '3 anos.'],
+                ['b', '5 anos.'],
+                ['c', '10 anos.'],
+                ['d', '15 anos.'],
+                ['e', 'Indeterminado enquanto o condutor estiver em bom comportamento.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O art. 147 do CTB fixou validade de 10 anos para condutores com até 50 anos após as alterações da Lei 14.071/2020.',
+        },
+        {
+            a: 'Errado: 3 anos é o prazo aplicado a condutores com mais de 70 anos.',
+            b: 'Errado: 5 anos vale para quem tem de 50 a 70 anos.',
+            c: 'Correta: o novo padrão da Lei 14.071 é 10 anos para até 50 anos.',
+            d: 'Errado: o CTB não prevê 15 anos de validade.',
+            e: 'Errado: a renovação é periódica e jamais indefinida.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-2',
+            exams: ['detran df'],
+            text: 'A CNH de um motorista comum é suspensa quando acumula quantos pontos no período de 12 meses?',
+            options: buildOptions([
+                ['a', '10 pontos.'],
+                ['b', '15 pontos.'],
+                ['c', '20 pontos.'],
+                ['d', '25 pontos.'],
+                ['e', '30 pontos.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O art. 261 do CTB determina suspensão ao atingir 20 pontos em 12 meses; profissionais podem estender até 30 desde que atendam requisitos.',
+        },
+        {
+            a: 'Errado: 10 pontos não corresponde à regra geral.',
+            b: 'Errado: 15 pontos também não é o limite oficial.',
+            c: 'Correta: 20 pontos é o valor previsto para condutores comuns.',
+            d: 'Errado: 25 pontos não está previsto.',
+            e: 'Errado: 30 pontos é um limite especial para profissionais.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-3',
+            exams: ['detran df'],
+            text: 'O que ocorre se um motorista se recusa a submeter-se a teste de alcoolemia durante fiscalização?',
+            options: buildOptions([
+                ['a', 'Recebe apenas advertência escrita.'],
+                ['b', 'É preso imediatamente.'],
+                ['c', 'Aplica-se multa, suspensão da CNH e recolhimento do documento por 12 meses (art. 165-A).'],
+                ['d', 'Não ocorre penalidade sem testemunhas.'],
+                ['e', 'O veículo é apreendido sem outras consequências.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O art. 165-A do CTB pune a recusa com multa, suspensão e recolhimento da CNH por 12 meses como infração gravíssima.',
+        },
+        {
+            a: 'Errado: a infração é mais severa que uma advertência.',
+            b: 'Errado: prisão não é sanção automática nesse caso.',
+            c: 'Correta: é essa a penalidade administrativa prevista.',
+            d: 'Errado: não depende de testemunhas.',
+            e: 'Errado: a apreensão complementa mas não substitui a penalidade.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-4',
+            exams: ['detran df'],
+            text: 'Transportar criança sem dispositivo de retenção adequado constitui infração:',
+            options: buildOptions([
+                ['a', 'Leve, 3 pontos.'],
+                ['b', 'Média, 4 pontos.'],
+                ['c', 'Grave, 5 pontos.'],
+                ['d', 'Gravíssima, 7 pontos.'],
+                ['e', 'Não é infração em trajetos urbanos curtos.'],
+            ]),
+            correctId: 'd',
+            explanation:
+                'O art. 64 do CTB classifica a falta de cadeirinha como infração gravíssima que gera 7 pontos.',
+        },
+        {
+            a: 'Errado: a penalidade oficial é mais severa.',
+            b: 'Errado: a penalidade não é média.',
+            c: 'Errado: embora grave, o CTB classifica como gravíssima.',
+            d: 'Correta: 7 pontos é o valor oficial.',
+            e: 'Errado: não há exceção por trajeto curto.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-5',
+            exams: ['detran df'],
+            text: 'O parâmetro de álcool para infração administrativa passou a ser:',
+            options: buildOptions([
+                ['a', '0,1 mg/L.'],
+                ['b', '0,3 mg/L.'],
+                ['c', '0,5 mg/L.'],
+                ['d', '0,8 mg/L.'],
+                ['e', 'Tolerância zero: basta alteração ao dirigir.'],
+            ]),
+            correctId: 'e',
+            explanation:
+                'A Lei 14.071/2020 consolidou o conceito de tolerância zero, sendo suficiente detecção de alteração para configurar infração.',
+        },
+        {
+            a: 'Errado: o CTB já não usa esse parâmetro.',
+            b: 'Errado: referências anteriores que não mais se aplicam.',
+            c: 'Errado: era usado para crimes, não mais para infrações administrativas.',
+            d: 'Errado: era limite penal antes da reforma.',
+            e: 'Correta: o critério atual é a detecção de alteração, não valores numéricos.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-6',
+            exams: ['detran df'],
+            text: 'A Lei Orgânica do DF reconhece que o Distrito Federal acumula competências de estado e município. Isso permite ao Detran-DF:',
+            options: buildOptions([
+                ['a', 'Editar resoluções federais.'],
+                ['b', 'Seguir unicamente normas municipais.'],
+                ['c', 'Criar normas distritais complementares ao CTB e gerir políticas de mobilidade.'],
+                ['d', 'Delegar suas atribuições aos municípios vizinhos.'],
+                ['e', 'Limitar-se a informações sem aplicação prática.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O art. 32 da LO-DF registra o modelo híbrido, legitimando normas e políticas distritais de mobilidade que complementam o CTB.',
+        },
+        {
+            a: 'Errado: quem edita resoluções federais é o CONTRAN.',
+            b: 'Errado: o DF tem autonomia própria.',
+            c: 'Correta: essa é a consequência do modelo híbrido.',
+            d: 'Errado: o DF não delega competências essenciais.',
+            e: 'Errado: a LO-DF proporciona aplicação prática imediata.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-7',
+            exams: ['detran df'],
+            text: 'A CNH digital possui o mesmo valor jurídico que a física? Pode ser exigida em fiscalização?',
+            options: buildOptions([
+                ['a', 'Não tem valor jurídico e serve apenas como auxílio.'],
+                ['b', 'Tem valor apenas para veículos oficiais.'],
+                ['c', 'Possui o mesmo valor jurídico e pode ser exigida em fiscalizações (Resolução 681/2017).'],
+                ['d', 'Só vale quando o condutor mostra o QR code impresso.'],
+                ['e', 'É válida apenas em rodovias interestaduais.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'A CNH digital (Resolução CONTRAN 681/2017) vale como documento oficial e pode ser exigida por autoridades em fiscalizações, inclusive distritais.',
+        },
+        {
+            a: 'Errado: possui valor jurídico pleno, não apenas auxílio.',
+            b: 'Errado: vale para qualquer jurisdição, inclusive fiscalizações locais.',
+            c: 'Correta: a resolução garante equivalência e obrigatoriedade.',
+            d: 'Errado: basta apresentar o app com QR code, sem impressão.',
+            e: 'Errado: a validade ocorre em qualquer via pública brasileira.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-8',
+            exams: ['detran df'],
+            text: 'Sob a ótica do CTB, quem pode fiscalizar estacionamento rotativo do DF?',
+            options: buildOptions([
+                ['a', 'Apenas guardas municipais de municípios vizinhos.'],
+                ['b', 'Agentes do Detran-DF e órgãos delegados do GDF em áreas públicas.'],
+                ['c', 'Apenas concessionárias privadas.'],
+                ['d', 'Polícia Federal.'],
+                ['e', 'Só o Corpo de Bombeiros.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O Detran-DF e órgãos delegados (Secretaria de Mobilidade) têm competência para fiscalizar estacionamentos públicos e rotativos distritais, conforme o CTB e normas complementares.',
+        },
+        {
+            a: 'Errado: guardas municipais de outros municípios não têm competência no DF.',
+            b: 'Correta: Detran e órgãos delegados atuam em áreas públicas.',
+            c: 'Errado: concessionárias podem operar, mas fiscalização é estatal.',
+            d: 'Errado: PF não é responsável por fiscalização urbana de estacionamento rotativo.',
+            e: 'Errado: Corpo de Bombeiros atua em prevenção, não fiscalização de vagas.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-9',
+            exams: ['detran df'],
+            text: 'Quanto tempo um infrator tem para recorrer em processo administrativo de trânsito antes da autuação transitar em julgado?',
+            options: buildOptions([
+                ['a', '5 dias corridos.'],
+                ['b', '10 dias úteis.'],
+                ['c', '15 dias úteis, contados da notificação.'],
+                ['d', '30 dias corridos.'],
+                ['e', 'Nenhum prazo; recurso depende de decisão judicial.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O art. 285 do CTB dá 15 dias úteis para defesa prévia ou recurso administrativo, prazo também adotado em procedimentos distritais.',
+        },
+        {
+            a: 'Errado: o prazo legal é maior que 5 dias.',
+            b: 'Errado: CTB especifica 15 dias úteis, não 10.',
+            c: 'Correta: 15 dias úteis contados da ciência da penalidade.',
+            d: 'Errado: 30 dias corridos excede o prazo.',
+            e: 'Errado: há prazo e decurso administrativo, não apenas judicial.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'transito-10',
+            exams: ['detran df'],
+            text: 'A categoria C da CNH autoriza conduzir:',
+            options: buildOptions([
+                ['a', 'Apenas carro de passeio.'],
+                ['b', 'Veículos de carga com até 750 kg.'],
+                ['c', 'Veículos de carga com peso bruto total acima de 3.500 kg.'],
+                ['d', 'Motocicletas.'],
+                ['e', 'Somente ônibus de passageiros.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'Categoria C permite conduzir veículos de carga com peso bruto total superior a 3.500 kg, conforme arts. 143 e 145 do CTB.',
+        },
+        {
+            a: 'Errado: categoria B cobre carros de passeio.',
+            b: 'Errado: limite indicado é maior que 750 kg.',
+            c: 'Correta: C abrange caminhões pesados acima de 3.500 kg.',
+            d: 'Errado: motos exigem categoria A.',
+            e: 'Errado: ônibus demandam categoria D.',
+        }
+    ),
+]);
+
+registerQuestions(['Legislacao Distrital do DF', 'Legislacao DF'], [
+    withFeedback(
+        {
+            id: 'detran-df-1',
+            exams: ['detran df'],
+            text: 'A Lei Orgânica do DF prevê competência para trânsito e transporte porque o DF:',
+            options: buildOptions([
+                ['a', 'É um ente federado com atribuições de estado e município.'],
+                ['b', 'Depende do governo de Goiás.'],
+                ['c', 'Só pode legislar sobre transporte coletivo.'],
+                ['d', 'Deve seguir apenas leis municipais para trânsito.'],
+                ['e', 'Não possui autonomia administrativa.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'A LO-DF define o DF como ente híbrido (art. 32), justificando normas distritais sobre mobilidade e trânsito.',
+        },
+        {
+            a: 'Correta: essa é a razão da competência distrital no trânsito.',
+            b: 'Errado: o DF é um ente autônomo.',
+            c: 'Errado: a competência vai além de apenas transporte coletivo.',
+            d: 'Errado: o DF possui legislação própria.',
+            e: 'Errado: o DF tem autonomia administrativa expressa.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'detran-df-2',
+            exams: ['detran df'],
+            text: 'O Detran-DF está vinculado à Secretaria de:',
+            options: buildOptions([
+                ['a', 'Educação.'],
+                ['b', 'Mobilidade ou Transporte e Mobilidade.'],
+                ['c', 'Saúde.'],
+                ['d', 'Cultura.'],
+                ['e', 'Planejamento territorial.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A Secretaria de Mobilidade/Transporte e Mobilidade é a pasta do GDF que abriga políticas de trânsito e supervisiona o Detran-DF.',
+        },
+        {
+            a: 'Errado: educação não lida com trânsito.',
+            b: 'Correta: é a secretaria responsável pela mobilidade urbana.',
+            c: 'Errado: saúde não abriga autarquia de trânsito.',
+            d: 'Errado: cultura trata de áreas diferentes.',
+            e: 'Errado: a pasta do planejamento não fiscaliza diretamente o trânsito.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'detran-df-3',
+            exams: ['detran df'],
+            text: 'Programas distritais de mobilidade devem priorizar:',
+            options: buildOptions([
+                ['a', 'Maior arrecadação de multas.'],
+                ['b', 'Integração modal, segurança viária e participação social conforme LO-DF.'],
+                ['c', 'Transferência das atribuições para municípios.'],
+                ['d', 'Redução de transporte coletivo.'],
+                ['e', 'Fiscalização apenas nas rodovias federais.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A LO-DF e os princípios distritais exigem políticas integradas, segurança viária e controle social nas ações do Detran-DF.',
+        },
+        {
+            a: 'Errado: o foco vai muito além de arrecadar.',
+            b: 'Correta: integrações e participação social são diretrizes legais.',
+            c: 'Errado: o DF mantém competências próprias.',
+            d: 'Errado: transporte coletivo é eixo central de mobilidade.',
+            e: 'Errado: atua em todas as vias urbanas, não apenas federais.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'detran-df-4',
+            exams: ['detran df'],
+            text: 'A legislação distrital exige controle social e participação pública nas políticas de mobilidade. Isso se traduz em:',
+            options: buildOptions([
+                ['a', 'Decisões exclusivas do governador, sem consulta.'],
+                ['b', 'A criação de conselhos consultivos e audiências públicas envolvendo Detran-DF.'],
+                ['c', 'Delegação total para o setor privado.'],
+                ['d', 'Limitação de participação aos órgãos federais.'],
+                ['e', 'Somente consulta técnica sem representantes da sociedade.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A LO-DF determina mecanismos participativos e conselhos de mobilidade que envolvem sociedade civil e órgãos públicos para orientar políticas do Detran-DF.',
+        },
+        {
+            a: 'Errado: a legislação distrital aposta na participação, não na exclusividade do governador.',
+            b: 'Correta: conselhos e audiências públicas são instrumentos previstos.',
+            c: 'Errado: delegado ao setor privado contradiz o controle público exigido.',
+            d: 'Errado: a participação não se limita a entidades federais.',
+            e: 'Errado: a participação deve incluir representantes sociais, não apenas técnicos.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'detran-df-5',
+            exams: ['detran df'],
+            text: 'As normas distritais exigem que o Detran-DF mantenha ouvidoria e relatórios de desempenho. Isso reforça:',
+            options: buildOptions([
+                ['a', 'A transparência e prestação de contas ao cidadão e ao Legislativo local.'],
+                ['b', 'O segredo absoluto das autuações.'],
+                ['c', 'A divulgação apenas de dados federais.'],
+                ['d', 'A transferência de dados para órgãos de outros estados.'],
+                ['e', 'A eliminação de canais de denúncias.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'Transparência exige ouvidoria funcional e relatórios regulares para garantir controle social e parlamentares, conforme princípios da LO-DF.',
+        },
+        {
+            a: 'Correta: o foco é a prestação de contas e transparência local.',
+            b: 'Errado: vigência da transparência vai contra segredo absoluto.',
+            c: 'Errado: trata-se de dados distritais, não apenas federais.',
+            d: 'Errado: não se transfere competência a outros estados.',
+            e: 'Errado: canais de denúncia são fortalecidos, não eliminados.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'detran-df-6',
+            exams: ['detran df'],
+            text: 'Um programa distrital de mobilidade urbana deve priorizar:',
+            options: buildOptions([
+                ['a', 'Maior arrecadação de multas.'],
+                ['b', 'Integração modal, segurança viária e participação social conforme LO-DF.'],
+                ['c', 'Transferência das responsabilidades para municípios vizinhos.'],
+                ['d', 'Redução de transporte coletivo.'],
+                ['e', 'Fiscalização apenas em rodovias federais.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A LO-DF e os princípios distritais orientam programas de mobilidade a priorizar integração modal, segurança e controle social.',
+        },
+        {
+            a: 'Errado: o objetivo vai além de arrecadar multas.',
+            b: 'Correta: são pilares fixados na legislação distrital.',
+            c: 'Errado: o DF mantém competências próprias.',
+            d: 'Errado: transporte coletivo é central e não dispensável.',
+            e: 'Errado: a atuação se estende a toda malha urbana.',
+        }
+    ),
+]);
+
+
+
+// =====================================================
+// DIREITOS HUMANOS
+// =====================================================
+registerQuestions(['Direitos Humanos'], [
+    {
+        id: 'dh-1',
+        text: 'O principio da universalidade implica que:',
+        options: buildOptions([
+            ['a', 'Direitos humanos valem apenas em democracias.'],
+            ['b', 'Todos os seres humanos sao titulares independentemente de nacionalidade ou situacao.'],
+            ['c', 'A ONU pode suspender direitos nacionais automaticamente.'],
+            ['d', 'Apenas pessoas sem condenacao criminal sao protegidas.'],
+            ['e', 'O governo pode relativizar direitos conforme conveniencia.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Universalidade assegura que todo ser humano e titular de direitos e liberdades fundamentais.',
+    },
+    {
+        id: 'dh-2',
+        text: 'Tratados de direitos humanos aprovados pelo rito do art. 5 §3 possuem status de:',
+        options: buildOptions([
+            ['a', 'Lei ordinaria.'],
+            ['b', 'Lei complementar.'],
+            ['c', 'Emenda constitucional.'],
+            ['d', 'Decreto regulamentar.'],
+            ['e', 'Ato infralegal.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Aprovados em dois turnos por 3/5 em cada Casa, adquirem equivalencia de emenda constitucional.',
+    },
+    {
+        id: 'dh-3',
+        text: 'A Corte Interamericana pode condenar o Brasil quando:',
+        options: buildOptions([
+            ['a', 'Nao houver esgotamento de recursos internos.'],
+            ['b', 'Ha violacao a tratado da OEA e o Estado reconheceu competencia contenciosa.'],
+            ['c', 'O fato envolva apenas particulares sem omissao estatal.'],
+            ['d', 'Nao exista opiniao consultiva previa.'],
+            ['e', 'Houver violacao apenas a direito social.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O Brasil reconheceu a jurisdicao contenciosa em 1998; exige esgotar recursos internos ou justificar impossibilidade.',
+    },
+    {
+        id: 'dh-4',
+        text: 'Protocolos sobre uso da forca da ONU recomendam que policiais:',
+        options: buildOptions([
+            ['a', 'Empreguem armas letais como primeira resposta.'],
+            ['b', 'Observem legalidade, necessidade, proporcionalidade e responsabilidade.'],
+            ['c', 'Nao registrem ocorrencias com vitimas.'],
+            ['d', 'Deleguem a civis o controle do cenario.'],
+            ['e', 'Protejam estritamente o patrimonio.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Os principios basicos exigem esses criterios cumulativos para legitimar o uso da forca.',
+    },
+    {
+        id: 'dh-5',
+        text: 'A Revisao Periodica Universal (RPU) do Conselho de Direitos Humanos da ONU:',
+        options: buildOptions([
+            ['a', 'Analisa apenas paises em guerra.'],
+            ['b', 'Submete todos os Estados membros a avaliacao ciclica do cumprimento de obrigacoes.'],
+            ['c', 'Julga individuos.'],
+            ['d', 'Substitui decisoes judiciais nacionais.'],
+            ['e', 'Concede asilo politico.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A RPU examina periodicamente todos os paises quanto ao cumprimento de compromissos assumidos. ',
+    },
+    {
+        id: 'dh-6',
+        exams: ['policia penal mg', 'pmdf'],
+        text: 'Na atuacao prisional, a Regra de Mandela 1 reforca que:',
+        options: buildOptions([
+            ['a', 'Nao existem limites para revistas corporais.'],
+            ['b', 'Os presos devem ser tratados com respeito a dignidade inerente ao ser humano.'],
+            ['c', 'A disciplina deve ser exclusivamente fisica.'],
+            ['d', 'A assistencia de saude e facultativa.'],
+            ['e', 'O isolamento prolongado e regra geral.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Regras Minimas para o Tratamento de Reclusos destacam dignidade, proibicao de tortura e garantia de assistencias.',
+    },
+]);
+
+// =====================================================
+// CRIMINOLOGIA
+// =====================================================
+registerQuestions(['Criminologia'], [
+    {
+        id: 'crim-1',
+        text: 'A escola classica da criminologia defendia que:',
+        options: buildOptions([
+            ['a', 'O crime resulta de determinismo biologico inevitavel.'],
+            ['b', 'O homem e racional e escolhe cometer delitos; a pena deve ser proporcional e legal.'],
+            ['c', 'O criminoso nato deve ser segregado.'],
+            ['d', 'As estruturas sociais sao as unicas responsaveis.'],
+            ['e', 'A pena deve ser indeterminada.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Classicos como Beccaria defendiam livre arbitrio, proporcionalidade e legalidade estrita.',
+    },
+    {
+        id: 'crim-2',
+        text: 'A escola positiva introduziu a ideia de:',
+        options: buildOptions([
+            ['a', 'Crime como escolha racional sem influencia externa.'],
+            ['b', 'Determinismo biologico e social, buscando causas empiricas do crime.'],
+            ['c', 'Punicao simbolica sem prisao.'],
+            ['d', 'Criminalidade de oportunidades.'],
+            ['e', 'Controle social informal apenas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Positivistas investigavam fatores biologicos e sociais, propondo respostas individualizadas.',
+    },
+    {
+        id: 'crim-3',
+        text: 'A teoria do etiquetamento (labeling approach) aponta que:',
+        options: buildOptions([
+            ['a', 'O crime e causado exclusivamente por genetica.'],
+            ['b', 'A rotulacao social de grupos como desviantes pode reforcar a reincidencia.'],
+            ['c', 'O controle social formal nao influencia identidades.'],
+            ['d', 'O crime e sempre racional.'],
+            ['e', 'Sistemas penais sao neutros.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O etiquetamento destaca o papel das agencias de controle na estigmatizacao.',
+    },
+    {
+        id: 'crim-4',
+        text: 'Vitimologia estuda:',
+        options: buildOptions([
+            ['a', 'Somente o autor do crime.'],
+            ['b', 'As caracteristicas e participacao da vitima no fenomeno criminal.'],
+            ['c', 'Apenas estatisticas de prisao.'],
+            ['d', 'Processos judiciais civis.'],
+            ['e', 'Questões economicas macro.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Analisa perfil, vulnerabilidade e interacoes vitima-ofensor para orientar prevencao.',
+    },
+    {
+        id: 'crim-5',
+        text: 'Politicas de prevencao situacional focam em:',
+        options: buildOptions([
+            ['a', 'Mudancas estruturais amplas sem foco espacial.'],
+            ['b', 'Reduzir oportunidades concretas do crime mediante vigilancia, iluminacao e design ambiental.'],
+            ['c', 'Programas educacionais unicamente.'],
+            ['d', 'Penas mais longas sem outras medidas.'],
+            ['e', 'Assistencia social exclusiva.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Prevencao situacional modifica ambiente e aumenta riscos para desencorajar o delito.',
+    },
+]);
+
+// =====================================================
+// ESTATUTO DOS POLICIAIS MILITARES DO DF
+// =====================================================
+registerQuestions(['Estatuto dos Policiais Militares do DF', 'Estatuto PMDF'], [
+    {
+        id: 'estatuto-pmdf-1',
+        exams: ['pmdf'],
+        text: 'O ingresso na PMDF exige, entre outros requisitos:',
+        options: buildOptions([
+            ['a', 'Idade minima de 14 anos.'],
+            ['b', 'Aprovacao em concurso publico e curso de formacao.'],
+            ['c', 'Nomeacao politica sem concurso.'],
+            ['d', 'Experiencia previa de 10 anos.'],
+            ['e', 'Ser servidor efetivo do DF.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A Lei 7.289/1984 exige concurso e curso especifico, alem de demais requisitos legais.',
+    },
+    {
+        id: 'estatuto-pmdf-2',
+        exams: ['pmdf'],
+        text: 'A hierarquia militar fundamenta-se no respeito a:',
+        options: buildOptions([
+            ['a', 'Escolha aleatoria de liderancas.'],
+            ['b', 'Antiguidade e graduacao, garantindo unidade de comando.'],
+            ['c', 'Idade biologica.'],
+            ['d', 'Preferencia politica.'],
+            ['e', 'Turnos de servico.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Hierarquia pressupoe graduacao e antiguidade, assegurando subordinacao e disciplina.',
+    },
+    {
+        id: 'estatuto-pmdf-3',
+        exams: ['pmdf'],
+        text: 'Entre os direitos previstos esta:',
+        options: buildOptions([
+            ['a', 'Gozo de ferias de 15 dias sem adicional.'],
+            ['b', 'Remuneracao durante licenca especial apos cada quinquenio, conforme lei local.'],
+            ['c', 'Dispensa automatica de sindicancia.'],
+            ['d', 'Imunidade penal.'],
+            ['e', 'Acumulacao remunerada de cargos civis.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O Estatuto assegura licenca especial (atualmente convertida em pecunia em certas situacoes) conforme normas distritais.',
+    },
+    {
+        id: 'estatuto-pmdf-4',
+        exams: ['pmdf'],
+        text: 'Qual dever deve ser observado mesmo fora do servico?',
+        options: buildOptions([
+            ['a', 'Recusar ordens legais.'],
+            ['b', 'Manter conduta moral e profissional compativel com o decoro da corporacao.'],
+            ['c', 'Divulgar dados sigilosos.'],
+            ['d', 'Realizar atividade comercial sem autorizacao.'],
+            ['e', 'Ausentar-se de solenidades oficiais por conveniencia.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O dever de manter conduta ilibada se estende a qualquer situacao, preservando a imagem institucional.',
+    },
+    {
+        id: 'estatuto-pmdf-5',
+        exams: ['pmdf'],
+        text: 'A promocao por bravura e concedida quando:',
+        options: buildOptions([
+            ['a', 'O militar conclui curso obrigatorio.'],
+            ['b', 'Ha ato heroico que supera o cumprimento regular do dever.'],
+            ['c', 'Completa tempo minimo na graduacao.'],
+            ['d', 'Existe vaga administrativa.'],
+            ['e', 'O militar solicita promocao por antiguidade.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Bravura reconhece ato excepcional que justifica elevacao imediata na carreira.',
+    },
+]);
+
+// =====================================================
+// REGULAMENTO DISCIPLINAR DA PMDF
+// =====================================================
+registerQuestions(['Regulamento Disciplinar da PMDF', 'RDP/PMDF'], [
+    {
+        id: 'rdpmdf-1',
+        exams: ['pmdf'],
+        text: 'As transgressoes disciplinares classificam-se em:',
+        options: buildOptions([
+            ['a', 'Leves, graves e intoleraveis.'],
+            ['b', 'Leves, medias e graves.'],
+            ['c', 'Comuns e especiais.'],
+            ['d', 'Simples e complexas.'],
+            ['e', 'Administrativas e penais.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O RDP/PMDF categoriza condutas em leves, medias e graves, com sancoes proporcionais.',
+    },
+    {
+        id: 'rdpmdf-2',
+        exams: ['pmdf'],
+        text: 'A autoridade que tomar conhecimento de transgressao deve:',
+        options: buildOptions([
+            ['a', 'Arquivar automaticamente.'],
+            ['b', 'Registrar e adotar providencias para apurar os fatos, podendo instaurar sindicancia ou IPM.'],
+            ['c', 'Punir sem ouvir o militar.'],
+            ['d', 'Remeter ao Poder Judiciario imediatamente.'],
+            ['e', 'Aguardar o interessado se apresentar.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O regulamento impõe dever de apurar e registrar, garantindo contraditorio e ampla defesa.',
+    },
+    {
+        id: 'rdpmdf-3',
+        exams: ['pmdf'],
+        text: 'Qual sancao corresponde a transgressoes medias segundo o regulamento?',
+        options: buildOptions([
+            ['a', 'Repreensao apenas.'],
+            ['b', 'Detencao ou prisao disciplinar ate 20 dias.'],
+            ['c', 'Licenciamento a bem da disciplina.'],
+            ['d', 'Expulsao sumaria.'],
+            ['e', 'Advertencia escrita apenas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Transgressoes medias admitem detencao/prisao disciplinar moderada, a depender do historico do militar.',
+    },
+    {
+        id: 'rdpmdf-4',
+        exams: ['pmdf'],
+        text: 'Abandonar o posto armado sem autorizacao configura:',
+        options: buildOptions([
+            ['a', 'Falta leve.'],
+            ['b', 'Transgressao grave.'],
+            ['c', 'Conduta licita se houver substituto.'],
+            ['d', 'Falta media.'],
+            ['e', 'Erro administrativo.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O abandono do posto compromete a seguranca do servico e e tipificado como grave.',
+    },
+    {
+        id: 'rdpmdf-5',
+        exams: ['pmdf'],
+        text: 'O prazo para pedido de reconsideracao da punicao disciplinar e de:',
+        options: buildOptions([
+            ['a', '24 horas.'],
+            ['b', '3 dias uteis.'],
+            ['c', '5 dias uteis.'],
+            ['d', '10 dias corridos.'],
+            ['e', '30 dias corridos.'],
+        ]),
+        correctId: 'c',
+        explanation: 'O militar pode solicitar reconsideracao em ate cinco dias uteis contados da ciencia da punicao.',
+    },
+]);
+
+// =====================================================
+// CONSTITUICAO DO ESTADO DE MINAS GERAIS
+// =====================================================
+registerQuestions(['Constituicao do Estado de MG', 'Constituicao Estadual MG'], [
+    {
+        id: 'const-mg-1',
+        exams: ['policia penal mg'],
+        text: 'A Constituicao mineira assegura que a seguranca publica e dever do Estado e responsabilidade de:',
+        options: buildOptions([
+            ['a', 'Apenas dos municipios.'],
+            ['b', 'Todos, assim como na Constituicao Federal.'],
+            ['c', 'Somente das forcas policiais.'],
+            ['d', 'Empresas privadas.'],
+            ['e', 'Apenas da Policia Militar.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O texto estadual replica o art. 144 da CF, destacando responsabilidade compartilhada.',
+    },
+    {
+        id: 'const-mg-2',
+        text: 'Integram o sistema de seguranca publica de Minas:',
+        options: buildOptions([
+            ['a', 'Somente a Policia Militar.'],
+            ['b', 'Policias Civil e Militar, Corpo de Bombeiros, Policia Penal e orgaos de defesa social.'],
+            ['c', 'Apenas guardas municipais.'],
+            ['d', 'Exclusivamente a Defesa Civil.'],
+            ['e', 'Somente a Policia Civil.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A CE/MG explicita orgaos integrados, incluindo a Policia Penal vinculada a SEJUSP.',
+    },
+    {
+        id: 'const-mg-3',
+        text: 'As polícias estaduais sao subordinadas ao:',
+        options: buildOptions([
+            ['a', 'Poder Judiciario.'],
+            ['b', 'Governador do Estado.'],
+            ['c', 'Ministerio Publico.'],
+            ['d', 'Prefeitos.'],
+            ['e', 'Assembleia Legislativa.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Assim como na CF, as policias estaduais subordinam-se ao Governador e integram o Executivo.',
+    },
+    {
+        id: 'const-mg-4',
+        text: 'A CE/MG garante aos servidores estaduais:',
+        options: buildOptions([
+            ['a', 'Apenas 20 dias de ferias.'],
+            ['b', 'Ferias de 30 dias anuais e licencas previstas em lei.'],
+            ['c', 'Acumulacao tripla de cargos.'],
+            ['d', 'Inexistencia de teto remuneratorio.'],
+            ['e', 'Estabilidade apos dois anos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O texto replica garantias gerais como ferias anuais remuneradas e licencas na forma da lei.',
+    },
+    {
+        id: 'const-mg-5',
+        text: 'O controle externo estadual e exercido pela:',
+        options: buildOptions([
+            ['a', 'Somente pelo Ministerio Publico.'],
+            ['b', 'Assembleia Legislativa com auxilio do Tribunal de Contas.'],
+            ['c', 'Prefeituras.'],
+            ['d', 'Poder Judiciario.'],
+            ['e', 'Defensoria Publica.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Assim como na CF, cabe ao Legislativo, com apoio do TCE/MG, fiscalizar contas e gestao.',
+    },
+]);
+
+// =====================================================
+// ESTATUTO DO SERVIDOR PUBLICO DE MG
+// =====================================================
+registerQuestions(['Estatuto do Servidor Publico de MG', 'Estatuto Servidor MG'], [
+    {
+        id: 'estatuto-mg-1',
+        exams: ['policia penal mg'],
+        text: 'O provimento derivado denominado reconducao ocorre quando:',
+        options: buildOptions([
+            ['a', 'Servidor retorna ao cargo de origem apos invalidacao de sua readaptacao ou reintegracao.'],
+            ['b', 'Servidor assume cargo em outro ente.'],
+            ['c', 'Servidor acumula dois cargos.'],
+            ['d', 'Servidor e promovido automaticamente.'],
+            ['e', 'Servidor assume cargo comissionado.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Reconducao devolve o servidor ao cargo anterior quando nao se consolida o novo provimento.',
+    },
+    {
+        id: 'estatuto-mg-2',
+        text: 'A posse deve ocorrer no prazo de:',
+        options: buildOptions([
+            ['a', '5 dias uteis contados da nomeacao.'],
+            ['b', '30 dias contados da publicacao do ato de provimento.'],
+            ['c', '60 dias contados da homologacao do concurso.'],
+            ['d', '90 dias contados do exame medico.'],
+            ['e', 'Nao ha prazo.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O estatuto mineiro segue regra geral de posse em ate 30 dias apos publicacao, salvo prorrogacao autorizada.',
+    },
+    {
+        id: 'estatuto-mg-3',
+        text: 'O estagio probatorio tem duracao de:',
+        options: buildOptions([
+            ['a', '12 meses.'],
+            ['b', '18 meses.'],
+            ['c', '24 meses.'],
+            ['d', '36 meses.'],
+            ['e', '48 meses.'],
+        ]),
+        correctId: 'd',
+        explanation: 'A avaliacao especial ocorre durante 3 anos, em consonancia com a CF apos EC 19/1998.',
+    },
+    {
+        id: 'estatuto-mg-4',
+        text: 'Segundo o estatuto, as ferias anuais correspondem a:',
+        options: buildOptions([
+            ['a', '20 dias sem fracionamento.'],
+            ['b', '30 dias, admitido fracionamento em ate dois periodos.'],
+            ['c', '45 dias continuos.'],
+            ['d', '15 dias sem adicional.'],
+            ['e', '60 dias bienais.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Sao 30 dias por ano, podendo dividir em dois periodos com adicional de 1/3.',
+    },
+    {
+        id: 'estatuto-mg-5',
+        text: 'A acumulacao remunerada so e permitida quando:',
+        options: buildOptions([
+            ['a', 'Houver tres cargos de qualquer natureza.'],
+            ['b', 'Forem dois cargos de professor; um de professor com outro tecnico/cientifico; ou dois cargos de profissionais de saude.'],
+            ['c', 'Tratar-se de cargo em comissao.'],
+            ['d', 'Servidor exercer cargo efetivo e emprego privado sem controle.'],
+            ['e', 'Houver contrato temporario.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A CE/MG replica a CF no art. 37 XVI, exigindo compatibilidade de horarios.',
+    },
+    {
+        id: 'estatuto-mg-6',
+        text: 'A remocao pode ocorrer:',
+        options: buildOptions([
+            ['a', 'Somente a pedido.'],
+            ['b', 'De oficio por necessidade do servico ou a pedido, se conveniente ao orgao.'],
+            ['c', 'Apenas com ordem judicial.'],
+            ['d', 'Como penalidade automatica.'],
+            ['e', 'Somente quando houver promocao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Remocao e ato administrativo que pode ser determinado ou deferido conforme interesse do servico.',
+    },
+]);
+
+// =====================================================
+// DIREITO PENAL - PARTE GERAL
+// =====================================================
+registerQuestions(['Direito Penal'], [
+    // APLICAÃÃO DA LEI PENAL
+    withFeedback(
+        {
+            id: 'direito-penal-1',
+            text: 'O principio da anterioridade penal impede a aplicacao de uma lei mais gravosa editada apos a pratica do fato. Em qual situacao a retroatividade sera admitida?',
+            options: buildOptions([
+                ['a', 'Nunca, pois a lei penal jamais retroage.'],
+                ['b', 'Quando se tratar de contravencao penal.'],
+                ['c', 'Quando a lei posterior for mais benigna ao reu.'],
+                ['d', 'Somente em crimes contra a administracao publica.'],
+                ['e', 'Apenas em crimes hediondos.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'A regra e a irretroatividade, mas o art. 5 XL da CF e o art. 2 do CP autorizam a retroatividade da lei penal mais favoravel (novatio legis in mellius).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: a lei penal retroage quando for mais benÃ©fica, logo nÃ£o Ã© correto falar em proibiÃ§Ã£o absoluta.',
+            b: 'Errado: contravenÃ§Ãµes penais seguem o mesmo princÃ­pio geral; nÃ£o hÃ¡ autorizaÃ§Ã£o automÃ¡tica para retroagir.',
+            c: 'Correta: leis penais mais benÃ©ficas retroagem em benefÃ­cio do rÃ©u (art. 5Âº, XL, e art. 2Âº do CP).',
+            d: 'Errado: o critÃ©rio nÃ£o depende do tipo de crime, mas sim de a lei ser mais benigna.',
+            e: 'Errado: mesmo crimes hediondos se submetem ao princÃ­pio da retroatividade benigna.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-2',
+            text: 'Ao analisar um fato, o delegado concluiu que houve conduta, resultado e nexo causal, mas identificou legitima defesa. Qual elemento do conceito analitico do crime foi afastado?',
+            options: buildOptions([
+                ['a', 'Fato tipico.'],
+                ['b', 'Ilicitude.'],
+                ['c', 'Culpabilidade.'],
+                ['d', 'Punibilidade.'],
+                ['e', 'Iter criminis.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A existencia de causa excludente (legitima defesa) afasta a ilicitude. O fato continua tipico, mas nao e ilicito.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: o fato continua tÃ­pico (conduta + resultado + nexo). A excludente atua em outra etapa.',
+            b: 'Correta: a legÃ­tima defesa exclui a ilicitude, mantendo o fato tÃ­pico mas lÃ­cito.',
+            c: 'Errado: somente apÃ³s a ilicitude analisamos a culpabilidade; a excludente nÃ£o a atinge diretamente.',
+            d: 'Errado: punibilidade Ã© consequÃªncia posterior e nÃ£o elemento do conceito analÃ­tico clÃ¡ssico.',
+            e: 'Errado: iter criminis descreve fases do crime e nÃ£o elemento do conceito analÃ­tico.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-3',
+            text: 'JoÃ£o estava embriagado quando cometeu furto. Quanto Ã  embriaguez, o CÃ³digo Penal estabelece que:',
+            options: buildOptions([
+                ['a', 'A embriaguez voluntÃ¡ria sempre afasta a imputabilidade.'],
+                ['b', 'A embriaguez preordenada nÃ£o agrava a pena.'],
+                ['c', 'A embriaguez voluntÃ¡ria ou culposa nÃ£o exclui a imputabilidade (teoria da actio libera in causa).'],
+                ['d', 'Somente a embriaguez completa, voluntÃ¡ria ou culposa, afasta o crime.'],
+                ['e', 'A embriaguez acidental nunca exclui a imputabilidade.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'Conforme art. 28, II, do CP, a embriaguez voluntÃ¡ria ou culposa nÃ£o exclui a imputabilidade criminal (actio libera in causa).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: a embriaguez voluntÃ¡ria nÃ£o afasta a imputabilidade.',
+            b: 'Errado: a embriaguez preordenada agrava a pena (art. 61, II, l).',
+            c: 'Correta: art. 28, II adota a teoria da actio libera in causa.',
+            d: 'Errado: mesmo completa, se voluntÃ¡ria ou culposa, nÃ£o afasta imputabilidade.',
+            e: 'Errado: a embriaguez acidental completa pode excluir a imputabilidade (art. 28, Â§1Âº).',
+        }
+    ),
+
+    // TEORIA DO CRIME
+    withFeedback(
+        {
+            id: 'direito-penal-4',
+            text: 'Sobre o dolo eventual, assinale a alternativa correta:',
+            options: buildOptions([
+                ['a', 'O agente prevÃª o resultado mas nÃ£o o aceita.'],
+                ['b', 'O agente assume o risco de produzir o resultado previsto.'],
+                ['c', 'Ã sinÃ´nimo de culpa consciente.'],
+                ['d', 'Ocorre quando o agente nÃ£o prevÃª resultado previsÃ­vel.'],
+                ['e', 'NÃ£o estÃ¡ previsto no CÃ³digo Penal.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'No dolo eventual (art. 18, I, 2Âª parte), o agente prevÃª o resultado e assume o risco de produzi-lo.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: se nÃ£o aceita, pode caracterizar culpa consciente.',
+            b: 'Correta: dolo eventual pressupÃµe assunÃ§Ã£o do risco (art. 18, I).',
+            c: 'Errado: na culpa consciente, o agente prevÃª mas acredita que o resultado nÃ£o ocorrerÃ¡.',
+            d: 'Errado: quando nÃ£o prevÃª resultado previsÃ­vel, hÃ¡ culpa inconsciente.',
+            e: 'Errado: o art. 18, I, parte final, prevÃª expressamente o dolo eventual.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-5',
+            text: 'O erro sobre elemento constitutivo do tipo penal (erro de tipo) tem como consequÃªncia:',
+            options: buildOptions([
+                ['a', 'A exclusÃ£o da ilicitude.'],
+                ['b', 'A exclusÃ£o do dolo e, se inevitÃ¡vel, tambÃ©m da culpa.'],
+                ['c', 'A manutenÃ§Ã£o do dolo, mas reduÃ§Ã£o da pena.'],
+                ['d', 'A configuraÃ§Ã£o de tentativa.'],
+                ['e', 'A aplicaÃ§Ã£o obrigatÃ³ria de medida de seguranÃ§a.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O erro de tipo (art. 20) exclui o dolo. Se escusÃ¡vel (inevitÃ¡vel), tambÃ©m exclui a culpa.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: o erro de tipo nÃ£o atua sobre a ilicitude, mas sobre o tipo penal.',
+            b: 'Correta: art. 20 estabelece exclusÃ£o do dolo e, se inevitÃ¡vel, tambÃ©m da culpa.',
+            c: 'Errado: o dolo Ã© excluÃ­do, nÃ£o apenas reduzido.',
+            d: 'Errado: erro de tipo nÃ£o se relaciona com tentativa.',
+            e: 'Errado: nÃ£o hÃ¡ previsÃ£o de medida de seguranÃ§a obrigatÃ³ria nesse caso.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-6',
+            text: 'Quanto Ã s excludentes de ilicitude, Ã© correto afirmar:',
+            options: buildOptions([
+                ['a', 'O estado de necessidade exige que o perigo seja provocado dolosamente pelo agente.'],
+                ['b', 'Na legÃ­tima defesa, a reaÃ§Ã£o deve ser proporcional Ã  agressÃ£o injusta atual ou iminente.'],
+                ['c', 'O estrito cumprimento de dever legal nÃ£o exclui a ilicitude.'],
+                ['d', 'O exercÃ­cio regular de direito sÃ³ se aplica a agentes pÃºblicos.'],
+                ['e', 'Todas as excludentes exigem animus especÃ­fico.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A legÃ­tima defesa (art. 25) exige moderaÃ§Ã£o: a reaÃ§Ã£o deve ser proporcional Ã  agressÃ£o injusta, atual ou iminente.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: no estado de necessidade o perigo nÃ£o pode ter sido voluntariamente causado (art. 24).',
+            b: 'Correta: a legÃ­tima defesa exige proporcionalidade entre agressÃ£o e defesa.',
+            c: 'Errado: o estrito cumprimento de dever legal Ã© excludente de ilicitude (art. 23).',
+            d: 'Errado: o exercÃ­cio regular de direito pode ser praticado por qualquer pessoa.',
+            e: 'Errado: nÃ£o hÃ¡ exigÃªncia de animus especÃ­fico para as excludentes.',
+        }
+    ),
+
+    // CONCURSO DE PESSOAS
+    withFeedback(
+        {
+            id: 'direito-penal-7',
+            text: 'No concurso de pessoas, considera-se coautor aquele que:',
+            options: buildOptions([
+                ['a', 'Apenas induz outro a cometer o crime.'],
+                ['b', 'Realiza atos executÃ³rios do nÃºcleo do tipo.'],
+                ['c', 'Presta auxÃ­lio material antes da execuÃ§Ã£o.'],
+                ['d', 'Auxilia apÃ³s o crime sem promessa anterior.'],
+                ['e', 'Conhece a intenÃ§Ã£o criminosa mas nÃ£o participa.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Coautor Ã© quem executa, junto com outros, o nÃºcleo do tipo (art. 29, caput).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: quem induz Ã© partÃ­cipe, nÃ£o coautor.',
+            b: 'Correta: coautor pratica atos executÃ³rios do tipo penal.',
+            c: 'Errado: auxÃ­lio material antes da execuÃ§Ã£o caracteriza participaÃ§Ã£o.',
+            d: 'Errado: auxÃ­lio posterior ao crime sem ajuste prÃ©vio pode caracterizar favorecimento.',
+            e: 'Errado: conhecer a intenÃ§Ã£o sem participar nÃ£o configura coautoria.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-8',
+            text: 'Sobre a participaÃ§Ã£o de menor importÃ¢ncia (art. 29, Â§1Âº):',
+            options: buildOptions([
+                ['a', 'A pena Ã© aumentada.'],
+                ['b', 'A pena pode ser diminuÃ­da de 1/6 a 1/3.'],
+                ['c', 'NÃ£o se aplica a crimes hediondos.'],
+                ['d', 'Exclui a punibilidade.'],
+                ['e', 'SÃ³ se aplica a coautores.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A participaÃ§Ã£o de menor importÃ¢ncia permite reduÃ§Ã£o da pena de 1/6 a 1/3 (art. 29, Â§1Âº).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: a pena Ã© reduzida, nÃ£o aumentada.',
+            b: 'Correta: art. 29, Â§1Âº prevÃª reduÃ§Ã£o de 1/6 a 1/3.',
+            c: 'Errado: aplica-se a todos os crimes, inclusive hediondos.',
+            d: 'Errado: reduz a pena, mas nÃ£o exclui a punibilidade.',
+            e: 'Errado: aplica-se a partÃ­cipes, nÃ£o a coautores.',
+        }
+    ),
+
+    // PENAS
+    withFeedback(
+        {
+            id: 'direito-penal-9',
+            text: 'Sobre a substituiÃ§Ã£o da pena privativa de liberdade por restritivas de direitos:',
+            options: buildOptions([
+                ['a', 'Ã possÃ­vel em qualquer crime.'],
+                ['b', 'Exige que a pena aplicada nÃ£o seja superior a 4 anos e o crime nÃ£o seja cometido com violÃªncia ou grave ameaÃ§a.'],
+                ['c', 'SÃ³ se aplica a crimes culposos.'],
+                ['d', 'Ã facultativa para o juiz, podendo substituir ou nÃ£o sem fundamentaÃ§Ã£o.'],
+                ['e', 'Crimes hediondos sempre admitem substituiÃ§Ã£o.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A substituiÃ§Ã£o (art. 44) exige: pena nÃ£o superior a 4 anos; crime sem violÃªncia/grave ameaÃ§a ou culposo; e requisitos subjetivos.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: hÃ¡ requisitos objetivos e subjetivos para substituiÃ§Ã£o.',
+            b: 'Correta: art. 44, I estabelece pena mÃ¡xima de 4 anos e ausÃªncia de violÃªncia/grave ameaÃ§a.',
+            c: 'Errado: aplica-se tambÃ©m a crimes dolosos sem violÃªncia ou grave ameaÃ§a.',
+            d: 'Errado: a decisÃ£o deve ser fundamentada.',
+            e: 'Errado: a Lei 8.072/90 proÃ­be substituiÃ§Ã£o em crimes hediondos.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-10',
+            text: 'A suspensÃ£o condicional da pena (sursis):',
+            options: buildOptions([
+                ['a', 'Pode ser concedida para penas superiores a 2 anos.'],
+                ['b', 'Ã aplicÃ¡vel quando a pena privativa nÃ£o for superior a 2 anos.'],
+                ['c', 'NÃ£o exige perÃ­odo de prova.'],
+                ['d', 'Ã direito subjetivo do rÃ©u.'],
+                ['e', 'NÃ£o pode ser revogada.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O sursis (art. 77) exige pena nÃ£o superior a 2 anos e outros requisitos legais.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: o limite Ã© 2 anos, nÃ£o superior.',
+            b: 'Correta: art. 77 estabelece limite de 2 anos para aplicaÃ§Ã£o do sursis.',
+            c: 'Errado: hÃ¡ perÃ­odo de prova de 2 a 4 anos (art. 77).',
+            d: 'Errado: atendidos os requisitos, Ã© um direito pÃºblico subjetivo, mas hÃ¡ discricionariedade fundamentada.',
+            e: 'Errado: pode ser revogado nas hipÃ³teses do art. 81.',
+        }
+    ),
+
+    // CRIMES CONTRA O PATRIMÃNIO
+    withFeedback(
+        {
+            id: 'direito-penal-11',
+            text: 'No crime de furto qualificado pelo rompimento de obstÃ¡culo (art. 155, Â§4Âº, I):',
+            options: buildOptions([
+                ['a', 'A pena Ã© a mesma do furto simples.'],
+                ['b', 'A pena Ã© de reclusÃ£o de 2 a 8 anos e multa.'],
+                ['c', 'Configura-se apenas com arrombamento de porta.'],
+                ['d', 'NÃ£o se aplica a furto de veÃ­culo.'],
+                ['e', 'Ã causa de aumento, nÃ£o qualificadora.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O furto qualificado por rompimento de obstÃ¡culo tem pena de reclusÃ£o de 2 a 8 anos e multa (art. 155, Â§4Âº, I).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: a pena Ã© maior no furto qualificado.',
+            b: 'Correta: art. 155, Â§4Âº prevÃª pena de 2 a 8 anos.',
+            c: 'Errado: qualquer rompimento de obstÃ¡culo qualifica.',
+            d: 'Errado: aplica-se a furto de qualquer bem.',
+            e: 'Errado: Ã© qualificadora, nÃ£o causa de aumento.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-12',
+            text: 'Diferencia o roubo (art. 157) do furto (art. 155):',
+            options: buildOptions([
+                ['a', 'A presenÃ§a ou nÃ£o de violÃªncia ou grave ameaÃ§a.'],
+                ['b', 'O valor da coisa subtraÃ­da.'],
+                ['c', 'O local do crime.'],
+                ['d', 'A hora em que foi cometido.'],
+                ['e', 'A reincidÃªncia do agente.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'O roubo distingue-se do furto pela presenÃ§a de violÃªncia ou grave ameaÃ§a Ã  pessoa.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Correta: o roubo exige violÃªncia ou grave ameaÃ§a (art. 157).',
+            b: 'Errado: o valor nÃ£o distingue roubo de furto.',
+            c: 'Errado: o local nÃ£o Ã© critÃ©rio distintivo.',
+            d: 'Errado: a hora do crime Ã© irrelevante para distinÃ§Ã£o.',
+            e: 'Errado: a reincidÃªncia nÃ£o diferencia os tipos penais.',
+        }
+    ),
+
+    // CRIMES CONTRA A PESSOA
+    withFeedback(
+        {
+            id: 'direito-penal-13',
+            text: 'No homicÃ­dio qualificado-privilegiado:',
+            options: buildOptions([
+                ['a', 'As circunstÃ¢ncias sÃ£o incompatÃ­veis.'],
+                ['b', 'Ã possÃ­vel a coexistÃªncia de privilÃ©gio e qualificadora de ordem subjetiva.'],
+                ['c', 'NÃ£o existe na legislaÃ§Ã£o brasileira.'],
+                ['d', 'A pena Ã© sempre de detenÃ§Ã£o.'],
+                ['e', 'SÃ³ se aplica a crimes culposos.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O STF e STJ admitem a figura do homicÃ­dio qualificado-privilegiado quando coexistem privilÃ©gio (art. 121, Â§1Âº) e qualificadora de ordem subjetiva.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: a jurisprudÃªncia admite a coexistÃªncia.',
+            b: 'Correta: Ã© possÃ­vel combinar privilÃ©gio com qualificadora subjetiva.',
+            c: 'Errado: a jurisprudÃªncia reconhece essa figura.',
+            d: 'Errado: a pena continua sendo de reclusÃ£o.',
+            e: 'Errado: aplica-se a homicÃ­dio doloso.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-14',
+            text: 'A lesÃ£o corporal de natureza grave ocorre quando resulta em:',
+            options: buildOptions([
+                ['a', 'Incapacidade para ocupaÃ§Ãµes habituais por menos de 30 dias.'],
+                ['b', 'Debilidade permanente de membro, sentido ou funÃ§Ã£o.'],
+                ['c', 'Perigo de vida em qualquer circunstÃ¢ncia.'],
+                ['d', 'Dor intensa momentÃ¢nea.'],
+                ['e', 'ArranhÃ£o superficial.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A lesÃ£o grave prevÃª debilidade permanente de membro, sentido ou funÃ§Ã£o (art. 129, Â§1Âº, II).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: incapacidade por mais de 30 dias caracteriza lesÃ£o grave.',
+            b: 'Correta: art. 129, Â§1Âº, II prevÃª debilidade permanente.',
+            c: 'Errado: perigo de vida Ã© resultado da lesÃ£o grave, nÃ£o qualquer circunstÃ¢ncia.',
+            d: 'Errado: dor momentÃ¢nea pode ser lesÃ£o leve.',
+            e: 'Errado: arranhÃ£o superficial pode ser lesÃ£o levÃ­ssima.',
+        }
+    ),
+
+    // CRIMES CONTRA A ADMINISTRAÃÃO PÃBLICA
+    withFeedback(
+        {
+            id: 'direito-penal-15',
+            text: 'O crime de peculato-furto (art. 312, Â§1Âº) ocorre quando o funcionÃ¡rio pÃºblico:',
+            options: buildOptions([
+                ['a', 'Apropria-se de bem que possui a posse em razÃ£o do cargo.'],
+                ['b', 'Furta bem pÃºblico que nÃ£o estÃ¡ sob sua guarda.'],
+                ['c', 'Subtrai ou concorre para que seja subtraÃ­do bem que tem posse por facilidade do cargo.'],
+                ['d', 'Recebe vantagem indevida.'],
+                ['e', 'Retarda ato de ofÃ­cio.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'No peculato-furto (art. 312, Â§1Âº), o funcionÃ¡rio nÃ£o tem a posse, mas a facilita-Ã§Ã£o pelo cargo permite a subtraÃ§Ã£o.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: quando tem posse, Ã© peculato-apropriaÃ§Ã£o.',
+            b: 'Errado: precisa haver facilitaÃ§Ã£o pelo cargo.',
+            c: 'Correta: peculato-furto exige facilitaÃ§Ã£o do cargo sem posse direta.',
+            d: 'Errado: receber vantagem caracteriza corrupÃ§Ã£o passiva.',
+            e: 'Errado: retardar ato configura prevaricaÃ§Ã£o.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'direito-penal-16',
+            text: 'A corrupÃ§Ã£o passiva privilegiada (art. 317, Â§2Âº) prevÃª:',
+            options: buildOptions([
+                ['a', 'Aumento de pena.'],
+                ['b', 'ReduÃ§Ã£o da pena de 1/3 atÃ© a metade quando o funcionÃ¡rio cede a pedido ou influÃªncia.'],
+                ['c', 'IsenÃ§Ã£o de pena.'],
+                ['d', 'ConversÃ£o em crime de menor potencial ofensivo.'],
+                ['e', 'AplicaÃ§Ã£o de pena de multa isolada.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A corrupÃ§Ã£o passiva privilegiada (art. 317, Â§2Âº) permite reduÃ§Ã£o de 1/3 atÃ© metade quando o funcionÃ¡rio cede a pedido ou influÃªncia.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: hÃ¡ reduÃ§Ã£o, nÃ£o aumento.',
+            b: 'Correta: art. 317, Â§2Âº prevÃª reduÃ§Ã£o de 1/3 a 1/2.',
+            c: 'Errado: nÃ£o hÃ¡ isenÃ§Ã£o, apenas reduÃ§Ã£o.',
+            d: 'Errado: nÃ£o hÃ¡ conversÃ£o em crime de menor potencial.',
+            e: 'Errado: mantÃ©m-se a pena privativa.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'etica-4',
+            exams: ['camara dos deputados'],
+            text: 'Segundo a Sumula Vinculante 13 e o codigo de etica da Camara, qual situacao caracteriza nepotismo e deve ser vedada?',
+            options: buildOptions([
+                ['a', 'Nomear parente ate o terceiro grau para cargo comissionado sob subordinacao direta.'],
+                ['b', 'Designar servidor efetivo por criterio de antiguidade.'],
+                ['c', 'Convocar servidor estavel para curso anual obrigatorio.'],
+                ['d', 'Selecionar equipe tecnica por meio de processo interno com edital.'],
+                ['e', 'Formar grupo de trabalho com servidores de diferentes areas.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'Nepotismo ocorre quando ha favorecimento de parente em cargo comissionado ou funcao gratificada, especialmente com relacao hierarquica direta.',
+        },
+        {
+            a: 'Correta: a Sumula Vinculante 13 veda parentesco ate 3Âº grau em cargos com relacao de subordinacao.',
+            b: 'Errado: a antiguidade e criterio impessoal.',
+            c: 'Errado: capacitacoes obrigatorias nao envolvem favoritismo.',
+            d: 'Errado: selecoes com edital preservam impessoalidade.',
+            e: 'Errado: grupos tecnicos com distintos servidores nao configuram nepotismo.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'etica-5',
+            exams: ['camara dos deputados'],
+            text: 'Em perfis institucionais de redes sociais, qual postura alinha-se ao codigo de etica do servidor?',
+            options: buildOptions([
+                ['a', 'Usar o perfil para autopromocao e pedidos de voto.'],
+                ['b', 'Divulgar informacoes sigilosas quando houver interesse jornalistico.'],
+                ['c', 'Publicar comunicados oficiais com linguagem impessoal e foco no interesse publico.'],
+                ['d', 'Responder criticas com ironia para defender a imagem do orgao.'],
+                ['e', 'Opinar sobre processos sigilosos para satisfazer seguidores.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'A comunicacao institucional deve ser impessoal, transparente e voltada ao interesse publico, preservando sigilos e evitando autopromocao.',
+        },
+        {
+            a: 'Errado: autopromocao viola impessoalidade.',
+            b: 'Errado: sigilos legais nao podem ser quebrados.',
+            c: 'Correta: linguagem impessoal e informativa cumpre o codigo.',
+            d: 'Errado: ironia compromete urbanidade e respeito.',
+            e: 'Errado: processos sigilosos nao podem ser discutidos publicamente.',
+        }
+    ),
+]);
+
+// =====================================================
+// DIREITO PROCESSUAL PENAL
+// =====================================================
+registerQuestions(['Direito Processual Penal'], [
+    // INQUÃRITO POLICIAL
+    withFeedback(
+        {
+            id: 'processo-penal-1',
+            text: 'A prisao preventiva somente pode ser decretada quando presentes prova da existencia do crime, indicios suficientes de autoria e um dos fundamentos do art. 312 do CPP. Qual alternativa exemplifica fundamento valido?',
+            options: buildOptions([
+                ['a', 'Antecedentes criminais negativos por si sÃ³s.'],
+                ['b', 'Descumprimento de medida protetiva de urgencia.'],
+                ['c', 'Vontade do delegado.'],
+                ['d', 'Simples clamor publico sem base fÃ¡tica.'],
+                ['e', 'Ser o investigado reincidente especifico.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O descumprimento de medida protetiva pode evidenciar risco a ordem publica e autoriza a preventiva (art. 313, III).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: antecedentes ruins isoladamente nÃ£o justificam a preventiva sem fundamento do art. 312.',
+            b: 'Correta: o descumprimento de medida protetiva indica risco concreto e autoriza a prisÃ£o (art. 313, III).',
+            c: 'Errado: a vontade da autoridade nÃ£o supre os requisitos legais.',
+            d: 'Errado: clamor popular desacompanhado de elementos concretos nÃ£o legitima a medida.',
+            e: 'Errado: reincidÃªncia especÃ­fica nÃ£o Ã© fundamento autÃ´nomo; Ã© apenas circunstÃ¢ncia a ser ponderada.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-2',
+            text: 'Sobre nulidades processuais, assinale a afirmativa correta.',
+            options: buildOptions([
+                ['a', 'Toda nulidade absoluta precisa demonstrar prejuizo.'],
+                ['b', 'Nulidades relativas podem ser alegadas a qualquer tempo.'],
+                ['c', 'Aplica-se o principio pas de nullitÃ© sans grief (art. 563 CPP).'],
+                ['d', 'A ausencia de defensor em interrogatorio nunca gera nulidade.'],
+                ['e', 'A nulidade relativa nao depende de arguicao da parte.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O CPP consagra que nao ha nulidade sem prejuizo. As relativas devem ser arguidas na primeira oportunidade.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: nulidades absolutas prescindem de demonstraÃ§Ã£o de prejuÃ­zo, ao contrÃ¡rio das relativas.',
+            b: 'Errado: nulidades relativas devem ser alegadas na primeira oportunidade, sob pena de preclusÃ£o.',
+            c: 'Correta: o art. 563 determina que nÃ£o hÃ¡ nulidade sem prejuÃ­zo (pas de nullitÃ© sans grief).',
+            d: 'Errado: a ausÃªncia de defensor gera nulidade absoluta, pois compromete a ampla defesa.',
+            e: 'Errado: nulidades relativas precisam ser arguidas pela parte interessada.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-3',
+            text: 'Sobre o inquÃ©rito policial, Ã© correto afirmar:',
+            options: buildOptions([
+                ['a', 'Ã procedimento judicial.'],
+                ['b', 'Ã obrigatÃ³rio para propositura de aÃ§Ã£o penal.'],
+                ['c', 'Ã procedimento administrativo, inquisitivo e sigiloso.'],
+                ['d', 'Admite contraditÃ³rio pleno.'],
+                ['e', 'SÃ³ Ã© presidido por delegado federal.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O inquÃ©rito Ã© procedimento administrativo (nÃ£o jurisdicional), inquisitivo (sem contraditÃ³rio) e sigiloso (arts. 4Âº e 20 CPP).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: Ã© procedimento administrativo, nÃ£o judicial.',
+            b: 'Errado: o inquÃ©rito Ã© dispensÃ¡vel se houver outros elementos.',
+            c: 'Correta: caracterÃ­sticas do inquÃ©rito segundo arts. 4Âº e 20 do CPP.',
+            d: 'Errado: nÃ£o hÃ¡ contraditÃ³rio no inquÃ©rito, que Ã© inquisitivo.',
+            e: 'Errado: pode ser presidido por delegado estadual, civil ou federal.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-4',
+            text: 'O prazo para conclusÃ£o do inquÃ©rito policial quando o indiciado estiver preso Ã© de:',
+            options: buildOptions([
+                ['a', '5 dias.'],
+                ['b', '10 dias.'],
+                ['c', '15 dias.'],
+                ['d', '30 dias.'],
+                ['e', '60 dias.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O art. 10 do CPP prevÃª prazo de 10 dias quando o indiciado estiver preso (JustiÃ§a Estadual).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: o prazo nÃ£o Ã© de 5 dias.',
+            b: 'Correta: art. 10 estabelece 10 dias para indiciado preso.',
+            c: 'Errado: 15 dias Ã© prazo da PolÃ­cia Federal para preso.',
+            d: 'Errado: 30 dias Ã© o prazo quando o indiciado estÃ¡ solto.',
+            e: 'Errado: nÃ£o hÃ¡ prazo de 60 dias no CPP para inquÃ©rito comum.',
+        }
+    ),
+
+    // AÃÃO PENAL
+    withFeedback(
+        {
+            id: 'processo-penal-5',
+            text: 'A aÃ§Ã£o penal privada caracteriza-se por:',
+            options: buildOptions([
+                ['a', 'Ser promovida pelo MinistÃ©rio PÃºblico.'],
+                ['b', 'Admitir perdÃ£o do ofendido atÃ© o trÃ¢nsito em julgado.'],
+                ['c', 'NÃ£o admitir renÃºncia.'],
+                ['d', 'Ser indisponÃ­vel.'],
+                ['e', 'NÃ£o ter prazo decadencial.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Na aÃ§Ã£o penal privada, o perdÃ£o do ofendido Ã© admitido atÃ© o trÃ¢nsito em julgado (art. 106, Â§2Âº CP).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: a aÃ§Ã£o privada Ã© promovida pelo ofendido ou representante legal.',
+            b: 'Correta: o perdÃ£o Ã© instituto da aÃ§Ã£o privada, admitido atÃ© o trÃ¢nsito.',
+            c: 'Errado: na aÃ§Ã£o privada hÃ¡ renÃºncia (art. 104 CP).',
+            d: 'Errado: a aÃ§Ã£o privada Ã© disponÃ­vel.',
+            e: 'Errado: hÃ¡ prazo decadencial de 6 meses (art. 103 CP).',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-6',
+            text: 'Sobre a aÃ§Ã£o penal pÃºblica condicionada Ã  representaÃ§Ã£o:',
+            options: buildOptions([
+                ['a', 'NÃ£o hÃ¡ prazo para oferecimento da representaÃ§Ã£o.'],
+                ['b', 'A representaÃ§Ã£o Ã© irretratÃ¡vel.'],
+                ['c', 'O prazo para representar Ã© de 6 meses a contar do conhecimento da autoria.'],
+                ['d', 'A representaÃ§Ã£o sÃ³ pode ser oferecida pessoalmente.'],
+                ['e', 'O MinistÃ©rio PÃºblico pode agir sem representaÃ§Ã£o.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O art. 38 do CPP estabelece prazo decadencial de 6 meses para oferecimento da representaÃ§Ã£o.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: hÃ¡ prazo decadencial de 6 meses.',
+            b: 'Errado: atÃ© oferecimento da denÃºncia, a representaÃ§Ã£o Ã© retratÃ¡vel (art. 25 CPP).',
+            c: 'Correta: art. 38 do CPP prevÃª prazo de 6 meses.',
+            d: 'Errado: pode ser feita por procurador com poderes especiais.',
+            e: 'Errado: sem representaÃ§Ã£o nÃ£o hÃ¡ justa causa para aÃ§Ã£o condicionada.',
+        }
+    ),
+
+    // PRISÃES E MEDIDAS CAUTELARES
+    withFeedback(
+        {
+            id: 'processo-penal-7',
+            text: 'A prisÃ£o em flagrante pode ser efetuada:',
+            options: buildOptions([
+                ['a', 'Apenas por agentes policiais.'],
+                ['b', 'Por qualquer pessoa do povo.'],
+                ['c', 'Somente com mandado judicial.'],
+                ['d', 'Apenas em crimes hediondos.'],
+                ['e', 'Somente durante o dia.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O art. 301 do CPP prevÃª que qualquer pessoa pode efetuar prisÃ£o em flagrante.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: qualquer pessoa pode prender em flagrante.',
+            b: 'Correta: art. 301 autoriza prisÃ£o por qualquer do povo.',
+            c: 'Errado: flagrante nÃ£o exige mandado.',
+            d: 'Errado: aplica-se a qualquer crime.',
+            e: 'Errado: pode ocorrer a qualquer hora.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-8',
+            text: 'SÃ£o hipÃ³teses de flagrante prÃ³prio:',
+            options: buildOptions([
+                ['a', 'Estar sendo perseguido pela polÃ­cia, logo apÃ³s a prÃ¡tica do crime.'],
+                ['b', 'Ser encontrado com instrumentos horas depois do crime.'],
+                ['c', 'Estar cometendo a infraÃ§Ã£o penal ou acabar de cometÃª-la.'],
+                ['d', 'Confessar espontaneamente o crime dias depois.'],
+                ['e', 'Ser encontrado com objetos produto do crime apÃ³s a prescriÃ§Ã£o.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'Flagrante prÃ³prio ocorre quando a pessoa estÃ¡ cometendo ou acabou de cometer o crime (art. 302, I e II).',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: perseguiÃ§Ã£o caracteriza flagrante imprÃ³prio.',
+            b: 'Errado: horas depois com instrumentos pode ser flagrante presumido.',
+            c: 'Correta: art. 302, I e II descrevem flagrante prÃ³prio.',
+            d: 'Errado: confissÃ£o posterior nÃ£o caracteriza flagrante.',
+            e: 'Errado: apÃ³s prescriÃ§Ã£o nÃ£o hÃ¡ flagrante.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-9',
+            text: 'A prisÃ£o temporÃ¡ria estÃ¡ prevista na Lei 7.960/89 e pode ser decretada:',
+            options: buildOptions([
+                ['a', 'Em qualquer crime doloso.'],
+                ['b', 'Durante investigaÃ§Ã£o de crimes hediondos ou rol taxativo da lei.'],
+                ['c', 'Por prazo indeterminado.'],
+                ['d', 'Pela autoridade policial.'],
+                ['e', 'Apenas em crimes contra o patrimÃ´nio.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A prisÃ£o temporÃ¡ria aplica-se a crimes hediondos e rol taxativo do art. 1Âº, III da Lei 7.960/89.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: sÃ³ se aplica a crimes do rol taxativo ou hediondos.',
+            b: 'Correta: Lei 7.960/89 prevÃª rol taxativo e crimes hediondos.',
+            c: 'Errado: hÃ¡ prazo de 5 dias (prorrogÃ¡vel por mais 5).',
+            d: 'Errado: sÃ³ pode ser decretada por juiz.',
+            e: 'Errado: aplica-se a diversos crimes, nÃ£o apenas patrimoniais.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-10',
+            text: 'As medidas cautelares diversas da prisÃ£o (art. 319, CPP) incluem:',
+            options: buildOptions([
+                ['a', 'SuspensÃ£o condicional da pena.'],
+                ['b', 'Comparecimento periÃ³dico em juÃ­zo e monitoramento eletrÃ´nico.'],
+                ['c', 'RemiÃ§Ã£o de pena.'],
+                ['d', 'ProgressÃ£o de regime.'],
+                ['e', 'Livramento condicional.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O art. 319 prevÃª medidas como comparecimento periÃ³dico e monitoramento eletrÃ´nico.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: sursis Ã© instituto da execuÃ§Ã£o penal, nÃ£o medida cautelar.',
+            b: 'Correta: art. 319 prevÃª essas medidas alternativas Ã  prisÃ£o.',
+            c: 'Errado: remiÃ§Ã£o Ã© instituto da execuÃ§Ã£o penal.',
+            d: 'Errado: progressÃ£o Ã© da execuÃ§Ã£o penal.',
+            e: 'Errado: livramento Ã© instituto da execuÃ§Ã£o penal.',
+        }
+    ),
+
+    // PROVAS
+    withFeedback(
+        {
+            id: 'processo-penal-11',
+            text: 'Sobre a prova ilÃ­cita no processo penal:',
+            options: buildOptions([
+                ['a', 'Ã admitida se for favorÃ¡vel ao rÃ©u.'],
+                ['b', 'Ã inadmissÃ­vel e contamina provas dela derivadas (teoria dos frutos da Ã¡rvore envenenada).'],
+                ['c', 'Pode ser usada contra o rÃ©u.'],
+                ['d', 'SÃ³ Ã© ilÃ­cita se obtida pela polÃ­cia.'],
+                ['e', 'NÃ£o hÃ¡ vedaÃ§Ã£o no CPP.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'CF art. 5Âº, LVI veda provas ilÃ­citas, e a teoria dos frutos da Ã¡rvore envenenada contamina derivadas.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: prova ilÃ­cita Ã© inadmissÃ­vel mesmo sendo favorÃ¡vel ao rÃ©u.',
+            b: 'Correta: CF art. 5Âº, LVI e jurisprudÃªncia consolidada.',
+            c: 'Errado: nÃ£o pode ser usada contra ninguÃ©m.',
+            d: 'Errado: qualquer prova ilÃ­cita Ã© vedada, independente de quem a obtÃ©m.',
+            e: 'Errado: hÃ¡ vedaÃ§Ã£o expressa na CF.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'processo-penal-12',
+            text: 'A confissÃ£o no processo penal:',
+            options: buildOptions([
+                ['a', 'Ã prova absoluta e suficiente para condenaÃ§Ã£o.'],
+                ['b', 'Deve ser analisada em conjunto com outras provas (art. 197 CPP).'],
+                ['c', 'NÃ£o pode ser retratada.'],
+                ['d', 'Gera reduÃ§Ã£o obrigatÃ³ria de 1/3 da pena.'],
+                ['e', 'SÃ³ tem valor se feita perante o juiz.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Art. 197 CPP: a confissÃ£o deve ser cotejada com outras provas; nÃ£o tem valor absoluto.',
+            exams: ['pmdf', 'policia penal mg'],
+        },
+        {
+            a: 'Errado: confissÃ£o nÃ£o Ã© prova absoluta.',
+            b: 'Correta: art. 197 estabelece anÃ¡lise contextual.',
+            c: 'Errado: a confissÃ£o Ã© retratÃ¡vel.',
+            d: 'Errado: reduÃ§Ã£o de 1/3 Ã© da delaÃ§Ã£o premiada, nÃ£o da confissÃ£o simples.',
+            e: 'Errado: confissÃ£o em qualquer fase tem valor probatÃ³rio.',
+        }
+    ),
+]);
+
+// =====================================================
+// LEI DE EXECUÃÃO PENAL (LEP)
+// =====================================================
+registerQuestions(['Lei de Execucao Penal', 'LEP', 'Lei de ExecuÃ§Ã£o Penal'], [
+    // REMIÃÃO
+    withFeedback(
+        {
+            id: 'lep-1',
+            text: 'No regime fechado, Joao trabalha em oficina. Quantos dias de pena ele remira, conforme a LEP, a cada 3 dias de trabalho?',
+            options: buildOptions([
+                ['a', 'Meio dia.'],
+                ['b', 'Um dia.'],
+                ['c', 'Dois dias.'],
+                ['d', 'Tres dias.'],
+                ['e', 'Somente apos 12 dias.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O art. 126 da LEP estabelece remicao de 1 dia a cada 3 dias de trabalho (ou 12h de estudo).',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: a fraÃ§Ã£o Ã© de 1 dia a cada 3 trabalhados, nÃ£o meio dia.',
+            b: 'Correta: art. 126 da LEP garante 1 dia de remiÃ§Ã£o a cada 3 de trabalho.',
+            c: 'Errado: nÃ£o hÃ¡ previsÃ£o de 2 dias de remiÃ§Ã£o para 3 trabalhados.',
+            d: 'Errado: remir trÃªs dias exigiria 9 dias de trabalho, nÃ£o 3.',
+            e: 'Errado: 12 horas Ã© a quantidade de estudo para remir 1 dia, nÃ£o requisito para o trabalho.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-2',
+            text: 'Sobre a remiÃ§Ã£o pelo estudo, a LEP estabelece que:',
+            options: buildOptions([
+                ['a', 'O preso remirÃ¡ 1 dia a cada 12 horas de estudo.'],
+                ['b', 'Apenas o trabalho gera remiÃ§Ã£o.'],
+                ['c', 'Estudo e trabalho nÃ£o podem ser cumulados.'],
+                ['d', 'SÃ³ hÃ¡ remiÃ§Ã£o em regime fechado.'],
+                ['e', 'A remiÃ§Ã£o nÃ£o se aplica a presos provisÃ³rios.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'Art. 126, Â§1Âº da LEP: a cada 12 horas de estudo presencial ou a distÃ¢ncia, remirÃ¡-se 1 dia de pena.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Correta: art. 126, Â§1Âº prevÃª remiÃ§Ã£o de 1 dia a cada 12 horas de estudo.',
+            b: 'Errado: o estudo tambÃ©m gera remiÃ§Ã£o desde 2011.',
+            c: 'Errado: Ã© possÃ­vel cumular estudo e trabalho (respeitados limites).',
+            d: 'Errado: aplica-se a todos os regimes.',
+            e: 'Errado: STJ admite remiÃ§Ã£o de presos provisÃ³rios.',
+        }
+    ),
+
+    // REGIMES PENITENCIÃRIOS
+    withFeedback(
+        {
+            id: 'lep-3',
+            text: 'No regime fechado, a execuÃ§Ã£o da pena se dÃ¡ em:',
+            options: buildOptions([
+                ['a', 'ColÃ´nia agrÃ­cola ou industrial.'],
+                ['b', 'Casa do albergado.'],
+                ['c', 'Estabelecimento de seguranÃ§a mÃ¡xima ou mÃ©dia.'],
+                ['d', 'PrisÃ£o domiciliar.'],
+                ['e', 'Centro de detenÃ§Ã£o provisÃ³ria.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'Art. 87 da LEP: o regime fechado Ã© cumprido em estabelecimento de seguranÃ§a mÃ¡xima ou mÃ©dia.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: colÃ´nia agrÃ­cola/industrial Ã© para regime semiaberto.',
+            b: 'Errado: casa do albergado Ã© para regime aberto.',
+            c: 'Correta: art. 87 determina penitenciÃ¡ria de seguranÃ§a mÃ¡xima ou mÃ©dia.',
+            d: 'Errado: prisÃ£o domiciliar Ã© medida excepcional.',
+            e: 'Errado: CDP Ã© para presos provisÃ³rios.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-4',
+            text: 'Para progressÃ£o do regime fechado para o semiaberto, o condenado precisa cumprir, em regra:',
+            options: buildOptions([
+                ['a', '1/6 da pena se primÃ¡rio.'],
+                ['b', '1/5 da pena se primÃ¡rio.'],
+                ['c', '1/4 da pena se primÃ¡rio.'],
+                ['d', '1/3 da pena se reincidente.'],
+                ['e', '2/3 da pena se primÃ¡rio.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'Art. 112 da LEP: o condenado nÃ£o reincidente precisa cumprir 1/6 da pena para progressÃ£o, alÃ©m de bom comportamento.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Correta: art. 112 prevÃª 1/6 para primÃ¡rio.',
+            b: 'Errado: 1/5 Ã© para reincidente em crime comum.',
+            c: 'Errado: 1/4 Ã© para reincidente em crime hediondo.',
+            d: 'Errado: 1/3 Ã© para reincidente especÃ­fico em hediondo.',
+            e: 'Errado: 2/3 Ã© requisito para livramento condicional em hediondos.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-5',
+            text: 'O regime aberto caracteriza-se por:',
+            options: buildOptions([
+                ['a', 'Cumprimento em penitenciÃ¡ria de seguranÃ§a mÃ¡xima.'],
+                ['b', 'Trabalho externo durante o dia e recolhimento noturno em casa do albergado.'],
+                ['c', 'Impossibilidade de trabalho externo.'],
+                ['d', 'Cumprimento integral em colÃ´nia agrÃ­cola.'],
+                ['e', 'Uso obrigatÃ³rio de tornozeleira eletrÃ´nica.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Art. 36: regime aberto baseia-se em autodisciplina, trabalho externo e recolhimento noturno em casa do albergado.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: seguranÃ§a mÃ¡xima Ã© para regime fechado.',
+            b: 'Correta: art. 36 define essas caracterÃ­sticas.',
+            c: 'Errado: o trabalho externo Ã© caracterÃ­stico do regime aberto.',
+            d: 'Errado: colÃ´nia agrÃ­cola Ã© para semiaberto.',
+            e: 'Errado: tornozeleira nÃ£o Ã© obrigatÃ³ria no regime aberto.',
+        }
+    ),
+
+    // DIREITOS E DEVERES DO PRESO
+    withFeedback(
+        {
+            id: 'lep-6',
+            text: 'SÃ£o direitos do preso, conforme LEP:',
+            options: buildOptions([
+                ['a', 'Vestimentas fornecidas pelo Estado e alimentaÃ§Ã£o suficiente.'],
+                ['b', 'Uso livre de celular.'],
+                ['c', 'Receber visitas conjugais a qualquer momento.'],
+                ['d', 'Sair do estabelecimento sem autorizaÃ§Ã£o.'],
+                ['e', 'Votar em eleiÃ§Ãµes municipais.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'Art. 41, inciso VII: o preso tem direito a vestuÃ¡rio e alimentaÃ§Ã£o suficiente.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Correta: art. 41, VII garante vestuÃ¡rio e alimentaÃ§Ã£o.',
+            b: 'Errado: uso de celular Ã© proibido em estabelecimentos penais.',
+            c: 'Errado: visitas Ã­ntimas sÃ£o regulamentadas, nÃ£o a qualquer momento.',
+            d: 'Errado: saÃ­da sem autorizaÃ§Ã£o Ã© falta grave.',
+            e: 'Errado: presos condenados perdem direitos polÃ­ticos (CF art. 15).',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-7',
+            text: 'Quanto Ã s assistÃªncias previstas na LEP:',
+            options: buildOptions([
+                ['a', 'NÃ£o hÃ¡ previsÃ£o de assistÃªncia jurÃ­dica.'],
+                ['b', 'A assistÃªncia material, Ã  saÃºde, jurÃ­dica, educacional, social e religiosa sÃ£o deveres do Estado.'],
+                ['c', 'AssistÃªncia Ã© faculdade do Estado, nÃ£o dever.'],
+                ['d', 'Apenas assistÃªncia Ã  saÃºde Ã© obrigatÃ³ria.'],
+                ['e', 'AssistÃªncia religiosa Ã© proibida.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Art. 10 e 11 da LEP: o Estado deve prestar assistÃªncia material, Ã  saÃºde, jurÃ­dica, educacional, social e religiosa.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: a assistÃªncia jurÃ­dica Ã© prevista no art. 15 da LEP.',
+            b: 'Correta: arts. 10 a 27 da LEP preveem todas essas assistÃªncias.',
+            c: 'Errado: sÃ£o deveres do Estado, nÃ£o faculdades.',
+            d: 'Errado: todas as assistÃªncias sÃ£o obrigatÃ³rias.',
+            e: 'Errado: assistÃªncia religiosa Ã© assegurada (art. 24 LEP).',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-8',
+            text: 'O trabalho do preso Ã©:',
+            options: buildOptions([
+                ['a', 'Facultativo, sem qualquer obrigatoriedade.'],
+                ['b', 'ObrigatÃ³rio como dever social e condiÃ§Ã£o de dignidade humana (art. 28 e 39).'],
+                ['c', 'Proibido pela LEP.'],
+                ['d', 'Apenas permitido em regime aberto.'],
+                ['e', 'NÃ£o gera qualquer benefÃ­cio ao preso.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Arts. 28 e 39 da LEP: o trabalho Ã© dever social e condiÃ§Ã£o de dignidade, com finalidade educativa e produtiva.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: o trabalho Ã© dever do preso.',
+            b: 'Correta: arts. 28 e 39 estabelecem o trabalho como dever e direito.',
+            c: 'Errado: o trabalho Ã© incentivado e regulamentado.',
+            d: 'Errado: aplica-se a todos os regimes.',
+            e: 'Errado: gera remiÃ§Ã£o e remuneraÃ§Ã£o (3/4 do salÃ¡rio mÃ­nimo).',
+        }
+    ),
+
+    // FALTAS DISCIPLINARES
+    withFeedback(
+        {
+            id: 'lep-9',
+            text: 'SÃ£o exemplos de faltas graves (art. 50):',
+            options: buildOptions([
+                ['a', 'Incitar movimento de subversÃ£o Ã  ordem e fugir.'],
+                ['b', 'Apenas descumprir horÃ¡rios.'],
+                ['c', 'Reclamar da alimentaÃ§Ã£o.'],
+                ['d', 'Pedir progressÃ£o de regime.'],
+                ['e', 'Estudar durante o repouso noturno.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'Art. 50 da LEP: falta grave inclui subversÃ£o Ã  ordem, fuga, posse de celular, ameaÃ§a, lesÃ£o corporal, entre outras.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Correta: art. 50, II e VII preveem subversÃ£o e fuga como faltas graves.',
+            b: 'Errado: descumprir horÃ¡rios pode ser falta mÃ©dia/leve.',
+            c: 'Errado: reclamar da alimentaÃ§Ã£o nÃ£o Ã© falta grave.',
+            d: 'Errado: pedir progressÃ£o Ã© direito.',
+            e: 'Errado: estudar nÃ£o Ã© falta.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-10',
+            text: 'A prÃ¡tica de falta grave acarreta:',
+            options: buildOptions([
+                ['a', 'RegressÃ£o de regime e perda de dias remidos.'],
+                ['b', 'ExtinÃ§Ã£o automÃ¡tica da pena.'],
+                ['c', 'ProgressÃ£o imediata.'],
+                ['d', 'Nenhuma consequÃªncia.'],
+                ['e', 'Apenas advertÃªncia verbal.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'Art. 118 e 127: falta grave pode causar regressÃ£o de regime e perda de atÃ© 1/3 dos dias remidos.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Correta: arts. 118 e 127 preveem regressÃ£o e perda de dias remidos.',
+            b: 'Errado: nÃ£o extingue a pena.',
+            c: 'Errado: impede a progressÃ£o, nÃ£o a concede.',
+            d: 'Errado: hÃ¡ sanÃ§Ãµes previstas.',
+            e: 'Errado: as sanÃ§Ãµes vÃ£o alÃ©m de advertÃªncia.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-11',
+            text: 'O procedimento administrativo disciplinar (PAD) para apuraÃ§Ã£o de falta grave:',
+            options: buildOptions([
+                ['a', 'NÃ£o assegura defesa ao preso.'],
+                ['b', 'Deve assegurar ampla defesa e contraditÃ³rio (SÃºmula Vinculante 5 do STF).'],
+                ['c', 'Ã sigiloso e sem recursos.'],
+                ['d', 'Pode ser conduzido por qualquer servidor.'],
+                ['e', 'NÃ£o Ã© obrigatÃ³rio.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'SÃºmula Vinculante 5: falta de defesa tÃ©cnica no PAD para falta discipl inar nÃ£o ofende CF se garantidos contraditÃ³rio e ampla defesa.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: deve assegurar ampla defesa.',
+            b: 'Correta: SV 5 assegura contraditÃ³rio e ampla defesa.',
+            c: 'Errado: Ã© possÃ­vel recurso e deve haver transparÃªncia.',
+            d: 'Errado: deve ser conduzido pela autoridade competente.',
+            e: 'Errado: Ã© obrigatÃ³rio para apuraÃ§Ã£o de falta grave.',
+        }
+    ),
+
+    // LIVRAMENTO CONDICIONAL E PROGRESSÃO
+    withFeedback(
+        {
+            id: 'lep-12',
+            text: 'O livramento condicional serÃ¡ concedido ao condenado nÃ£o reincidente em crime doloso que tenha cumprido:',
+            options: buildOptions([
+                ['a', '1/6 da pena.'],
+                ['b', '1/3 da pena.'],
+                ['c', 'Metade da pena.'],
+                ['d', 'Mais de 1/3 da pena.'],
+                ['e', 'Toda a pena.'],
+            ]),
+            correctId: 'd',
+            explanation:
+                'Art. 83, I do CP: nÃ£o reincidente em crime doloso precisa cumprir mais de 1/3 da pena para livramento condicional.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: 1/6 Ã© para progressÃ£o de regime.',
+            b: 'Errado: 1/3 Ã© requisito mÃ­nimo; precisa ser mais de 1/3.',
+            c: 'Errado: metade Ã© para reincidente.',
+            d: 'Correta: art. 83, I exige mais de 1/3.',
+            e: 'Errado: se cumprisse toda a pena, seria extinta, nÃ£o haveria livramento.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-13',
+            text: 'A saÃ­da temporÃ¡ria (art. 122 LEP) pode ser autorizada para presos em regime:',
+            options: buildOptions([
+                ['a', 'Fechado.'],
+                ['b', 'Semiaberto.'],
+                ['c', 'Aberto.'],
+                ['d', 'ProvisÃ³rio.'],
+                ['e', 'RDD (Regime Disciplinar Diferenciado).'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Art. 122 da LEP: saÃ­da temporÃ¡ria Ã© benefÃ­cio para presos em regime semiaberto.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: no fechado nÃ£o hÃ¡ saÃ­da temporÃ¡ria, apenas saÃ­das excepcionais (art. 120).',
+            b: 'Correta: art. 122 permite saÃ­da temporÃ¡ria no semiaberto.',
+            c: 'Errado: no aberto o preso jÃ¡ trabalha fora diariamente.',
+            d: 'Errado: preso provisÃ³rio nÃ£o estÃ¡ em execuÃ§Ã£o de pena.',
+            e: 'Errado: RDD Ã© regime disciplinar excepcional.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-14',
+            text: 'O Regime Disciplinar Diferenciado (RDD) pode ser aplicado quando o preso:',
+            options: buildOptions([
+                ['a', 'Praticar qualquer falta leve.'],
+                ['b', 'Apresentar alto risco para a ordem e seguranÃ§a ou for lÃ­der de organizaÃ§Ã£o criminosa.'],
+                ['c', 'Solicitar progressÃ£o de regime.'],
+                ['d', 'Recusar-se a trabalhar por motivos mÃ©dicos.'],
+                ['e', 'Receber visitas familiares.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Art. 52 da LEP: RDD aplica-se a pres os de alto risco ou envolvidos com organizaÃ§Ãµes criminosas.',
+            exams: ['policia penal mg'],
+        },
+        {
+            a: 'Errado: RDD Ã© para situaÃ§Ãµes excepcionais de alta periculosidade.',
+            b: 'Correta: art. 52 dainternao LEP prevÃª essas hipÃ³teses.',
+            c: 'Errado: solicitar progressÃ£o Ã© direito do preso.',
+            d: 'Errado: recusa justificada nÃ£o gera RDD.',
+            e: 'Errado: receber visitas Ã© direito.',
+        }
+    ),
+withFeedback(
+        {
+            id: 'lep-2',
+            exams: ['policia penal mg', 'pmdf'],
+            text: 'De acordo com o art. 41 da LEP, qual direito nao pode ser restringido mesmo em regime disciplinar mais grave?',
+            options: buildOptions([
+                ['a', 'Atendimento a saude.'],
+                ['b', 'Visitas da familia e do advogado.'],
+                ['c', 'Remicao pelo trabalho.'],
+                ['d', 'Participacao em eventos recreativos.'],
+                ['e', 'Uso livre de aparelho celular.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O art. 41 assegura ao preso visitas do conjuge, companheira, parentes e amigos em dias determinados, bem como do advogado, mesmo com restricoes disciplinares.',
+        },
+        {
+            a: 'Errado: o atendimento pode ser adequadamente organizado.',
+            b: 'Correta: visitas familiares e do advogado sao direitos assegurados.',
+            c: 'Errado: a remicao depende do trabalho/estudo e pode ser suspensa quando nao realizado.',
+            d: 'Errado: atividades recreativas podem ser restringidas.',
+            e: 'Errado: celulares sao proibidos.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-3',
+            exams: ['policia penal mg', 'pmdf'],
+            text: 'O Conselho Disciplinar de uma unidade prisional, segundo a LEP, deve ser composto por:',
+            options: buildOptions([
+                ['a', 'Apenas pelo diretor e seu substituto.'],
+                ['b', 'Diretor, representante do Ministerio Publico e defensor publico.'],
+                ['c', 'Integrantes da administracao indicados pelo diretor, no minimo tres servidores.'],
+                ['d', 'Dois presos eleitos e um servidor.'],
+                ['e', 'Somente policiais penais de plantao.'],
+            ]),
+            correctId: 'c',
+            explanation:
+                'O art. 59 prevÃª Conselhos compostos por servidores do estabelecimento designados pela direÃ§Ã£o, garantindo pluralidade e registro em livro prÃ³prio.',
+        },
+        {
+            a: 'Errado: exige colegiado.',
+            b: 'Errado: a composiÃ§Ã£o administrativa Ã© interna.',
+            c: 'Correta: servidores designados compÃµem o conselho.',
+            d: 'Errado: presos nÃ£o integram o conselho disciplinar.',
+            e: 'Errado: nÃ£o se limita a quem estÃ¡ de plantÃ£o.',
+        }
+    ),
+]);
+
+registerQuestions(['Normas da Policia Penal de MG', 'Normas Policia Penal MG'], [
+    withFeedback(
+        {
+            id: 'normas-ppmg-1',
+            exams: ['policia penal mg'],
+            text: 'O organograma padrao da Policia Penal integra a estrutura da:',
+            options: buildOptions([
+                ['a', 'Secretaria de Estado de Seguranca Publica (SESP).'],
+                ['b', 'Secretaria de Justica e Seguranca Publica (SEJUSP) e do Sistema Prisional.'],
+                ['c', 'Assembleia Legislativa de MG.'],
+                ['d', 'Prefeituras municipais.'],
+                ['e', 'Defensoria Publica.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'As normas internas vinculam a Policia Penal Ã  SEJUSP, com unidades regionais subordinadas aos Departamentos da pasta.',
+        },
+        {
+            a: 'Errado: a SEJUSP, e nao a SESP federal, coordena a estrutura. ',
+            b: 'Correta: descreve o vinculo institucional correto. ',
+            c: 'Errado: a ALMG nao integra o organograma operativo. ',
+            d: 'Errado: as prefeituras nao gerem a Policia Penal. ',
+            e: 'Errado: a Defensoria atua como controle externo. ',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'normas-ppmg-2',
+            exams: ['policia penal mg'],
+            text: 'As rotinas de escolta externa exigem, obrigatoriamente:',
+            options: buildOptions([
+                ['a', 'Registro em livro especifico, planejamento com base em analise de risco e comunicacao ao centro integrado.'],
+                ['b', 'Apenas a escala verbal do plantao.'],
+                ['c', 'Dispensa de comunicacao quando a distancia for inferior a 5 km.'],
+                ['d', 'Substituicao de armas letais por tasers em quaisquer deslocamentos.'],
+                ['e', 'Presenca do diretor-geral em toda escolta.'],
+            ]),
+            correctId: 'a',
+            explanation:
+                'As normas estaduais determinam planejamento com ficha de risco, autorizacao do comando operacional e registro das saidas e retornos. ',
+        },
+        {
+            a: 'Correta: resume os procedimentos padrao. ',
+            b: 'Errado: deve haver registro formal. ',
+            c: 'Errado: toda escolta exige comunicacao. ',
+            d: 'Errado: o uso da arma depende da avaliacao de risco. ',
+            e: 'Errado: o diretor delega a chefias operacionais. ',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'normas-ppmg-3',
+            exams: ['policia penal mg'],
+            text: 'Sobre gestao de crises em unidades prisionais, a doutrina estadual estabelece que:',
+            options: buildOptions([
+                ['a', 'Qualquer agente pode negociar sem respaldo da cadeia de comando.'],
+                ['b', 'O plano de contingencia deve prever acionamento de grupos de intervenÃ§ao, comunicacao com autoridades externas e registro posterior.'],
+                ['c', 'Nao ha necessidade de revisar procedimentos apos a crise.'],
+                ['d', 'A prioridade e sempre a repressao imediata, mesmo com refens.'],
+                ['e', 'Nao se admite utilizaÃ§ao da LEP como base para direitos dos custodiados.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'Os protocolos estaduais exigem planos atualizados, negociacao controlada e integracao com LEP e corregedoria.',
+        },
+        {
+            a: 'Errado: ha cadeia de comando clara. ',
+            b: 'Correta: sintetiza as etapas essenciais do plano. ',
+            c: 'Errado: a avaliacao pos-crise e obrigatoria. ',
+            d: 'Errado: a preservacao de vidas e prioridade. ',
+            e: 'Errado: a LEP continua fundamento para direitos basicos. ',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'normas-ppmg-4',
+            exams: ['policia penal mg'],
+            text: 'O protocolo de uso progressivo da forca determina que:',
+            options: buildOptions([
+                ['a', 'A forca letal seja sempre a primeira escolha.'],
+                ['b', 'As intervencoes sejam graduais, com dialogo, controle fisico e meios menos letais antes da forca potencialmente letal.'],
+                ['c', 'Nao haja necessidade de registrar o uso da forca.'],
+                ['d', 'Algemas sejam proibidas em todas as situacoes.'],
+                ['e', 'O agente decida isoladamente sem comunicar a chefia.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'As normas da SEJUSP exigem escalonamento, supervisao e registros formais para cada emprego da forca.',
+        },
+        {
+            a: 'Errado: a forca letal e ultima razao.',
+            b: 'Correta: descreve a progressividade exigida.',
+            c: 'Errado: o uso da forca deve ser registrado.',
+            d: 'Errado: algemas podem ser usadas conforme avaliacao de risco.',
+            e: 'Errado: e obrigatoria a comunicacao ? chefia.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'normas-ppmg-5',
+            exams: ['policia penal mg'],
+            text: 'Apos motim, fuga ou ocorrencia grave, as normas estaduais determinam:',
+            options: buildOptions([
+                ['a', 'Apenas comunicacao verbal entre plantoes.'],
+                ['b', 'Relatorio circunstanciado no SISDEP e envio imediato ? chefia e ? corregedoria.'],
+                ['c', 'Registro exclusivo pelo diretor-geral.'],
+                ['d', 'Que se aguarde ordem judicial para documentar.'],
+                ['e', 'Dispensa de registro para evitar exposicao.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'O plano de gestao de crises imp?e registro formal e comunicacao para avaliacao e correcao de procedimentos.',
+        },
+        {
+            a: 'Errado: comunicacao informal nao basta.',
+            b: 'Correta: corresponde ao rito padrao.',
+            c: 'Errado: todos os envolvidos podem ser ouvidos.',
+            d: 'Errado: nao e necessaria ordem judicial.',
+            e: 'Errado: a transparencia e obrigatoria.',
+        }
+    ),
+
+]);
+
+const isUsed = (used, id) => {
+    if (!used) return false;
+    if (used instanceof Set) {
+        return used.has(id);
+    }
+    if (Array.isArray(used)) {
+        return used.includes(id);
+    }
+    return Boolean(used[id]);
+};
+
+const questionMatchesExam = (question, examSlug) => {
+    if (!examSlug) return true;
+    if (!question.examSlugs || question.examSlugs.length === 0) return true;
+    return question.examSlugs.some((slug) => slug === examSlug || slug === 'geral');
+};
+
+const cloneQuestion = (question) => ({
+    ...question,
+    options: question.options.map((opt) => ({ ...opt })),
+});
+
+function pickAvailable(slug, used, examSlug) {
+    const pool = QUESTION_BANK[slug];
+    if (!pool || pool.length === 0) return null;
+    const available = pool.filter((question) => !isUsed(used, question.id) && questionMatchesExam(question, examSlug));
+    if (available.length === 0) return null;
+    const index = Math.floor(Math.random() * available.length);
+    return available[index];
+}
+
+export function getQuestionFromBank(subjectName, used, examName) {
+    const slug = slugify(subjectName) || 'geral';
+    const examSlug = slugify(examName) || 'geral';
+    const subjectQuestion = pickAvailable(slug, used, examSlug);
+    if (subjectQuestion) {
+        return cloneQuestion(subjectQuestion);
+    }
+    if (slug !== 'geral') {
+        const fallback = pickAvailable('geral', used, examSlug);
+        if (fallback) {
+            return cloneQuestion(fallback);
+        }
+    }
+    return null;
+}
+
+export { QUESTION_BANK };
