@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, ChevronRight, Wifi, WifiOff, Loader2, Zap, Target, Sparkles, NotebookPen } from 'lucide-react';
+import { BarChart3, ChevronRight, Wifi, WifiOff, Loader2, Zap, Target, Sparkles, NotebookPen, Brain } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { Header } from '../components/Header';
 import { checkConnection } from '../services/ai';
@@ -231,6 +231,28 @@ export function Home() {
                                 </p>
                             </div>
                             <ChevronRight className="w-5 h-5 text-blue-500 group-hover:translate-x-1 transition-transform shrink-0" />
+                        </div>
+                    </button>
+
+                    <button
+                        onClick={() => navigate('/flashcards')}
+                        className="group relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 backdrop-blur-xl border border-purple-500/20 p-4 md:p-6 text-left transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:shadow-2xl md:hover:shadow-purple-500/20"
+                    >
+                        <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all duration-300"></div>
+
+                        <div className="relative z-10 flex items-start gap-3 md:gap-4">
+                            <div className="p-2.5 md:p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl shadow-lg shrink-0">
+                                <Brain className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <h3 className="text-base md:text-lg font-bold text-slate-800 dark:text-white mb-1">
+                                    Flashcards
+                                </h3>
+                                <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">
+                                    Revise conceitos-chave de todas as matérias com cards interativos.
+                                </p>
+                            </div>
+                            <ChevronRight className="w-5 h-5 text-purple-500 group-hover:translate-x-1 transition-transform shrink-0" />
                         </div>
                     </button>
 
