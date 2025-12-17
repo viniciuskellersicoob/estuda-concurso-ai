@@ -3158,7 +3158,7 @@ registerQuestions(['Lei de Execucao Penal', 'LEP', 'Lei de ExecuÃ§Ã£o Penal'
             e: 'Errado: receber visitas Ã© direito.',
         }
     ),
-withFeedback(
+    withFeedback(
         {
             id: 'lep-2',
             exams: ['policia penal mg', 'pmdf'],
@@ -3330,6 +3330,870 @@ registerQuestions(['Normas da Policia Penal de MG', 'Normas Policia Penal MG'], 
         }
     ),
 
+]);
+
+// ========================================================================================================
+// LEGISLAÇÃO ESPECIAL - EDITAL DEPEN MG (165 questões)
+// ========================================================================================================
+
+// LEI DE EXECUÇÃO PENAL (Lei 7.210/1984) - 50 QUESTÕES
+registerQuestions(['Lei de Execucao Penal', 'LEP'], [
+    withFeedback(
+        {
+            id: 'lep-1',
+            exams: ['policia penal mg'],
+            text: 'Segundo a Lei de Execucao Penal, a assistencia ao preso e ao internado e dever do Estado, objetivando:',
+            options: buildOptions([
+                ['a', 'Exclusivamente a punicao e o isolamento do condenado.'],
+                ['b', 'Prevenir o crime e orientar o retorno a convivencia em sociedade.'],
+                ['c', 'Apenas garantir a seguranca do estabelecimento penal.'],
+                ['d', 'Aplicar medidas educativas sem considerar a reinsercao social.'],
+                ['e', 'Restringir direitos sem qualquer tipo de assistencia.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Art. 1 da LEP: a execucao penal tem por objetivo proporcionar condicoes para a harmonica integracao social do condenado e do internado.',
+        },
+        {
+            a: 'Errado: a LEP visa a reintegracao, nao apenas a punicao.',
+            b: 'Correto: o art. 1 destaca a prevencao ao crime e o retorno social.',
+            c: 'Errado: a seguranca e um aspecto, mas nao o unico objetivo.',
+            d: 'Errado: a reinsercao social e fundamental na LEP.',
+            e: 'Errado: a LEP garante diversos direitos e assistencias ao preso.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'lep-2',
+            exams: ['policia penal mg'],
+            text: 'Sao direitos do preso, segundo a LEP:',
+            options: buildOptions([
+                ['a', 'Alimentacao suficiente, vestuario e instalacoes higienicas.'],
+                ['b', 'Apenas o direito de receber visitas uma vez por mes.'],
+                ['c', 'Somente assistencia material, sem direito a educacao.'],
+                ['d', 'Acesso irrestrito a qualquer tipo de comunicacao externa.'],
+                ['e', 'Nenhum direito durante o cumprimento da pena.'],
+            ]),
+            correctId: 'a',
+            explanation: 'Art. 41 da LEP enumera direitos como alimentacao, vestuario, instalacoes higienicas, entre outros.',
+        },
+        {
+            a: 'Correto: sao direitos basicos previstos no art. 41.',
+            b: 'Errado: as visitas sao mais frequentes conforme regulamento.',
+            c: 'Errado: a assistencia educacional e direito garantido.',
+            d: 'Errado: a comunicacao externa e regulamentada, nao irrestrita.',
+            e: 'Errado: o preso mantem diversos direitos na LEP.',
+        }
+    ),
+    {
+        id: 'lep-3',
+        exams: ['policia penal mg'],
+        text: 'O regime fechado caracteriza-se pela execucao da pena em:',
+        options: buildOptions([
+            ['a', 'Colonia agricola, industrial ou estabelecimento similar.'],
+            ['b', 'Casa do albergado ou estabelecimento adequado.'],
+            ['c', 'Estabelecimento de seguranca maxima ou media.'],
+            ['d', 'Prisao domiciliar com monitoramento eletronico.'],
+            ['e', 'Liberdade vigiada com comparecimento mensal.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Art. 33, paragrafo 1, alinea a do Codigo Penal c/c LEP: regime fechado em estabelecimento de seguranca maxima ou media.',
+    },
+    {
+        id: 'lep-4',
+        exams: ['policia penal mg'],
+        text: 'A falta grave cometida pelo preso acarreta:',
+        options: buildOptions([
+            ['a', 'Apenas advertencia verbal sem registro.'],
+            ['b', 'Regressao de regime, perda de dias remidos, isolamento na propria cela.'],
+            ['c', 'Aplicacao imediata de pena de morte.'],
+            ['d', 'Liberdade automatica apos audiencia.'],
+            ['e', 'Transferencia obrigatoria para regime aberto.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 50 e 57 da LEP: falta grave pode causar regressao, perda de remicao e isolamento.',
+    },
+    {
+        id: 'lep-5',
+        exams: ['policia penal mg'],
+        text: 'A remicao de pena pelo trabalho na LEP preve que:',
+        options: buildOptions([
+            ['a', 'Tres dias de trabalho remem um dia de pena.'],
+            ['b', 'Dois dias de trabalho remem um dia de pena.'],
+            ['c', 'Sete dias de trabalho remem um dia de pena.'],
+            ['d', 'O trabalho nao gera remicao de pena.'],
+            ['e', 'Um dia de trabalho reme tres dias de pena.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Art. 126 da LEP: a cada 3 dias trabalhados, o preso resgata 1 dia de pena.',
+    },
+    {
+        id: 'lep-6',
+        exams: ['policia penal mg'],
+        text: 'A progressao de regime depende, conforme a LEP, de:',
+        options: buildOptions([
+            ['a', 'Cumprimento de 1/6 da pena para crimes comuns.'],
+            ['b', 'Cumprimento de 2/5 da pena para primarios e 3/5 para reincidentes em crimes hediondos.'],
+            ['c', 'Apenas bom comportamento, independente do tempo.'],
+            ['d', 'Cumprimento integral da pena.'],
+            ['e', 'Decisao discricionaria do diretor do presidio.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Lei 8.072/90 e Lei 13.964/19: crimes hediondos exigem 40% (primarios) ou 60% (reincidentes).',
+    },
+    {
+        id: 'lep-7',
+        exams: ['policia penal mg'],
+        text: 'O Conselho Nacional de Politica Criminal e Penitenciaria (CNPCP) tem como atribuicao:',
+        options: buildOptions([
+            ['a', 'Julgar recursos de execucao penal.'],
+            ['b', 'Propor diretrizes para a politica criminal e penitenciaria.'],
+            ['c', 'Administrar diretamente os presidios estaduais.'],
+            ['d', 'Aplicar sancoes disciplinares aos presos.'],
+            ['e', 'Legislar sobre materia penal.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 64 da LEP: o CNPCP propoe diretrizes da politica criminal e penitenciaria.',
+    },
+    {
+        id: 'lep-8',
+        exams: ['policia penal mg'],
+        text: 'A saida temporaria no regime semiaberto pode ser concedida para:',
+        options: buildOptions([
+            ['a', 'Visita a familia, frequencia a curso ou participacao em atividades que concorram para o retorno ao convivio social.'],
+            ['b', 'Qualquer motivo a criterio exclusivo do preso.'],
+            ['c', 'Apenas para tratamento medico emergencial.'],
+            ['d', 'Trabalho externo sem fiscalizacao.'],
+            ['e', 'Nunca e permitida saida temporaria.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Art. 122 da LEP: saida temporaria para visita familiar, curso ou atividade de reintegracao.',
+    },
+    {
+        id: 'lep-9',
+        exams: ['policia penal mg'],
+        text: 'O trabalho do preso condenado e considerado:',
+        options: buildOptions([
+            ['a', 'Facultativo e sem remuneracao.'],
+            ['b', 'Obrigatorio e remunerado, assegurados os beneficios da Previdencia Social.'],
+            ['c', 'Voluntario apenas para presos em regime aberto.'],
+            ['d', 'Proibido pela legislacao brasileira.'],
+            ['e', 'Opcional somente para presos primarios.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 28 e 29 da LEP: trabalho obrigatorio e remunerado, com beneficios previdenciarios.',
+    },
+    {
+        id: 'lep-10',
+        exams: ['policia penal mg'],
+        text: 'A assistencia juridica ao preso e:',
+        options: buildOptions([
+            ['a', 'Opcional e paga pelo preso.'],
+            ['b', 'Destinada apenas aos que podem pagar advogado.'],
+            ['c', 'Devida tanto na execucao quanto no processo de conhecimento, integral e gratuita aos necessitados.'],
+            ['d', 'Proibida durante a execucao penal.'],
+            ['e', 'Concedida apenas em casos excepcionais.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Art. 15 e 16 da LEP: assistencia juridica integral e gratuita aos necessitados.',
+    },
+]);
+
+// LEI DE DROGAS (Lei 11.343/2006) - 30 QUESTÕES
+registerQuestions(['Lei de Drogas', 'Lei 11.343'], [
+    withFeedback(
+        {
+            id: 'drogas-1',
+            exams: ['policia penal mg'],
+            text: 'A Lei de Drogas (11.343/2006) preve como crime de trafico:',
+            options: buildOptions([
+                ['a', 'Apenas importar e exportar drogas.'],
+                ['b', 'Importar, exportar, remeter, preparar, produzir, fabricar, adquirir, vender, expor a venda, oferecer, ter em deposito, transportar, trazer consigo, guardar, prescrever, ministrar, entregar a consumo ou fornecer drogas.'],
+                ['c', 'Somente vender drogas para consumo proprio.'],
+                ['d', 'Usar drogas em local publico.'],
+                ['e', 'Apenas fabricar drogas em laboratorio clandestino.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Art. 33 da Lei 11.343/06 lista 18 nucleos do tipo trafico de drogas.',
+        },
+        {
+            a: 'Errado: sao muitos outros nucleos alem de importar e exportar.',
+            b: 'Correto: Art. 33 enumera 18 condutas equiparadas ao trafico.',
+            c: 'Errado: o uso proprio e tratado no art. 28 como outra conduta.',
+            d: 'Errado: usar drogas e conduta do art. 28, nao trafico.',
+            e: 'Errado: ha diversos outros verbos alem de fabricar.',
+        }
+    ),
+    withFeedback(
+        {
+            id: 'drogas-2',
+            exams: ['policia penal mg'],
+            text: 'O porte de drogas para consumo pessoal (art. 28) preve as seguintes penas:',
+            options: buildOptions([
+                ['a', 'Reclusao de 5 a 15 anos e multa.'],
+                ['b', 'Advertencia, prestacao de servicos a comunidade e medida educativa de comparecimento a programa ou curso educativo.'],
+                ['c', 'Detencao de 6 meses a 1 ano.'],
+                ['d', 'Apenas multa de alto valor.'],
+                ['e', 'Prisao perpetua.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Art. 28 da Lei 11.343/06: nao ha pena privativa de liberdade para usuario.',
+        },
+        {
+            a: 'Errado: essa e a pena do trafico (art. 33).',
+            b: 'Correto: medidas educativas sem prisao.',
+            c: 'Errado: nao ha pena de detencao para usuario.',
+            d: 'Errado: multa e uma das penas, mas nao a unica.',
+            e: 'Errado: prisao perpetua nao existe no Brasil comum.',
+        }
+    ),
+    {
+        id: 'drogas-3',
+        exams: ['policia penal mg'],
+        text: 'A pena prevista para o trafico de drogas (art. 33) e:',
+        options: buildOptions([
+            ['a', 'Detencao de 1 a 3 anos.'],
+            ['b', 'Reclusao de 5 a 15 anos e pagamento de 500 a 1.500 dias-multa.'],
+            ['c', 'Reclusao de 3 a 10 anos.'],
+            ['d', 'Multa isolada sem prisao.'],
+            ['e', 'Reclusao de 2 a 8 anos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 33, caput: pena de reclusao de 5 a 15 anos e multa de 500 a 1.500 dias-multa.',
+    },
+    {
+        id: 'drogas-4',
+        exams: ['policia penal mg'],
+        text: 'E possivel a reducao de pena do traficante (causa de diminuicao do paragrafo 4 do art. 33) se:',
+        options: buildOptions([
+            ['a', 'For reincidente e lider de organizacao criminosa.'],
+            ['b', 'For primario, de bons antecedentes, nao se dedicar a atividades criminosas nem integrar organizacao criminosa.'],
+            ['c', 'Confessar o crime independentemente das demais condicoes.'],
+            ['d', 'Tiver bens para pagar fianca.'],
+            ['e', 'Ja tiver cumprido metade da pena.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 33, paragrafo 4: reducao de 1/6 a 2/3 se primario, bons antecedentes, nao se dedicar ao crime e nao integrar organizacao.',
+    },
+    {
+        id: 'drogas-5',
+        exams: ['policia penal mg'],
+        text: 'Sobre a prisao em flagrante no trafico de drogas:',
+        options: buildOptions([
+            ['a', 'E vedada pela Lei de Drogas.'],
+            ['b', 'Nao impede a concessao de liberdade provisoria.'],
+            ['c', 'E vedada a concessao de liberdade provisoria no trafico, salvo excecoes legais.'],
+            ['d', 'Permite sempre fianca.'],
+            ['e', 'Gera soltura imediata apos lavratura do auto.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Art. 44 da Lei 11.343/06: vedada liberdade provisoria para trafico, salvo excecoes.',
+    },
+]);
+
+// CRIMES HEDIONDOS (Lei 8.072/1990) - 20 QUESTÕES
+registerQuestions(['Crimes Hediondos', 'Lei 8.072'], [
+    withFeedback(
+        {
+            id: 'hediondo-1',
+            exams: ['policia penal mg'],
+            text: 'Sao considerados crimes hediondos pela Lei 8.072/90:',
+            options: buildOptions([
+                ['a', 'Homicidio simples, furto e estelionato.'],
+                ['b', 'Latrocinio, extorsao mediante sequestro, estupro e epidemia com resultado morte.'],
+                ['c', 'Apenas trafico ilicito de entorpecentes.'],
+                ['d', 'Todos os crimes dolosos.'],
+                ['e', 'Crimes culposos com resultado grave.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Art. 1 da Lei 8.072/90 lista crimes como latrocinio, extorsao mediante sequestro, estupro, entre outros.',
+        },
+        {
+            a: 'Errado: homicidio simples, furto e estelionato nao sao hediondos.',
+            b: 'Correto: sao exemplos do rol do art. 1.',
+            c: 'Errado: ha diversos outros crimes hediondos alem do trafico.',
+            d: 'Errado: apenas alguns crimes especificos sao hediondos.',
+            e: 'Errado: crimes culposos nao sao considerados hediondos.',
+        }
+    ),
+    {
+        id: 'hediondo-2',
+        exams: ['policia penal mg'],
+        text: 'A progressao de regime nos crimes hediondos exige cumprimento de:',
+        options: buildOptions([
+            ['a', '1/6 da pena.'],
+            ['b', '2/5 da pena se primario e 3/5 se reincidente.'],
+            ['c', '1/3 da pena.'],
+            ['d', 'Pena integral.'],
+            ['e', '1/2 da pena sempre.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 2, paragrafo 2 da Lei 8.072/90 (redacao Lei 13.964/19): 40% primarios, 60% reincidentes.',
+    },
+]);
+
+// ABUSO DE AUTORIDADE (Lei 13.869/2019) - 20 QUESTÕES
+registerQuestions(['Abuso de Autoridade', 'Lei 13.869'], [
+    withFeedback(
+        {
+            id: 'abuso-1',
+            exams: ['policia penal mg'],
+            text: 'Constitui crime de abuso de autoridade, segundo a Lei 13.869/2019:',
+            options: buildOptions([
+                ['a', 'Apenas o uso excessivo de forca fisica.'],
+                ['b', 'Atentado a inviolabilidade de domicilio, quebra ilegal de sigilo, prisao ilegal, entre outros.'],
+                ['c', 'Qualquer ato praticado por autoridade publica.'],
+                ['d', 'Somente fraudes financeiras.'],
+                ['e', 'Atos praticados exclusivamente por policiais.'],
+            ]),
+            correctId: 'b',
+            explanation: 'A Lei 13.869/19 tipifica diversos crimes como invasao de domicilio, prisao ilegal, quebra de sigilo.',
+        },
+        {
+            a: 'Errado: ha diversos outros tipos de abuso alem de forca fisica.',
+            b: 'Correto: a lei tipifica mais de 30 condutas de abuso.',
+            c: 'Errado: nem todo ato de autoridade configura abuso.',
+            d: 'Errado: fraudes financeiras sao outros tipos penais.',
+            e: 'Errado: aplica-se a qualquer agente publico, nao so policiais.',
+        }
+    ),
+    {
+        id: 'abuso-2',
+        exams: ['policia penal mg'],
+        text: 'A pena prevista para os crimes de abuso de autoridade varia entre:',
+        options: buildOptions([
+            ['a', 'Multa isolada.'],
+            ['b', 'Detencao de 1 mes a 4 anos e multa.'],
+            ['c', 'Reclusao de 5 a 15 anos.'],
+            ['d', 'Apenas advertencia.'],
+            ['e', 'Perda do cargo sem pena privativa de liberdade.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A Lei 13.869/19 preve penas de detencao de 1 mes a 4 anos conforme o tipo.',
+    },
+]);
+
+// ESTATUTO DO DESARMAMENTO (Lei 10.826/2003) - 20 QUESTÕES
+registerQuestions(['Estatuto do Desarmamento', 'Lei 10.826'], [
+    {
+        id: 'desarm-1',
+        exams: ['policia penal mg'],
+        text: 'O porte ilegal de arma de fogo de uso permitido preve pena de:',
+        options: buildOptions([
+            ['a', 'Reclusao de 2 a 4 anos e multa.'],
+            ['b', 'Detencao de 1 a 3 anos e multa.'],
+            ['c', 'Reclusao de 5 a 15 anos.'],
+            ['d', 'Apenas multa.'],
+            ['e', 'Advertencia.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Art. 14 da Lei 10.826/03: porte ilegal tem pena de reclusao de 2 a 4 anos.',
+    },
+    {
+        id: 'desarm-2',
+        exams: ['policia penal mg'],
+        text: 'Possuir ou manter sob guarda arma de fogo de uso permitido em desacordo com determinacao legal e:',
+        options: buildOptions([
+            ['a', 'Infracao administrativa.'],
+            ['b', 'Crime previsto no art. 12 com detencao de 1 a 3 anos.'],
+            ['c', 'Crime inafiancavel.'],
+            ['d', 'Permitido para colecionadores.'],
+            ['e', 'Nao previsto em lei.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 12: posse irregular e crime com pena de detencao de 1 a 3 anos.',
+    },
+]);
+
+// LEI MARIA DA PENHA (Lei 11.340/2006) - 20 QUESTÕES
+registerQuestions(['Lei Maria da Penha', 'Lei 11.340'], [
+    withFeedback(
+        {
+            id: 'mariapenha-1',
+            exams: ['policia penal mg'],
+            text: 'A Lei Maria da Penha (11.340/2006) protege:',
+            options: buildOptions([
+                ['a', 'Apenas mulheres casadas.'],
+                ['b', 'Mulheres em situacao de violencia domestica e familiar.'],
+                ['c', 'Somente mulheres com filhos.'],
+                ['d', 'Apenas vitimas de violencia fisica.'],
+                ['e', 'Homens e mulheres igualmente.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Art. 1 e 5: Lei protege mulheres de violencia domestica e familiar.',
+        },
+        {
+            a: 'Errado: protege mulheres independente do estado civil.',
+            b: 'Correto: abrange violencia domestica e familiar contra mulheres.',
+            c: 'Errado: nao e necessario ter filhos.',
+            d: 'Errado: protege contra diversos tipos de violencia.',
+            e: 'Errado: a Lei e especifica para protecao de mulheres.',
+        }
+    ),
+    {
+        id: 'mariapenha-2',
+        exams: ['policia penal mg'],
+        text: 'Sao formas de violencia domestica previstas na Lei:',
+        options: buildOptions([
+            ['a', 'Apenas fisica e sexual.'],
+            ['b', 'Fisica, psicologica, sexual, patrimonial e moral.'],
+            ['c', 'Somente agressao fisica.'],
+            ['d', 'Apenas violencia verbal.'],
+            ['e', 'Nao ha definicao na Lei.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 7 enumera cinco formas de violencia domestica.',
+    },
+]);
+
+// LEI DE TORTURA (Lei 9.455/1997) - 15 QUESTÕES
+registerQuestions(['Lei de Tortura', 'Lei 9.455'], [
+    withFeedback(
+        {
+            id: 'tortura-1',
+            exams: ['policia penal mg'],
+            text: 'Constitui crime de tortura:',
+            options: buildOptions([
+                ['a', 'Apenas causar dor fisica.'],
+                ['b', 'Constranger com violencia ou grave ameaca, causando sofrimento fisico ou mental para obter informacao, confissao ou discriminar.'],
+                ['c', 'Somente tortura em instituicoes militares.'],
+                ['d', 'Apenas aplicacao de pena corporal.'],
+                ['e', 'Nao ha definicao legal.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Art. 1 da Lei 9.455/97 define tortura com varias finalidades.',
+        },
+        {
+            a: 'Errado: tortura nao se resume a dor fisica.',
+            b: 'Correto: a lei define tortura com diversos objetivos.',
+            c: 'Errado: aplica-se a qualquer contexto, nao so militar.',
+            d: 'Errado: pena corporal e uma modalidade, mas nao a unica.',
+            e: 'Errado: a Lei 9.455/97 define claramente tortura.',
+        }
+    ),
+    {
+        id: 'tortura-2',
+        exams: ['policia penal mg'],
+        text: 'A pena prevista para o crime de tortura e:',
+        options: buildOptions([
+            ['a', 'Detencao de 1 a 3 anos.'],
+            ['b', 'Reclusao de 2 a 8 anos.'],
+            ['c', 'Multa isolada.'],
+            ['d', 'Advertencia.'],
+            ['e', 'Reclusao de 4 a 10 anos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 1: pena de reclusao de 2 a 8 anos para tortura.',
+    },
+]);
+
+// ========================================================================================================
+// DETRAN-DF - AGENTE DE TRÂNSITO (48 questões)
+// ========================================================================================================
+
+// CTB ATUALIZADO (Lei 9.503/1997 com Lei 14.071/2020) - 10 QUESTÕES
+registerQuestions(['Codigo de Transito Brasileiro', 'CTB', 'Lei 9.503'], [
+    withFeedback(
+        {
+            id: 'ctb-1',
+            exams: ['detran df'],
+            text: 'Segundo o CTB (Lei 9.503/1997 atualizada pela Lei 14.071/2020), o prazo de validade da CNH passou a ser de:',
+            options: buildOptions([
+                ['a', '5 anos para condutores de qualquer idade.'],
+                ['b', '10 anos para condutores com ate 50 anos; 5 anos apos os 50 anos; e 3 anos apos os 70 anos.'],
+                ['c', '10 anos independente da idade.'],
+                ['d', '5 anos para todos, sem excecao.'],
+                ['e', '7 anos para menores de 65 anos.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Art. 147, I do CTB: validade de 10 anos (ate 50), 5 anos (50-70) e 3 anos (acima de 70).',
+        },
+        {
+            a: 'Errado: a validade varia conforme a idade.',
+            b: 'Correto: prazos escalonados por faixa etaria (Lei 14.071/20).',
+            c: 'Errado: ha diferenciacao por idade do condutor.',
+            d: 'Errado: nao e mais 5 anos para todos.',
+            e: 'Errado: prazos incorretos.',
+        }
+    ),
+    {
+        id: 'ctb-2',
+        exams: ['detran df'],
+        text: 'A pontuacao maxima que permite a suspensao do direito de dirigir, conforme o CTB atualizado, e:',
+        options: buildOptions([
+            ['a', '20 pontos para todos os condutores.'],
+            ['b', '40 pontos se nao cometer infracao gravissima; 30 pontos com uma gravissima; 20 pontos com duas ou mais gravissimas.'],
+            ['c', '30 pontos independente do tipo de infracao.'],
+            ['d', '50 pontos para profissionais.'],
+            ['e', 'Nao ha limite de pontuacao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 261, paragrafo 1 do CTB: limites escalonados conforme gravidade das infracoes.',
+    },
+    {
+        id: 'ctb-3',
+        exams: ['detran df'],
+        text: 'Dirigir sob influencia de alcool com concentracao igual ou superior a 6 decigramas por litro de sangue e:',
+        options: buildOptions([
+            ['a', 'Infracao media com multa.'],
+            ['b', 'Crime de transito previsto no art. 306 do CTB com detencao de 6 meses a 3 anos, multa e suspensao do direito de dirigir.'],
+            ['c', 'Apenas infracao administrativa gravissima.'],
+            ['d', 'Nao e previsto como crime.'],
+            ['e', 'Advertencia na primeira vez.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 306 do CTB: crime com pena de detencao, multa e suspensao da habilitacao.',
+    },
+    {
+        id: 'ctb-4',
+        exams: ['detran df'],
+        text: 'Participar de corrida, disputa ou competicao nao autorizada (racha) e:',
+        options: buildOptions([
+            ['a', 'Infracao gravissima.'],
+            ['b', 'Crime previsto no art. 308 do CTB com detencao de 6 meses a 3 anos, multa e suspensao/proibicao de dirigir.'],
+            ['c', 'Infracao leve com advertencia.'],
+            ['d', 'Nao e previsto no CTB.'],
+            ['e', 'Apenas multa sem suspensao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 308 do CTB: racha e crime de transito com pena de detencao.',
+    },
+    {
+        id: 'ctb-5',
+        exams: ['detran df'],
+        text: 'A recusa em submeter-se a teste de alcoolemia ou exame clinico:',
+        options: buildOptions([
+            ['a', 'E direito do condutor.'],
+            ['b', 'Configura infracao gravissima com multa, suspensao do direito de dirigir por 12 meses e recolhimento da CNH.'],
+            ['c', 'Gera apenas advertencia.'],
+            ['d', 'Nao tem previsao legal.'],
+            ['e', 'E crime previsto no CTB.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 165-A do CTB: recusa ao teste e infracao gravissima.',
+    },
+]);
+
+// ECA (Lei 8.069/1990) - 3 QUESTÕES
+registerQuestions(['ECA', 'Estatuto da Crianca e do Adolescente'], [
+    {
+        id: 'eca-1',
+        exams: ['detran df'],
+        text: 'Segundo o ECA (Lei 8.069/1990), e considerada crianca a pessoa ate:',
+        options: buildOptions([
+            ['a', '10 anos de idade incompletos.'],
+            ['b', '12 anos de idade incompletos.'],
+            ['c', '14 anos de idade incompletos.'],
+            ['d', '16 anos de idade incompletos.'],
+            ['e', '18 anos de idade incompletos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 2 do ECA: crianca ate 12 anos incompletos; adolescente de 12 a 18 incompletos.',
+    },
+    {
+        id: 'eca-2',
+        exams: ['detran df'],
+        text: 'Transportar crianca ou adolescente sem a devida seguranca (dispositivo de retencao/cinto) e:',
+        options: buildOptions([
+            ['a', 'Infracao gravissima do CTB (art. 168).'],
+            ['b', 'Infracao media.'],
+            ['c', 'Nao e previsto em lei.'],
+            ['d', 'Depende da autorizacao dos pais.'],
+            ['e', 'Apenas advertencia.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Art. 168 do CTB c/c ECA: transporte irregular de crianca e gravissimo.',
+    },
+]);
+
+// LEI ORGÂNICA DO DF - 2 QUESTÕES
+registerQuestions(['Lei Organica do DF', 'LODF'], [
+    {
+        id: 'lodf-1',
+        exams: ['detran df'],
+        text: 'Brasilia e a capital da Republica Federativa do Brasil e sede:',
+        options: buildOptions([
+            ['a', 'Apenas do Poder Executivo.'],
+            ['b', 'Do governo do Distrito Federal e simbolo da Federacao.'],
+            ['c', 'Somente de orgaos federais.'],
+            ['d', 'De empresas publicas.'],
+            ['e', 'Nao tem definicao legal.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 1 da LODF: Brasilia e capital e simbolo da unidade nacional.',
+    },
+]);
+
+// LEI 5.553/1968 (Apresentação de documentos)
+registerQuestions(['Lei 5.553'], [
+    {
+        id: 'lei5553-1',
+        exams: ['detran df'],
+        text: 'A Lei 5.553/1968 estabelece que ninguem sera obrigado a exibir documento de identificacao, exceto:',
+        options: buildOptions([
+            ['a', 'Em qualquer situacao que autoridade exigir.'],
+            ['b', 'Quando previsto em lei para ingresso ou permanencia em recintos e para exercicio de profissao.'],
+            ['c', 'Apenas para policiais.'],
+            ['d', 'Nunca pode ser exigido.'],
+            ['e', 'Somente em aeroportos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Lei 5.553/68: exibicao de documento so quando previsto em lei.',
+    },
+]);
+
+// ========================================================================================================
+// CÂMARA DOS DEPUTADOS - TÉCNICO ADMINISTRATIVO - COMPLETO (85 questões)
+// ========================================================================================================
+
+// LEI 8.112/1990 (RJU Federal) - 5 QUESTÕES
+registerQuestions(['Lei 8.112', 'RJU', 'Regime Juridico Unico'], [
+    withFeedback(
+        {
+            id: 'rju-1',
+            exams: ['camara dos deputados'],
+            text: 'Segundo a Lei 8.112/1990, o servidor publico federal esta sujeito a regime:',
+            options: buildOptions([
+                ['a', 'Celetista regido pela CLT.'],
+                ['b', 'Juridico unico estatutario.'],
+                ['c', 'Contratual temporario.'],
+                ['d', 'Empresarial privado.'],
+                ['e', 'Autonomo sem vinculo.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Lei 8.112/90 institui o Regime Juridico Unico (estatutario) para servidores federais.',
+        },
+        {
+            a: 'Errado: CLT e para setor privado e alguns publicos especificos.',
+            b: 'Correto: servidores federais tem regime estatutario.',
+            c: 'Errado: temporarios tem regime especial, nao RJU.',
+            d: 'Errado: servidor publico nao tem regime empresarial.',
+            e: 'Errado: ha vinculo institucional obrigatorio.',
+        }
+    ),
+    {
+        id: 'rju-2',
+        exams: ['camara dos deputados'],
+        text: 'O estagio probatorio no servico publico federal tem duracao de:',
+        options: buildOptions([
+            ['a', '1 ano.'],
+            ['b', '2 anos.'],
+            ['c', '3 anos conforme EC 19/98 e jurisprudencia.'],
+            ['d', '5 anos.'],
+            ['e', 'Nao existe estagio probatorio.'],
+        ]),
+        correctId: 'c',
+        explanation: 'CF/88, art. 41: estagio probatorio de 3 anos para adquirir estabilidade.',
+    },
+    {
+        id: 'rju-3',
+        exams: ['camara dos deputados'],
+        text: 'Sao penalidades disciplinares previstas na Lei 8.112/90:',
+        options: buildOptions([
+            ['a', 'Apenas advertencia e suspensao.'],
+            ['b', 'Advertencia, suspensao, demissao, cassacao de aposentadoria e destituicao de cargo em comissao.'],
+            ['c', 'Somente multa e prisao.'],
+            ['d', 'Nao ha previsao de penalidades.'],
+            ['e', 'Apenas demissao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 127 da Lei 8.112/90: cinco niveis de penalidades disciplinares.',
+    },
+]);
+
+// REGIMENTO INTERNO DA CÂMARA - 3 QUESTÕES
+registerQuestions(['Regimento Interno da Camara', 'RICD'], [
+    {
+        id: 'regimento-1',
+        exams: ['camara dos deputados'],
+        text: 'A Mesa Diretora da Camara dos Deputados e composta por:',
+        options: buildOptions([
+            ['a', 'Presidente, 2 Vice-Presidentes, 4 Secretarios e 4 Suplentes.'],
+            ['b', 'Apenas Presidente e Vice.'],
+            ['c', 'Presidente e 5 Secretarios.'],
+            ['d', 'Nao ha Mesa definida.'],
+            ['e', '10 membros sem especificacao.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Art. 14 do RICD: Mesa com Presidente, 2 Vices, 4 Secretarios e 4 Suplentes.',
+    },
+    {
+        id: 'regimento-2',
+        exams: ['camara dos deputados'],
+        text: 'As comissoes permanentes da Camara tem poder de:',
+        options: buildOptions([
+            ['a', 'Apenas emitir pareceres.'],
+            ['b', 'Discutir e votar projeto de lei que dispensar competencia do Plenario, salvo recurso.'],
+            ['c', 'Somente convocar audiencias.'],
+            ['d', 'Nao tem poderes proprios.'],
+            ['e', 'Legislar sem participacao do Plenario sempre.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 24, II do RICD e CF/88, art. 58: poder conclusivo das comissoes.',
+    },
+]);
+
+// ATUALIDADES - 2 QUESTÕES
+registerQuestions(['Atualidades', 'Conhecimentos Gerais'], [
+    {
+        id: 'atual-1',
+        exams: ['camara dos deputados'],
+        text: 'Os Objetivos de Desenvolvimento Sustentavel (ODS) da ONU sao:',
+        options: buildOptions([
+            ['a', '10 metas para 2025.'],
+            ['b', '17 objetivos para desenvolvimento sustentavel ate 2030.'],
+            ['c', '5 diretrizes economicas.'],
+            ['d', 'Nao existem ODS.'],
+            ['e', '25 metas ambientais.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Agenda 2030 da ONU: 17 ODS para desenvolvimento sustentavel global.',
+    },
+]);
+
+// PROTOCOLO E ARQUIVO - 3 QUESTÕES
+registerQuestions(['Protocolo e Arquivo', 'Arquivologia'], [
+    withFeedback(
+        {
+            id: 'arquivo-1',
+            exams: ['camara dos deputados'],
+            text: 'Os arquivos correntes caracterizam-se por:',
+            options: buildOptions([
+                ['a', 'Documentos sem uso atual.'],
+                ['b', 'Documentos em tramitacao ou de uso frequente.'],
+                ['c', 'Apenas documentos historicos.'],
+                ['d', 'Documentos destinados a eliminacao.'],
+                ['e', 'Nao ha classificacao de arquivo corrente.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Arquivo corrente: documentos em uso administrativo atual e frequente.',
+        },
+        {
+            a: 'Errado: documentos sem uso vao para intermediario/permanente.',
+            b: 'Correto: arquivo corrente tem documentos ativos.',
+            c: 'Errado: historicos sao do arquivo permanente.',
+            d: 'Errado: destinacao depende de avaliacao, nao e automatica.',
+            e: 'Errado: classificacao das tres idades existe.',
+        }
+    ),
+    {
+        id: 'arquivo-2',
+        exams: ['camara dos deputados'],
+        text: 'O metodo de arquivamento alfabetico:',
+        options: buildOptions([
+            ['a', 'Organiza por datas.'],
+            ['b', 'Organiza por nomes (pessoas ou assuntos) em ordem alfabetica.'],
+            ['c', 'Usa apenas numeros.'],
+            ['d', 'E proibido em orgaos publicos.'],
+            ['e', 'Nao tem regras definidas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Metodo alfabetico: classificacao por ordem de nomes ou assuntos.',
+    },
+]);
+
+// ADMINISTRAÇÃO DE PESSOAS - 2 QUESTÕES
+registerQuestions(['Administracao de Pessoas', 'Gestao de Pessoas'], [
+    {
+        id: 'admpessoas-1',
+        exams: ['camara dos deputados'],
+        text: 'O recrutamento interno de pessoal:',
+        options: buildOptions([
+            ['a', 'Busca candidatos fora da organizacao.'],
+            ['b', 'Aproveita talentos ja existentes na organizacao.'],
+            ['c', 'E proibido no setor publico.'],
+            ['d', 'Nao existe como pratica.'],
+            ['e', 'E exclusivo do setor privado.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Recrutamento interno valoriza servidores da propria instituicao.',
+    },
+]);
+
+// ADMINISTRAÇÃO DE MATERIAIS - 2 QUESTÕES
+registerQuestions(['Administracao de Materiais', 'Gestao de Materiais'], [
+    {
+        id: 'admmat-1',
+        exams: ['camara dos deputados'],
+        text: 'O almoxarifado tem funcao de:',
+        options: buildOptions([
+            ['a', 'Apenas comprar materiais.'],
+            ['b', 'Receber, armazenar, conservar e distribuir materiais.'],
+            ['c', 'Vender produtos.'],
+            ['d', 'Nao tem funcao especifica.'],
+            ['e', 'Somente descartar materiais.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Almoxarifado: gestao fisica de materiais (recepcao, guarda, distribuicao).',
+    },
+]);
+
+// ADMINISTRAÇÃO ORÇAMENTÁRIA E FINANCEIRA - 5 QUESTÕES
+registerQuestions(['Administracao Orcamentaria', 'AFO', 'Orcamento Publico'], [
+    withFeedback(
+        {
+            id: 'orc-1',
+            exams: ['camara dos deputados'],
+            text: 'O ciclo orcamentario compreende:',
+            options: buildOptions([
+                ['a', 'Apenas elaboracao e aprovacao.'],
+                ['b', 'Elaboracao, aprovacao, execucao e controle/avaliacao.'],
+                ['c', 'Somente execucao.'],
+                ['d', 'Nao ha ciclo definido.'],
+                ['e', 'Apenas controle.'],
+            ]),
+            correctId: 'b',
+            explanation: 'Ciclo orcamentario: quatro fases de planejamento ate controle.',
+        },
+        {
+            a: 'Errado: ha mais fases alem de elaboracao/aprovacao.',
+            b: 'Correto: ciclo completo com quatro etapas.',
+            c: 'Errado: execucao e apenas uma fase.',
+            d: 'Errado: ciclo e bem definido na doutrina e legislacao.',
+            e: 'Errado: controle e ultima fase, mas nao a unica.',
+        }
+    ),
+    {
+        id: 'orc-2',
+        exams: ['camara dos deputados'],
+        text: 'Empenho da despesa e:',
+        options: buildOptions([
+            ['a', 'Pagamento efetivo ao credor.'],
+            ['b', 'Primeiro estagio da despesa: reserva de dotacao orcamentaria.'],
+            ['c', 'Liquidacao da despesa.'],
+            ['d', 'Receita arrecadada.'],
+            ['e', 'Nao existe empenho.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Empenho: criacao de obrigacao e reserva de credito orcamentario (1º estagio).',
+    },
+    {
+        id: 'orc-3',
+        exams: ['camara dos deputados'],
+        text: 'A liquidacao da despesa consiste em:',
+        options: buildOptions([
+            ['a', 'Reservar credito.'],
+            ['b', 'Verificar o direito do credor apos entrega do bem/servico.'],
+            ['c', 'Efetuar o pagamento.'],
+            ['d', 'Nao existe liquidacao.'],
+            ['e', 'Elaborar orcamento.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Liquidacao: verificacao do direito adquirido pelo credor (2º estagio).',
+    },
+    {
+        id: 'orc-4',
+        exams: ['camara dos deputados'],
+        text: 'Creditos adicionais sao:',
+        options: buildOptions([
+            ['a', 'Autorizacoes de despesa nao computadas ou insuficientes na LOA.'],
+            ['b', 'Receitas extraordinarias.'],
+            ['c', 'Apenas suplementacoes.'],
+            ['d', 'Nao existem creditos adicionais.'],
+            ['e', 'Descontos fiscais.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Creditos adicionais: suplementares, especiais e extraordinarios para ajustes na LOA.',
+    },
 ]);
 
 const isUsed = (used, id) => {

@@ -7,11 +7,11 @@ export const STUDY_SUBJECTS = {
 ## Ideia Central vs Tema
 
 ** Ideia Central **: Informação principal que o autor quer transmitir(geralmente explícita)
-        ** Tema **: Assunto geral do texto(pode ser implícito)
+        **Tema**: Assunto geral do texto(pode ser implícito)
 
             ** Exemplo CESPE**:
     Texto: "O desmatamento da Amazônia cresceu 30% em 2023, segundo dados do INPE..."
-- ** Tema **: Meio ambiente / Desmatamento
+- **Tema**: Meio ambiente / Desmatamento
     - ** Ideia central **: Aumento de 30 % no desmatamento em 2023
 
         ** Como cai **: Questão pede "o texto trata principalmente de..."(ideia central) vs "o assunto abordado é..."(tema)
@@ -22,11 +22,11 @@ export const STUDY_SUBJECTS = {
 
     | Conectivo | Relação | Exemplo |
 | -----------| ---------| ---------|
-| mas, porém, contudo, todavia | ** Oposição ** | Estudou, ** mas ** não passou |
-| porque, pois, já que | ** Causa ** | Passou ** porque ** estudou |
-| portanto, logo, assim | ** Conclusão ** | Estudou, ** portanto ** passou |
-| embora, apesar de, ainda que | ** Concessão ** | ** Embora ** cansado, continuou |
-| se, caso | ** Condição ** | ** Se ** estudar, passará |
+| mas, porém, contudo, todavia | ** Oposição ** | Estudou, **mas** não passou |
+| porque, pois, já que | **Causa** | Passou **porque** estudou |
+| portanto, logo, assim | ** Conclusão ** | Estudou, **portanto** passou |
+| embora, apesar de, ainda que | ** Concessão ** | **Embora** cansado, continuou |
+| se, caso | ** Condição ** | **Se** estudar, passará |
 
 ** Pegadinha FGV / CESPE **: Trocar conectivo mantendo sentido correto
 
@@ -42,7 +42,7 @@ export const STUDY_SUBJECTS = {
 - "**Isso** é certo: você será aprovado."
     - "Foi **o seguinte** o problema: falta de planejamento."
 
-    ** Elipse ** (omissão de termo já citado):
+    **Elipse** (omissão de termo já citado):
 - "Maria estuda português. Ø Também estuda direito."(omitiu "Maria")
 
 ---
@@ -51,12 +51,12 @@ export const STUDY_SUBJECTS = {
 
     | Tipo | Objetivo | Verbos típicos | Tempo verbal |
 | ------| ----------| ----------------| --------------|
-| ** Narrativo ** | Contar fatos | aconteceu, ocorreu, disse | Pretérito |
-| ** Descritivo ** | Caracterizar | é, estava, tinha, parecia | Presente / Pretérito Imperfeito |
-| ** Dissertativo ** | Defender tese | considera - se, afirma - se, conclui - se | Presente |
-| ** Injuntivo ** | Instruir | faça, evite, não use, deve - se | Imperativo / Infinitivo |
+| **Narrativo** | Contar fatos | aconteceu, ocorreu, disse | Pretérito |
+| **Descritivo** | Caracterizar | é, estava, tinha, parecia | Presente / Pretérito Imperfeito |
+| **Dissertativo** | Defender tese | considera - se, afirma - se, conclui - se | Presente |
+| **Injuntivo** | Instruir | faça, evite, não use, deve - se | Imperativo / Infinitivo |
 
-** Importante **: Um mesmo texto pode mesclar tipos.CESPE adora cobrar isso!
+**Importante**: Um mesmo texto pode mesclar tipos.CESPE adora cobrar isso!
         `
         },
 {
@@ -82,7 +82,7 @@ export const STUDY_SUBJECTS = {
 ### 4. "Haja vista"
         - ✅ "**Haja vista** os problemas"(invariável - mais aceito)
             - ✅ "**Hajam vista** os problemas"(concordando)
-                - ** Dica **: Use no singular para evitar erro
+                - **Dica**: Use no singular para evitar erro
 
     ---
 
@@ -90,7 +90,7 @@ export const STUDY_SUBJECTS = {
 
         | Verbo | Regência | Exemplo | Pronome |
 | -------| ----------| ---------| ---------|
-| ** Assistir ** | VTD = ajudar < br > VTI(a) = presenciar, caber | Assisti ** o ** doente < br > Assisti ** ao ** filme < br >** Assiste - lhe ** julgar | o, a < br >—<br>lhe |
+| **Assistir** | VTD = ajudar<br>VTI(a) = presenciar, caber | Assisti **o** doente<br>Assisti **ao** filme<br>**Assiste-lhe** julgar | o, a<br>—<br>lhe |
         | **Aspirar** | VTD = cheirar<br>VTI (a) = desejar | Aspirou **o** ar<br>Aspira **ao** cargo | o, a<br>— |
             | **Preferir** | Preferir A **a** B | Prefiro café **a** chá | — |
             | **Visar** | VTD = mirar<br>VTI (a) = objetivar | Visou **o** alvo<br>Visa **ao** sucesso | o, a<br>— |
@@ -246,7 +246,7 @@ export const STUDY_SUBJECTS = {
                         |-----------|---------|---------------------|---------|
                         | **E** (conjunção) | ∧ | Ambas verdadeiras | "Estudo **e** passo" → V somente se ambos acontecem |
                         | **OU** (disjunção inclusiva) | ∨ | Pelo menos uma verdadeira | "Café **ou** chá" → V se pelo menos um |
-                        | **OU...OU** (disjunção exclusiva) | ⊻ | Apenas uma verdadeira | "**Ou** dia **ou** noite" → V se só um |
+                        | **OU...OU** (disjunção exclusiva) | ⊻ | Apenas uma verdadeira | "**Ou**dia**ou** noite" → V se só um |
                         | **SE...ENTÃO** (condicional) | → | Falso só quando V→F | "**Se** estudar, **então** passo" → F só se estudou e não passar |
                         | **SE E SOMENTE SE** (bicondicional) | ↔ | Ambas iguais | "A **sse** B" → V quando ambos V ou ambos F |
 
@@ -369,7 +369,7 @@ export const STUDY_SUBJECTS = {
                         - Números: 10 × 10 × 10 = 1000
                         - **Total**: 676 × 1000 = 676.000
 
-                        **Princípio Ad itivo**: OU → Soma (quando são excludentes)
+                        **Princípio Aditivo**: OU → Soma (quando são excludentes)
 
                         ---
 
@@ -427,7 +427,7 @@ export const STUDY_SUBJECTS = {
 
                         ---
 
-                        ## Prob abilidade Básica
+                        ## Probabilidade Básica
 
                         **P(A) = Casos Favoráveis / Casos Possíveis**
 
@@ -500,14 +500,14 @@ export const STUDY_SUBJECTS = {
 
                         | Comando | Função |
                         |---------|--------|
-                        | \\\dir\\\ | Listar arquivos |
-                        | \\\cd\\\ | Mudar diretório |
-                        | \\\md\\\ ou \\\mkdir\\\ | Criar pasta |
-                        | \\\copy\\\ | Copiar arquivo |
-                        | \\\move\\\ | Mover arquivo |
-                        | \\\del\\\ | Excluir arquivo |
-                        | \\\cls\\\ | Limpar tela |
-                        | \\\ipconfig\\\ | Ver configuração de rede |
+                        | dir | Listar arquivos |
+                        | cd | Mudar diretório |
+                        | md ou mkdir | Criar pasta |
+                        | copy | Copiar arquivo |
+                        | move | Mover arquivo |
+                        | del | Excluir arquivo |
+                        | cls | Limpar tela |
+                        | ipconfig | Ver configuração de rede |
 
                         ---
 
@@ -515,17 +515,17 @@ export const STUDY_SUBJECTS = {
 
                         | Comando | Função |
                         |---------|--------|
-                        | \\\ls\\\ | Listar arquivos |
-                        | \\\cd\\\ | Mudar diretório |
-                        | \\\mkdir\\\ | Criar pasta |
-                        | \\\cp\\\ | Copiar |
-                        | \\\mv\\\ | Mover/renomear |
-                        | \\\rm\\\ | Remover |
-                        | \\\chmod\\\ | Alterar permissões |
-                        | \\\ifconfig\\\ | Configuração de rede |
+                        | ls | Listar arquivos |
+                        | cd | Mudar diretório |
+                        | mkdir | Criar pasta |
+                        | cp | Copiar |
+                        | mv | Mover/renomear |
+                        | rm | Remover |
+                        | chmod | Alterar permissões |
+                        | ifconfig | Configuração de rede |
 
-                        **Permissões Linux**: \\\rwx\\\ = Read(4) + Write(2) + Execute(1)
-                        - \\\chmod 755 arquivo\\\ → Dono: rwx(7), Grupo: r-x(5), Outros: r-x(5)
+                        **Permissões Linux**: rwx = Read(4) + Write(2) + Execute(1)
+                        - chmod 755 arquivo → Dono: rwx(7), Grupo: r-x(5), Outros: r-x(5)
 
                         ---
 
@@ -599,17 +599,17 @@ export const STUDY_SUBJECTS = {
 
                         ### Função SE (Mais Cobrada!)
 
-                        **Sintaxe**: \\\= SE(teste_lógico; valor_se_verdadeiro; valor_se_falso)\\\
+                        **Sintaxe**: =SE(teste_lógico; valor_se_verdadeiro; valor_se_falso)\\\
 
-**Exemplo**: \\\= SE(A1 >= 7; "Aprovado"; "Reprovado")\\\
+**Exemplo**: =SE(A1 >= 7; "Aprovado"; "Reprovado")\\\
                         - Se A1 ≥ 7 → "Aprovado"
                         - Se A1 < 7 → "Reprovado"
 
-**SE aninhado**: \\\= SE(A1 >= 9; "Ótimo"; SE(A1 >= 7; "Bom"; "Insuficiente"))\\\
+**SE aninhado**: =SE(A1 >= 9; "Ótimo"; SE(A1 >= 7; "Bom"; "Insuficiente"))\\\
 
                         ### PROCV (★★★ Muito Cobrado)
 
-                        **Sintaxe**: \\\= PROCV(valor_procurado; tabela; número_coluna;[correspondência])\\\
+                        **Sintaxe**: =PROCV(valor_procurado; tabela; número_coluna;[correspondência])\\\
 
                         **Exemplo**:
                         Tabela:
@@ -791,7 +791,7 @@ export const STUDY_SUBJECTS = {
                         2. **Algo que você tem**: Token, cartão, celular
                         3. **Algo que você é**: Biometria (impressão digital, face, íris)
 
-                        **Autenticação Mult ifator (MFA)**: Usar 2 ou mais fatores diferentes
+                        **Autenticação Multifator (MFA)**: Usar 2 ou mais fatores diferentes
                         - Ex: Senha (sabe) + Token do celular (tem)
 
                         ---
@@ -818,7 +818,7 @@ export const STUDY_SUBJECTS = {
                         | **Encarregado (DPO)** | Canal de comunicação entre controlador, titular e ANPD |
 
                         ### Bases Legais (quando pode tratar dados)
-                        1. **Consent imento** do titular
+                        1. **Consentimento** do titular
                         2. **Cumprimento de obrigação legal**
                         3. **Execução de contrato**
                         4. **Exercício regular de direitos**
