@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const lei8112 = {
     name: 'Lei 8.112/1990 (RJU Federal)',
@@ -24,5 +24,13 @@ export const lei8112 = {
         ['Acumulação de cargos: regra?', 'Vedada salvo hipóteses constitucionais e compatibilidade.'],
         ['Deveres do servidor: exemplos?', 'Assiduidade, lealdade, urbanidade, cumprir ordens legais, zelo pelo patrimônio público.'],
         ['Proibições típicas: exemplos?', 'Valer-se do cargo para proveito pessoal; receber vantagens; atuar em gerência de empresa (conforme regras).'],
+
+        // CÂMARA - organização por conteúdo (tópicos internos para filtrar)
+        ['RJU: Provimento e posse — o que cai?', 'Formas de provimento (nomeação etc.), posse e exercício; prazos e consequências (noções).', 'Provimento/posse/exercício'],
+        ['RJU: Vacância — exemplos?', 'Exoneração, demissão, promoção, readaptação, aposentadoria e falecimento (noções).', 'Vacância'],
+        ['RJU: Deveres e proibições — resumo?', 'Deveres: zelo/assiduidade/urbanidade. Proibições: valer-se do cargo, receber vantagens, etc.', 'Deveres e proibições'],
+        ['RJU: Penalidades — quais?', 'Advertência, suspensão, demissão, cassação e destituição (conforme lei).', 'Penalidades'],
+        ['RJU: PAD e sindicância — diferença?', 'Sindicância apura e pode resultar em medidas leves/abertura de PAD; PAD é processo formal com comissão.', 'PAD/Sindicância'],
+        ['RJU: Licenças — como estudar?', 'Memorizar espécies e requisitos; banca costuma cobrar hipóteses e efeitos funcionais (noções).', 'Licenças/afastamentos'],
     ]),
 };

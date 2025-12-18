@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const ctb = {
     name: 'Código de Trânsito Brasileiro (CTB)',
@@ -32,5 +32,32 @@ export const ctb = {
         ['Distância de segurança: regra?', 'Manter distância frontal/lateral suficiente conforme velocidade e condições.'],
         ['Aquaplanagem: reação básica?', 'Tirar o pé do acelerador, segurar firme o volante e evitar freada brusca.'],
         ['Primeiros socorros: princípio?', 'Sinalizar local, acionar socorro e evitar movimentar vítima sem necessidade.'],
+
+        // DETRAN-DF - cards por tópico do edital (1+ por tópico)
+        [
+            'DETRAN: CTB — competências, princípios e infrações (essência)?',
+            'Competências dos órgãos do SNT, princípios de segurança e classificação de infrações/penalidades no CTB.',
+            'Código de Trânsito Brasileiro: competências, princípios e infrações',
+        ],
+        [
+            'DETRAN: Lei 14.071/2020 — o que mudou (ideia)?',
+            'Atualizações sobre CNH (validade), pontuação/suspensão e regras de processos/recursos (cobrado como noção).',
+            'Lei 14.071/2020 e atualizações sobre validade da CNH, pontuação e recursos',
+        ],
+        [
+            'DETRAN: Infrações, penalidades e medidas administrativas — diferença?',
+            'Penalidade pune (multa/suspensão); medida administrativa é providência imediata (retenção/remoção etc.).',
+            'Infrações, penalidades e medidas administrativas com foco em fiscalização',
+        ],
+        [
+            'DETRAN: Processos administrativos e recursos — caminho típico?',
+            'Defesa prévia e recursos nas instâncias administrativas (JARI/Conselhos), conforme regras do CTB/CONTRAN.',
+            'Processos administrativos de trânsito e recursos',
+        ],
+        [
+            'DETRAN: Resoluções do CONTRAN — por que caem?',
+            'Detalham e atualizam regras do CTB (procedimentos, equipamentos, prazos); prova cobra noções e atualizações.',
+            'Resoluções do CONTRAN e normas complementares mais recentes',
+        ],
     ]),
 };

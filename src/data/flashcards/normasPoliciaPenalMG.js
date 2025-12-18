@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const normasPoliciaPenalMG = {
     name: 'Normas da Polícia Penal de MG (Noções)',
@@ -15,4 +15,3 @@ export const normasPoliciaPenalMG = {
         ['Gestão de crise: primeiros passos?', 'Acionar plano, comando único, preservar vidas e reduzir danos.'],
     ]),
 };
-

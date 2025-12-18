@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const estatutoServidorMG = {
     name: 'Estatuto do Servidor de MG (Noções)',
@@ -15,4 +15,3 @@ export const estatutoServidorMG = {
         ['Responsabilidade: esferas?', 'Administrativa, civil e penal.'],
     ]),
 };
-

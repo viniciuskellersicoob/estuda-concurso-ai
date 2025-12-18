@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const arquivologia = {
     name: 'Arquivologia',
@@ -17,4 +17,3 @@ export const arquivologia = {
         ['Cadeia de custódia (documentos/evidências)?', 'Registro de posse/manuseio para garantir integridade e confiabilidade.'],
     ]),
 };
-

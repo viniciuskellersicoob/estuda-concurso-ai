@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Shuffle, ChevronLeft, ChevronRight, BookOpen, Brain } from 'lucide-react';
 import { Layout } from '../components/Layout';
@@ -9,6 +9,8 @@ export function Flashcards() {
     const navigate = useNavigate();
     const [selectedExam, setSelectedExam] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
+    const [selectedTopic, setSelectedTopic] = useState('all');
+    const [allCards, setAllCards] = useState([]);
     const [cards, setCards] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
@@ -21,12 +23,34 @@ export function Flashcards() {
     useEffect(() => {
         if (selectedExam && selectedSubject) {
             const flashcards = getFlashcards(selectedExam, selectedSubject);
-            setCards(shuffleFlashcards(flashcards));
+            const shuffled = shuffleFlashcards(flashcards);
+            setAllCards(shuffled);
+            setCards(shuffled);
             setCurrentIndex(0);
             setIsFlipped(false);
             setStudied(new Set());
+            setSelectedTopic('all');
         }
     }, [selectedExam, selectedSubject]);
+
+    const availableTopics = useMemo(() => {
+        const topicSet = new Set();
+        allCards.forEach((card) => {
+            if (card.topic) topicSet.add(card.topic);
+        });
+        return Array.from(topicSet).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    }, [allCards]);
+
+    useEffect(() => {
+        if (!selectedExam || !selectedSubject) return;
+        if (!allCards || allCards.length === 0) return;
+
+        const filtered = selectedTopic === 'all' ? allCards : allCards.filter((card) => card.topic === selectedTopic);
+        setCards(shuffleFlashcards(filtered));
+        setCurrentIndex(0);
+        setIsFlipped(false);
+        setStudied(new Set());
+    }, [selectedTopic, selectedExam, selectedSubject, allCards]);
 
     const currentCard = cards[currentIndex];
     const progress = cards.length > 0 ? Math.round(((currentIndex + 1) / cards.length) * 100) : 0;
@@ -47,7 +71,8 @@ export function Flashcards() {
     };
 
     const handleShuffle = () => {
-        setCards(shuffleFlashcards([...cards]));
+        const base = selectedTopic === 'all' ? allCards : allCards.filter((card) => card.topic === selectedTopic);
+        setCards(shuffleFlashcards([...base]));
         setCurrentIndex(0);
         setIsFlipped(false);
         setStudied(new Set());
@@ -62,11 +87,15 @@ export function Flashcards() {
     const handleBackToExams = () => {
         setSelectedExam(null);
         setSelectedSubject(null);
+        setSelectedTopic('all');
+        setAllCards([]);
         setCards([]);
     };
 
     const handleBackToSubjects = () => {
         setSelectedSubject(null);
+        setSelectedTopic('all');
+        setAllCards([]);
         setCards([]);
     };
 
@@ -175,6 +204,33 @@ export function Flashcards() {
                         </div>
                     ) : (
                         <>
+                            {/* Filtro por tópico (quando houver tags) */}
+                            {availableTopics.length > 0 && (
+                                <div className="mb-4 md:mb-6">
+                                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+                                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                                            <BookOpen className="w-4 h-4" />
+                                            <span className="font-medium">Filtrar por tópico</span>
+                                        </div>
+                                        <select
+                                            value={selectedTopic}
+                                            onChange={(e) => setSelectedTopic(e.target.value)}
+                                            className="w-full sm:w-auto px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+                                        >
+                                            <option value="all">Todos os tópicos ({allCards.length})</option>
+                                            {availableTopics.map((topic) => {
+                                                const count = allCards.filter((c) => c.topic === topic).length;
+                                                return (
+                                                    <option key={topic} value={topic}>
+                                                        {topic} ({count})
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Progress */}
                             <div className="mb-4">
                                 <div className="flex items-center justify-between text-xs md:text-sm mb-2">
@@ -221,6 +277,13 @@ export function Flashcards() {
                                             <div className="inline-block px-3 py-1 bg-green-500/20 rounded-full text-xs font-medium text-green-600 dark:text-green-400 mb-4">
                                                 Resposta
                                             </div>
+                                            {currentCard?.topic && (
+                                                <div className="mb-3">
+                                                    <span className="inline-block px-3 py-1 bg-purple-500/15 border border-purple-500/20 rounded-full text-xs font-medium text-purple-700 dark:text-purple-300">
+                                                        Tópico: {currentCard.topic}
+                                                    </span>
+                                                </div>
+                                            )}
                                             <p className="text-base md:text-lg lg:text-xl text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
                                                 {currentCard?.back}
                                             </p>

@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const leiExecucaoPenal = {
     name: 'Lei de Execução Penal (LEP)',

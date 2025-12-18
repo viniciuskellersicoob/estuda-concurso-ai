@@ -32,6 +32,13 @@ import {
     raciocinioLogico,
     estatutoPMDF,
     estatutoServidorMG,
+    legislacaoPenalEspecial,
+    usoProgressivoForca,
+    primeirosSocorros,
+    sinalizacaoViaria,
+    processoLegislativo,
+    gestaoContratos,
+    improbidadeAdm,
 } from './flashcards/index.js';
 
 export const FLASHCARD_DATABASE = {
@@ -68,6 +75,13 @@ export const FLASHCARD_DATABASE = {
     'constituicao-mg': constituicaoMG,
     'estatuto-servidor-mg': estatutoServidorMG,
     'normas-policia-penal-mg': normasPoliciaPenalMG,
+    'legislacao-penal-especial': legislacaoPenalEspecial,
+    'uso-progressivo-forca': usoProgressivoForca,
+    'primeiros-socorros': primeirosSocorros,
+    'sinalizacao-viaria': sinalizacaoViaria,
+    'processo-legislativo': processoLegislativo,
+    'gestao-contratos': gestaoContratos,
+    'improbidade-adm': improbidadeAdm,
 };
 
 export const EXAM_CONFIG = {

@@ -41,7 +41,17 @@ const enhanceQuestion = (question, slug, index) => {
 function registerQuestions(aliases, questions) {
     aliases.forEach((alias) => {
         const slug = slugify(alias) || 'geral';
-        QUESTION_BANK[slug] = questions.map((question, index) => enhanceQuestion(question, slug, index));
+        const existing = QUESTION_BANK[slug] || [];
+        const enhanced = questions.map((question, index) => enhanceQuestion(question, slug, existing.length + index));
+        const merged = [...existing, ...enhanced];
+        const deduped = [];
+        const seenIds = new Set();
+        for (const q of merged) {
+            if (seenIds.has(q.id)) continue;
+            seenIds.add(q.id);
+            deduped.push(q);
+        }
+        QUESTION_BANK[slug] = deduped;
     });
 }
 
@@ -3332,6 +3342,332 @@ registerQuestions(['Normas da Policia Penal de MG', 'Normas Policia Penal MG'], 
 
 ]);
 
+// ETICA - EXPANSAO
+registerQuestions(['Etica no Servico Publico', 'Etica'], [
+    {
+        id: 'exp-etica-1',
+        exams: ['detran df', 'camara dos deputados', 'pmdf', 'policia penal mg'],
+        topic: 'Conflito de interesses e deveres funcionais',
+        text: 'Configura exemplo TIPICO de conflito de interesses no serviÃ§o publico:',
+        options: buildOptions([
+            ['a', 'Servidor participar de curso de capacitaÃ§ao.'],
+            ['b', 'Servidor fiscalizar processo em que possui interesse pessoal direto.'],
+            ['c', 'Servidor cumprir jornada regular.'],
+            ['d', 'Servidor registrar ponto corretamente.'],
+            ['e', 'Servidor atender o cidadÃ£o com urbanidade.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Ha risco de parcialidade e beneficio privado; o correto e declarar impedimento/suspeiÃ§ao conforme normas aplicaveis.',
+    },
+]);
+
+// CTB / LEGISLACAO DE TRANSITO - EXPANSAO
+registerQuestions(['Legislacao de Transito', 'Codigo de Transito Brasileiro'], [
+    {
+        id: 'exp-ctb-1',
+        exams: ['detran df'],
+        topic: 'InfraÃ§oes, penalidades e medidas administrativas',
+        text: 'No CTB, penalidade e medida administrativa se diferenciam porque:',
+        options: buildOptions([
+            ['a', 'Sao sinonimos perfeitos.'],
+            ['b', 'Penalidade tem carater sancionatorio; medida administrativa e providencia imediata/operacional.'],
+            ['c', 'Medida administrativa depende sempre de decisao judicial.'],
+            ['d', 'Penalidade nunca gera pontuaÃ§ao.'],
+            ['e', 'Medida administrativa so existe para crimes de transito.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Penalidade pune (multa, suspensao etc.); medida administrativa e acao de fiscalizacao (retenÃ§ao, remoÃ§ao, recolhimento).',
+    },
+    {
+        id: 'exp-ctb-2',
+        exams: ['detran df'],
+        topic: 'Processo administrativo e recursos',
+        text: 'Em regra, o direito de defesa no processo de transito envolve:',
+        options: buildOptions([
+            ['a', 'Somente recurso ao Judiciario.'],
+            ['b', 'Defesa previa e recursos nas instancias administrativas (ex.: JARI e CETRAN/CONTRANDIFE).'],
+            ['c', 'Apenas pagamento imediato sem possibilidade de recurso.'],
+            ['d', 'Recurso unico e definitivo ao agente autuador.'],
+            ['e', 'Nao existe contraditorio no transito.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'O CTB e normas do sistema preveem contraditorio e ampla defesa, com instancias administrativas (p. ex., JARI).',
+    },
+]);
+
+// LODF / LEGISLACAO DF - EXPANSAO
+registerQuestions(['Lei Organica do DF', 'LODF'], [
+    {
+        id: 'exp-lodf-1',
+        exams: ['detran df'],
+        topic: 'Transparencia e controle social',
+        text: 'A ideia de controle social na administraÃ§ao publica distrital se relaciona principalmente a:',
+        options: buildOptions([
+            ['a', 'Sigilo absoluto de atos administrativos.'],
+            ['b', 'ParticipaÃ§ao cidadÃ£ e mecanismos de transparÃªncia e prestaÃ§ao de contas.'],
+            ['c', 'Dispensa de publicaÃ§ao oficial.'],
+            ['d', 'SubstituiÃ§ao do controle interno pelo privado.'],
+            ['e', 'EliminaÃ§ao do controle externo.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Controle social envolve participaÃ§ao, transparÃªncia, acesso Ã  informaÃ§ao e fiscalizaÃ§ao pela sociedade.',
+    },
+]);
+
+// DIREITO PENAL - EXPANSAO
+registerQuestions(['Direito Penal'], [
+    {
+        id: 'exp-penal-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Concurso de pessoas',
+        text: 'Sobre concurso de pessoas, assinale a alternativa CORRETA.',
+        options: buildOptions([
+            ['a', 'Exige sempre autoria mediata.'],
+            ['b', 'Nao admite participaÃ§ao.'],
+            ['c', 'Regra geral: quem concorre para o crime responde na medida de sua culpabilidade.'],
+            ['d', 'Somente o autor responde; o partÃ­cipe nunca.'],
+            ['e', 'Sempre que houver 2 pessoas, ha concurso de crimes.'],
+        ]),
+        correctId: 'c',
+        explanation:
+            'No CP, a regra geral e a responsabilidade na medida da culpabilidade; avaliam-se condutas, liame subjetivo e relevÃ¢ncia causal.',
+    },
+    {
+        id: 'exp-penal-2',
+        exams: ['pmdf'],
+        topic: 'Excludentes de ilicitude',
+        text: 'Ã‰ exemplo classico de estado de necessidade:',
+        options: buildOptions([
+            ['a', 'Agente pratica crime por vinganÃ§a.'],
+            ['b', 'Agente destrÃ³i bem alheio para salvar pessoa de perigo atual inevitavel.'],
+            ['c', 'Agente age por preconceito.'],
+            ['d', 'Agente age para obter vantagem.'],
+            ['e', 'Agente age por erro de proibiÃ§ao inevitavel.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Estado de necessidade: sacrifica-se bem de menor valor para salvar direito proprio/alheio de perigo atual nÃ£o provocado.',
+    },
+]);
+
+// PROCESSO PENAL - EXPANSAO
+registerQuestions(['Direito Processual Penal'], [
+    {
+        id: 'exp-pp-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'PrisÃµes e medidas cautelares',
+        text: 'A prisao preventiva, em regra, depende de:',
+        options: buildOptions([
+            ['a', 'Apenas vontade do delegado, sem controle judicial.'],
+            ['b', 'Decisao judicial fundamentada e requisitos legais (fumus comissi delicti e periculum libertatis).'],
+            ['c', 'Somente do clamor pÃºblico.'],
+            ['d', 'Denuncia recebida e condenaÃ§ao transitada em julgado.'],
+            ['e', 'Pagamento de fianÃ§a obrigatoria.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'A preventiva e medida excepcional, decretada pelo juiz com fundamentaÃ§ao e requisitos/hipoteses legais.',
+    },
+    {
+        id: 'exp-pp-2',
+        exams: ['policia penal mg'],
+        topic: 'Cadeia de custodia',
+        text: 'A cadeia de custodia da prova serve principalmente para:',
+        options: buildOptions([
+            ['a', 'Aumentar a pena do acusado.'],
+            ['b', 'Garantir rastreabilidade e integridade da evidencia desde a coleta ate o julgamento.'],
+            ['c', 'Dispensar pericia.'],
+            ['d', 'Evitar contraditorio.'],
+            ['e', 'Substituir o inquerito policial.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Cadeia de custodia documenta manipulaÃ§oes/transferencias e reduz risco de contaminaÃ§ao/impugnaÃ§ao da prova.',
+    },
+]);
+
+// DIREITOS HUMANOS - EXPANSAO
+registerQuestions(['Direitos Humanos'], [
+    {
+        id: 'exp-dh-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Uso da forca e protecao de vulneraveis',
+        text: 'Em abordagem com pessoa em situaÃ§ao de vulnerabilidade (ex.: transtorno mental), a diretriz mais adequada e:',
+        options: buildOptions([
+            ['a', 'Escalonar para forca letal desde o inicio para garantir controle.'],
+            ['b', 'Adotar tÃ©cnicas de desescalada, proporcionalidade e acionar apoio especializado quando cabivel.'],
+            ['c', 'Ignorar protocolos e atuar por intuiÃ§ao.'],
+            ['d', 'Dispensar comunicaÃ§ao verbal e partir para contenÃ§ao fisica imediata.'],
+            ['e', 'Evitar qualquer intervenÃ§ao mesmo com risco concreto.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Direitos humanos e boas praticas indicam desescalada, proporcionalidade e minimizaÃ§ao de danos, com registro e supervisao.',
+    },
+]);
+
+// CRIMINOLOGIA - EXPANSAO
+registerQuestions(['Criminologia'], [
+    {
+        id: 'exp-crim-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Vitimologia e controle social',
+        text: 'A vitimologia, em criminologia, estuda principalmente:',
+        options: buildOptions([
+            ['a', 'Apenas o autor do delito.'],
+            ['b', 'A vitima, sua participaÃ§ao, vulnerabilidades e relaÃ§ao com o sistema de justiÃ§a.'],
+            ['c', 'Somente estatistica de crimes patrimoniais.'],
+            ['d', 'Apenas a legislaÃ§ao penal.'],
+            ['e', 'Somente a execuÃ§ao penal.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Vitimologia analisa vitimaÃ§ao, perfis, relaÃ§ao autor-vitima e respostas institucionais.',
+    },
+]);
+
+// REGIMENTO / CAMARA - EXPANSAO
+registerQuestions(['Regimento Interno da Camara dos Deputados', 'Regimento Camara'], [
+    {
+        id: 'exp-ricd-1',
+        exams: ['camara dos deputados'],
+        topic: 'Processo legislativo interno',
+        text: 'Em regra, o regimento interno disciplina o trÃ¢mite de proposiÃ§oes (como projetos) por meio de:',
+        options: buildOptions([
+            ['a', 'Atos jurisdicionais do STF.'],
+            ['b', 'Fases e Ã³rgÃ£os internos (comissoes, plenÃ¡rio) com prazos e formas de deliberaÃ§ao.'],
+            ['c', 'Decretos do Executivo.'],
+            ['d', 'Portarias municipais.'],
+            ['e', 'Apenas decisao monocratica do presidente da Casa.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Regimento organiza rito, comissoes, relatorias, pareceres, votaÃ§oes e prazos no Ã¢mbito da Casa.',
+    },
+]);
+
+// AFO - EXPANSAO
+registerQuestions(['Administracao Financeira e Orcamentaria', 'AFO'], [
+    {
+        id: 'exp-afo-1',
+        exams: ['camara dos deputados'],
+        topic: 'PPA, LDO e LOA',
+        text: 'A relaÃ§ao correta entre PPA, LDO e LOA Ã©:',
+        options: buildOptions([
+            ['a', 'A LOA define diretrizes para o PPA.'],
+            ['b', 'A LDO orienta a elaboraÃ§ao da LOA e conecta com metas/prioridades do PPA.'],
+            ['c', 'O PPA Ã© anual e a LOA Ã© plurianual.'],
+            ['d', 'A LDO substitui a LOA.'],
+            ['e', 'Nenhum instrumento se relaciona.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'PPA Ã© planejamento plurianual; LDO define metas/prioridades e orienta a LOA; LOA estima receita e fixa despesa anual.',
+    },
+]);
+
+// ESTATUTO/REGULAMENTO PMDF - EXPANSAO
+registerQuestions(['Estatuto dos Policiais Militares do DF', 'Estatuto PMDF'], [
+    {
+        id: 'exp-est-pmdf-1',
+        exams: ['pmdf'],
+        topic: 'Hierarquia e disciplina',
+        text: 'No contexto militar, hierarquia e disciplina se relacionam porque:',
+        options: buildOptions([
+            ['a', 'Hierarquia Ã© opcional e disciplina Ã© irrelevante.'],
+            ['b', 'Hierarquia organiza a cadeia de comando; disciplina Ã© observancia das normas e ordens legais.'],
+            ['c', 'Disciplina elimina deveres funcionais.'],
+            ['d', 'Hierarquia impede qualquer recurso ou revisao.'],
+            ['e', 'Nao ha relaÃ§ao entre elas.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Hierarquia estrutura autoridade; disciplina garante cumprimento das normas e ordens legais, essenciais Ã  organizaÃ§ao militar.',
+    },
+]);
+
+registerQuestions(['Regulamento Disciplinar da PMDF', 'RDP/PMDF'], [
+    {
+        id: 'exp-rdpmdf-1',
+        exams: ['pmdf'],
+        topic: 'TransgressÃµes e processo disciplinar',
+        text: 'Em processo/rito disciplinar, a garantia essencial ao acusado e:',
+        options: buildOptions([
+            ['a', 'Ausencia total de defesa para preservar disciplina.'],
+            ['b', 'Contraditorio e ampla defesa, com possibilidade de recurso nos termos do regulamento.'],
+            ['c', 'Julgamento secreto sem motivacao.'],
+            ['d', 'Pena automatica por presuncao.'],
+            ['e', 'ProibiÃ§ao de apresentar prova.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Mesmo no Ã¢mbito disciplinar, asseguram-se garantias como defesa e recurso, observados os ritos previstos.',
+    },
+]);
+
+// CONSTITUICAO/ESTATUTO SERVIDOR MG - EXPANSAO
+registerQuestions(['Constituicao do Estado de MG', 'Constituicao Estadual MG'], [
+    {
+        id: 'exp-cemg-1',
+        exams: ['policia penal mg'],
+        topic: 'OrganizaÃ§ao do Estado (noÃ§oes)',
+        text: 'Em linhas gerais, a constituiÃ§ao estadual trata de:',
+        options: buildOptions([
+            ['a', 'Apenas direito penal.'],
+            ['b', 'OrganizaÃ§ao dos poderes no Ã¢mbito do estado, administraÃ§ao, direitos e garantias, entre outros temas.'],
+            ['c', 'Somente normas municipais.'],
+            ['d', 'Apenas tratados internacionais.'],
+            ['e', 'Somente execuÃ§ao penal.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'ConstituiÃ§oes estaduais organizam poderes/estruturas estaduais e regras administrativas, dentro dos limites da CF.',
+    },
+]);
+
+registerQuestions(['Estatuto do Servidor Publico de MG', 'Estatuto Servidor MG'], [
+    {
+        id: 'exp-esmg-1',
+        exams: ['policia penal mg'],
+        topic: 'Deveres e responsabilidades',
+        text: 'Em estatutos de servidores, e regra geral:',
+        options: buildOptions([
+            ['a', 'Servidor nao pode sofrer responsabilizaÃ§ao disciplinar.'],
+            ['b', 'Deveres funcionais e vedaÃ§oes, com apuraÃ§ao por processo administrativo e direito de defesa.'],
+            ['c', 'So existe responsabilidade civil; nunca administrativa.'],
+            ['d', 'PuniÃ§oes independem de motivacao.'],
+            ['e', 'NÃ£o ha hipoteses de afastamento/licenÃ§a.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Estatutos disciplinam deveres, proibicoes, responsabilidades e ritos de apuraÃ§ao, com garantias procedimentais.',
+    },
+]);
+
+// LEGISLACAO PENAL ESPECIAL - EXPANSAO
+registerQuestions(['Legislacao Penal Especial'], [
+    {
+        id: 'exp-lpe-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Lei 11.343/2006 (drogas): diferenciaÃ§ao usuÃ¡rio x trÃ¡fico',
+        text: 'Na Lei de Drogas, a distinÃ§ao entre usuÃ¡rio e trÃ¡fico, em regra, considera:',
+        options: buildOptions([
+            ['a', 'Apenas a confissao do agente.'],
+            ['b', 'Elementos do caso concreto (quantidade, circunstÃ¢ncias, local, condiÃ§oes, antecedentes, conduta).'],
+            ['c', 'Somente a opiniÃ£o da vitima.'],
+            ['d', 'Sempre a quantidade fixa em gramas definida em lei federal.'],
+            ['e', 'Apenas a renda do agente.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'A lei/doutrina/jurisprudÃªncia apontam analise do caso concreto; nÃ£o ha quantidade fixa universal em lei para separar usuÃ¡rio de trÃ¡fico.',
+    },
+]);
+
 // ========================================================================================================
 // LEGISLAÇÃO ESPECIAL - EDITAL DEPEN MG (165 questões)
 // ========================================================================================================
@@ -4196,6 +4532,1061 @@ registerQuestions(['Administracao Orcamentaria', 'AFO', 'Orcamento Publico'], [
     },
 ]);
 
+// =====================================================================
+// EXPANSAO DE QUESTOES (por concurso/materia/topico)
+// Objetivo: aumentar variedade e permitir filtragem por topicos (quando selecionados no setup).
+// =====================================================================
+
+// LINGUA PORTUGUESA - EXPANSAO
+registerQuestions(['Lingua Portuguesa', 'LÃ­ngua Portuguesa'], [
+    withFeedback(
+        {
+            id: 'exp-lp-1',
+            exams: ['pmdf'],
+            topic: 'Pontuacao',
+            text: 'Assinale a alternativa em que o uso da virgula esta CORRETO segundo a norma-padrao.',
+            options: buildOptions([
+                ['a', 'Os candidatos, estudaram por meses para a prova.'],
+                ['b', 'Se necessario, o comando acionara reforco.'],
+                ['c', 'A equipe, chegou cedo e iniciou o briefing.'],
+                ['d', 'A banca, geralmente cobra, coesao e coerencia.'],
+                ['e', 'Embora cansado, e sem tempo, ele continuou.'],
+            ]),
+            correctId: 'b',
+            explanation:
+                'A virgula pode separar adjunto adverbial anteposto (\"Se necessario,\"). As demais trazem separacao indevida entre sujeito e verbo, ou excesso de virgulas.',
+        },
+        {
+            a: 'Errado: nao se separa sujeito (Os candidatos) do verbo (estudaram).',
+            b: 'Correto: adjunto adverbial curto/medio anteposto pode vir isolado por virgula.',
+            c: 'Errado: separacao indevida entre sujeito e verbo.',
+            d: 'Errado: virgulas desnecessarias quebram a estrutura (sujeito-verbo-objeto).',
+            e: 'Errado: ha excesso de virgulas sem justificativa sintatica clara.',
+        }
+    ),
+    {
+        id: 'exp-lp-2',
+        exams: ['camara dos deputados'],
+        topic: 'Coesao e coerencia',
+        text: 'Em um texto oficial, qual escolha melhora a COESAO por retomada adequada, evitando repeticao?',
+        options: buildOptions([
+            ['a', 'O servidor enviou o relatorio. O servidor anexou o comprovante.'],
+            ['b', 'O servidor enviou o relatorio. Ele anexou o comprovante.'],
+            ['c', 'O servidor enviou o relatorio. Portanto, o relatorio e servidor.'],
+            ['d', 'O servidor enviou o relatorio. Logo, o comprovante e o servidor.'],
+            ['e', 'O servidor enviou o relatorio. Todavia, o relatorio enviou o servidor.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'A retomada por pronome (ele) evita repeticao e mantem a referencia correta, reforcando coesao textual.',
+    },
+    {
+        id: 'exp-lp-3',
+        exams: ['detran df'],
+        topic: 'Regencia e crase',
+        text: 'Assinale a alternativa em que o uso de crase esta CORRETO.',
+        options: buildOptions([
+            ['a', 'O agente se dirigiu a a autoridade competente.'],
+            ['b', 'O servidor compareceu a reuniao de alinhamento.'],
+            ['c', 'O recurso foi encaminhado a Procuradoria.'],
+            ['d', 'O condutor obedeceu Ã  sinalizacao e reduziu a velocidade.'],
+            ['e', 'A equipe retornou a base rapidamente.'],
+        ]),
+        correctId: 'd',
+        explanation:
+            'Ha fusao de preposicao (a) + artigo feminino (a) em \"Ã  sinalizacao\". Nas demais, falta artigo, ha duplicacao, ou o termo nao exige artigo.',
+    },
+]);
+
+// RACIOCINIO LOGICO - EXPANSAO
+registerQuestions(['Raciocinio Logico', 'Matematica e Raciocinio Logico', 'Raciocinio Logico-Matematico'], [
+    {
+        id: 'exp-rl-1',
+        exams: ['pmdf'],
+        topic: 'Porcentagem e regra de tres',
+        text: 'Um pelotao tinha 120 policiais. Em uma operacao, 15% ficaram na reserva. Quantos atuaram na linha de frente?',
+        options: buildOptions([
+            ['a', '18'],
+            ['b', '90'],
+            ['c', '96'],
+            ['d', '102'],
+            ['e', '108'],
+        ]),
+        correctId: 'd',
+        explanation: '15% de 120 = 18. Linha de frente = 120 - 18 = 102.',
+    },
+    {
+        id: 'exp-rl-2',
+        exams: ['policia penal mg'],
+        topic: 'Proposicoes, conectivos e equivalencias',
+        text: 'A negacao da proposicao \"Se ha revista, entao ha registro\" (p -> q) e:',
+        options: buildOptions([
+            ['a', 'p -> ~q'],
+            ['b', '~p -> ~q'],
+            ['c', 'p ^ ~q'],
+            ['d', '~p v q'],
+            ['e', '~p ^ q'],
+        ]),
+        correctId: 'c',
+        explanation: 'A negacao de (p -> q) e (p ^ ~q): p verdadeiro e q falso.',
+    },
+]);
+
+// NOCOES DE INFORMATICA - EXPANSAO
+registerQuestions(['Nocoes de Informatica', 'Informatica'], [
+    {
+        id: 'exp-inf-1',
+        exams: ['camara dos deputados'],
+        topic: 'Seguranca da informacao (phishing, senhas, backup)',
+        text: 'Um e-mail aparenta ser do \"suporte\" pedindo senha para \"validar conta\". Essa situacao caracteriza tipicamente:',
+        options: buildOptions([
+            ['a', 'DoS.'],
+            ['b', 'Ransomware.'],
+            ['c', 'Phishing.'],
+            ['d', 'Sniffing em rede cabeada.'],
+            ['e', 'DLP (prevenÃ§ao de perda de dados).'],
+        ]),
+        correctId: 'c',
+        explanation: 'Phishing tenta induzir a vitima a revelar credenciais ou dados por engenharia social.',
+    },
+    {
+        id: 'exp-inf-2',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Cadeia de custodia digital (boas praticas)',
+        text: 'Ao coletar evidencias digitais (ex.: imagens/arquivos), qual pratica melhora a confiabilidade (integridade) do material?',
+        options: buildOptions([
+            ['a', 'Editar o arquivo para reduzir tamanho antes de armazenar.'],
+            ['b', 'Gerar hash (ex.: SHA-256) e registrar em termo, mantendo copia imutavel.'],
+            ['c', 'Compartilhar o arquivo em grupos de mensagem para facilitar acesso.'],
+            ['d', 'Renomear o arquivo e sobrescrever o original para organizar.'],
+            ['e', 'Converter o arquivo para outro formato para \"padronizar\".'],
+        ]),
+        correctId: 'b',
+        explanation: 'Hash + registro formal permite verificar integridade e rastreabilidade (cadeia de custodia).',
+    },
+]);
+
+// DIREITO CONSTITUCIONAL - EXPANSAO
+registerQuestions(['Direito Constitucional'], [
+    {
+        id: 'exp-const-1',
+        exams: ['pmdf'],
+        topic: 'Seguranca publica (art. 144)',
+        text: 'Nos termos do art. 144 da CF, a seguranca publica e dever do Estado, direito e responsabilidade de todos e e exercida para a preservacao:',
+        options: buildOptions([
+            ['a', 'Apenas da propriedade.'],
+            ['b', 'Da ordem publica e da incolumidade das pessoas e do patrimonio.'],
+            ['c', 'Somente da ordem economica.'],
+            ['d', 'Da soberania nacional e apenas.'],
+            ['e', 'Exclusivamente da incolumidade do patrimonio.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Texto constitucional: preservacao da ordem publica e da incolumidade das pessoas e do patrimonio.',
+    },
+    {
+        id: 'exp-const-2',
+        exams: ['camara dos deputados'],
+        topic: 'Processo legislativo (art. 59 a 69)',
+        text: 'Conforme a CF/88, integram o processo legislativo (art. 59), entre outros:',
+        options: buildOptions([
+            ['a', 'Decretos judiciais e sentencas.'],
+            ['b', 'Leis ordinarias, leis complementares, emendas constitucionais e medidas provisoria.'],
+            ['c', 'Resolucao do CNJ e recomendacoes.'],
+            ['d', 'Portarias e instrucao normativa.'],
+            ['e', 'Apenas leis ordinarias.'],
+        ]),
+        correctId: 'b',
+        explanation: 'O art. 59 lista especies normativas (inclui EC, LC, LO, MP, DL, resolucoes, etc.).',
+    },
+]);
+
+// LEP / NORMAS MG - EXPANSAO
+registerQuestions(['Lei de Execucao Penal', 'LEP', 'Lei de ExecuÃ§Ã£o Penal'], [
+    {
+        id: 'exp-lep-1',
+        exams: ['policia penal mg'],
+        topic: 'Direitos e deveres do preso',
+        text: 'Em linhas gerais, a LEP assegura ao preso, entre outros direitos:',
+        options: buildOptions([
+            ['a', 'Escolher livremente o regime de cumprimento.'],
+            ['b', 'Integridade fisica e moral e assistencias previstas em lei.'],
+            ['c', 'Dispensa de disciplina interna.'],
+            ['d', 'Inexistencia de sancoes disciplinares.'],
+            ['e', 'Ausencia de fiscalizacao estatal.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A LEP garante integridade e assistencias (material, saude, juridica, educacional, social, religiosa), entre outras.',
+    },
+]);
+
+registerQuestions(['Normas da Policia Penal de MG', 'Normas Policia Penal MG'], [
+    {
+        id: 'exp-ppm-mg-1',
+        exams: ['policia penal mg'],
+        topic: 'Uso progressivo da forca',
+        text: 'Em protocolos de uso progressivo da forca, a medida correta e:',
+        options: buildOptions([
+            ['a', 'Aplicar sempre a forca maxima para evitar risco.'],
+            ['b', 'Adequar nivel de forca a resistencia/ameaÃ§a, com proporcionalidade e registro.'],
+            ['c', 'Dispensar registro para preservar a equipe.'],
+            ['d', 'Usar algemas sempre, independentemente de risco.'],
+            ['e', 'Evitar qualquer intervenÃ§ao, mesmo em agressao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Padrao: legalidade, necessidade, proporcionalidade, e dever de registrar/justificar o uso da forca.',
+    },
+]);
+
+// =====================================================================
+// LOTE 2: QUESTOES ADICIONAIS (60 questoes - todas materias/topicos)
+// =====================================================================
+
+// DIREITO ADMINISTRATIVO - mais questoes
+registerQuestions(['Direito Administrativo'], [
+    {
+        id: 'exp2-adm-1',
+        exams: ['pmdf', 'policia penal mg', 'detran df', 'camara dos deputados'],
+        topic: 'Atos administrativos',
+        text: 'Ato administrativo VINCULADO difere do DISCRICIONARIO porque:',
+        options: buildOptions([
+            ['a', 'Vinculado permite escolha de conveniencia; discricionario nao.'],
+            ['b', 'Vinculado: lei define tudo; discricionario: margem escolha (conveniencia/oportunidade) dentro da lei.'],
+            ['c', 'Ambos sao identicos.'],
+            ['d', 'Discricionario e sempre ilegal.'],
+            ['e', 'Vinculado nunca pode ser anulado.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Vinculado: sem margem escolha. Discricionario: administrador escolhe dentro limites legais (merito administrativo).',
+    },
+    {
+        id: 'exp2-adm-2',
+        exams: ['camara dos deputados'],
+        topic: 'Licitacao',
+        text: 'Pregao e modalidade licitatoria que se caracteriza por:',
+        options: buildOptions([
+            ['a', 'Complexidade tecnica alta e obras acima R$10 milhoes.'],
+            ['b', 'Bens/servicos comuns, menor preco, fases invertidas (proposta antes habilitacao).'],
+            ['c', 'Trabalho tecnico/artistico com premiacao.'],
+            ['d', 'Alienacao de bens publicos por leilao.'],
+            ['e', 'Somente para contratacao de pessoal.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Pregao: bens/servicos comuns (padroes mercado), menor preco, sequencia invertida (proposta → habilitacao).',
+    },
+]);
+
+// AFO - mais questoes
+registerQuestions(['AFO', 'Administracao Financeira e Orcamentaria'], [
+    {
+        id: 'exp2-afo-1',
+        exams: ['camara dos deputados'],
+        topic: 'Ciclo orcamentario',
+        text: 'O ciclo orcamentario compreende, em linhas gerais:',
+        options: buildOptions([
+            ['a', 'Apenas elaboracao do PPA.'],
+            ['b', 'Elaboracao (Executivo), apreciacao (Legislativo), execucao, controle/avaliacao.'],
+            ['c', 'Somente execucao da despesa.'],
+            ['d', 'Apenas controle externo (TCU).'],
+            ['e', 'Nao ha fases; tudo e simultaneo.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Ciclo: elaboracao → discussao/aprovacao → execucao → controle/fiscalizacao (interno/externo).',
+    },
+    {
+        id: 'exp2-afo-2',
+        exams: ['camara dos deputados'],
+        topic: 'Despesa publica',
+        text: 'A despesa publica passa por estagios. Qual a ordem correta?',
+        options: buildOptions([
+            ['a', 'Empenho → Liquidacao → Pagamento.'],
+            ['b', 'Pagamento → Empenho → Liquidacao.'],
+            ['c', 'Liquidacao → Pagamento → Empenho.'],
+            ['d', 'Empenho e liquidacao sao sinonimos.'],
+            ['e', 'Nao ha estagios; despesa e direta.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Estagios: 1) Empenho (reserva), 2) Liquidacao (verifica entrega/servico), 3) Pagamento (quitacao).',
+    },
+]);
+
+// ARQUIVOLOGIA - mais questoes
+registerQuestions(['Arquivologia'], [
+    {
+        id: 'exp2-arq-1',
+        exams: ['camara dos deputados'],
+        topic: 'Classificacao e avaliacao documental',
+        text: 'A avaliacao de documentos em arquivistica visa principalmente:',
+        options: buildOptions([
+            ['a', 'Destruir todos documentos imediatamente.'],
+            ['b', 'Definir prazos de guarda e destino final (eliminacao ou guarda permanente).'],
+            ['c', 'Ignorar tabela de temporalidade.'],
+            ['d', 'Manter tudo indefinidamente sem criterio.'],
+            ['e', 'Dispensar comissao de avaliacao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Avaliacao: define valor (primario/secundario), prazos guarda, destino (eliminacao ou permanente).',
+    },
+]);
+
+// ADMINISTRACAO DE PESSOAS - mais questoes
+registerQuestions(['Administracao de Pessoas'], [
+    {
+        id: 'exp2-ap-1',
+        exams: ['camara dos deputados'],
+        topic: 'Avaliacao de desempenho',
+        text: 'A avaliacao de desempenho serve principalmente para:',
+        options: buildOptions([
+            ['a', 'Punir colaboradores sempre.'],
+            ['b', 'Medir resultados, dar feedback, identificar potencial, subsidiar decisoes (promocao, capacitacao).'],
+            ['c', 'Dispensar treinamento.'],
+            ['d', 'Eliminar gestao por competencias.'],
+            ['e', 'Evitar dialogo com equipe.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Avaliacao: melhoria continua, feedback, decisoes RH (promocao, bonus, desenvolvimento).',
+    },
+]);
+
+// ADMINISTRACAO DE MATERIAIS - mais questoes
+registerQuestions(['Administracao de Materiais'], [
+    {
+        id: 'exp2-am-1',
+        exams: ['camara dos deputados'],
+        topic: 'Curva ABC',
+        text: 'Na Curva ABC de estoque, itens classe A representam tipicamente:',
+        options: buildOptions([
+            ['a', '50% itens, 5% valor.'],
+            ['b', '20% itens, 80% valor.'],
+            ['c', '80% itens, 20% valor.'],
+            ['d', '100% itens, 100% valor.'],
+            ['e', 'Nao ha criterio.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Classe A: poucos itens (20%) representam maior valor (80%). Exigem controle rigoroso.',
+    },
+]);
+
+// CTB - mais questoes
+registerQuestions(['Codigo de Transito Brasileiro', 'CTB', 'Legislacao de Transito'], [
+    {
+        id: 'exp2-ctb-1',
+        exams: ['detran df'],
+        topic: 'Infrações gravíssimas',
+        text: 'Infracoes GRAVISSIMAS no CTB incluem, entre outras:',
+        options: buildOptions([
+            ['a', 'Estacionar em local permitido.'],
+            ['b', 'Dirigir sob efeito alcool, avançar sinal vermelho, ultrapassagem irregular em faixa continua.'],
+            ['c', 'Usar cinto de seguranca corretamente.'],
+            ['d', 'Respeitar faixa de pedestres.'],
+            ['e', 'Manter velocidade abaixo do limite.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Gravissimas: 7 pontos, multa multiplicada, ex.: alcool, avancar sinal, ultrapassagem proibida.',
+    },
+    {
+        id: 'exp2-ctb-2',
+        exams: ['detran df'],
+        topic: 'Suspensao CNH',
+        text: 'A suspensao do direito de dirigir pode ocorrer, entre outras situacoes, quando:',
+        options: buildOptions([
+            ['a', 'Condutor acumula 40 pontos em 12 meses (infrator reincidente).'],
+            ['b', 'Condutor nunca dirigiu.'],
+            ['c', 'Condutor tem 0 pontos.'],
+            ['d', 'Condutor possui CNH valida e sem infrações.'],
+            ['e', 'Condutor fez curso preventivo.'],
+        ]),
+        correctId: 'a',
+        explanation: 'Suspensao: 40 pontos (reincidente/gravissima), 30 (infracoes graves), infrações específicas (alcool, racha).',
+    },
+]);
+
+// ECA - mais questoes
+registerQuestions(['ECA', 'Estatuto da Crianca e Adolescente'], [
+    {
+        id: 'exp2-eca-1',
+        exams: ['detran df'],
+        topic: 'Medidas socioeducativas',
+        text: 'Internacao de adolescente por ato infracional tem prazo maximo de:',
+        options: buildOptions([
+            ['a', '1 ano.'],
+            ['b', '2 anos.'],
+            ['c', '3 anos.'],
+            ['d', '5 anos.'],
+            ['e', 'Indefinido.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Internacao: max 3 anos. Reavaliacao 6/6 meses. Liberacao compulsoria 21 anos.',
+    },
+]);
+
+// LODF - mais questoes
+registerQuestions(['Lei Organica do DF', 'LODF'], [
+    {
+        id: 'exp2-lodf-1',
+        exams: ['detran df'],
+        topic: 'Competencias DF',
+        text: 'O DF acumula competencias de:',
+        options: buildOptions([
+            ['a', 'Apenas municipio.'],
+            ['b', 'Estado e municipio.'],
+            ['c', 'Apenas Uniao.'],
+            ['d', 'Somente internacional.'],
+            ['e', 'Nenhuma competencia propria.'],
+        ]),
+        correctId: 'b',
+        explanation: 'DF: autonomia limitada, acumula competencias estaduais + municipais. Vedado dividir em municipios.',
+    },
+]);
+
+// DIREITO PENAL - mais casos
+registerQuestions(['Direito Penal'], [
+    {
+        id: 'exp2-penal-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Tentativa',
+        text: 'Tentativa e punivel quando:',
+        options: buildOptions([
+            ['a', 'Agente cogita praticar crime mas desiste antes de iniciar.'],
+            ['b', 'Agente inicia execucao mas crime nao se consuma por circunstancias alheias a sua vontade.'],
+            ['c', 'Agente pratica crime culposo.'],
+            ['d', 'Agente e absolvido.'],
+            ['e', 'Crime e impossivel desde o inicio (crime impossivel - nao ha tentativa punivel).'],
+        ]),
+        correctId: 'b',
+        explanation: 'Tentativa: inicio execucao + nao consumacao por circunstancia alheia vontade. Pena: reducao 1/3 a 2/3.',
+    },
+    {
+        id: 'exp2-penal-2',
+        exams: ['pmdf'],
+        topic: 'Prescricao',
+        text: 'Prescricao da pretensao punitiva conta-se, em regra, a partir:',
+        options: buildOptions([
+            ['a', 'Da sentenca condenatoria transita em julgado.'],
+            ['b', 'Do dia em que o crime se consumou.'],
+            ['c', 'Do cumprimento total da pena.'],
+            ['d', 'Somente em crimes hediondos.'],
+            ['e', 'Nao existe prescricao penal.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Prescricao pretensao punitiva (antes transito): conta da consumacao (regra). Prescricao executoria: apos transito.',
+    },
+]);
+
+// DIREITO PROCESSUAL PENAL - mais casos
+registerQuestions(['Direito Processual Penal'], [
+    {
+        id: 'exp2-pp-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Flagrante',
+        text: 'Flagrante proprio ocorre quando:',
+        options: buildOptions([
+            ['a', 'Agente e perseguido logo apos crime, em situacao que faca presumir autoria.'],
+            ['b', 'Agente esta cometendo crime ou acaba de comete-lo.'],
+            ['c', 'Agente e encontrado com objetos dias depois.'],
+            ['d', 'Agente confessa sem ter sido preso.'],
+            ['e', 'Nao existe flagrante proprio.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Flagrante proprio: esta cometendo ou acabou de cometer. Impróprio/quase-flagrante: perseguicao logo apos.',
+    },
+]);
+
+// LEI DE DROGAS - mais casos
+registerQuestions(['Lei de Drogas', 'Lei 11.343'], [
+    {
+        id: 'exp2-drogas-1',
+        exams: ['policia penal mg'],
+        topic: 'Trafico privilegiado',
+        text: 'Trafico privilegiado (reducao 1/6 a 2/3) exige:',
+        options: buildOptions([
+            ['a', 'Reincidencia e integracao em organizacao criminosa.'],
+            ['b', 'Primariedade, bons antecedentes, nao dedicacao, nao integracao organizacao.'],
+            ['c', 'Violencia e arma de fogo.'],
+            ['d', 'Condenacao anterior por homicidio.'],
+            ['e', 'Trafico internacional.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Art. 33, §4º: primario + bons antecedentes + nao dedicar + nao organização → reducao 1/6 a 2/3.',
+    },
+]);
+
+// CRIMES HEDIONDOS - mais casos
+registerQuestions(['Crimes Hediondos', 'Lei 8.072'], [
+    {
+        id: 'exp2-hed-1',
+        exams: ['policia penal mg'],
+        topic: 'Progressao regime',
+        text: 'Em crimes hediondos, a progressao de regime exige cumprimento de:',
+        options: buildOptions([
+            ['a', '1/6 da pena.'],
+            ['b', '2/5 (primario) ou 3/5 (reincidente).'],
+            ['c', '1/2 sempre.'],
+            ['d', '4/5 sempre.'],
+            ['e', 'Nao ha progressao em hediondos.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Hediondos: 2/5 primario, 3/5 reincidente + exame criminologico (se fundamentado) + merito.',
+    },
+]);
+
+// ESTATUTO/REGULAMENTO PMDF - mais questoes
+registerQuestions(['Estatuto PMDF', 'Regulamento PMDF'], [
+    {
+        id: 'exp2-pmdf-1',
+        exams: ['pmdf'],
+        topic: 'Hierarquia e disciplina',
+        text: 'Hierarquia militar se fundamenta em:',
+        options: buildOptions([
+            ['a', 'Vontade pessoal do superior.'],
+            ['b', 'Grau, posto/graduacao, antiguidade, definindo subordinacao e comando.'],
+            ['c', 'Sorteio aleatorio.'],
+            ['d', 'Preferencias individuais.'],
+            ['e', 'Nao existe hierarquia.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Hierarquia: estrutura autoridade baseada grau, posto/graduacao, antiguidade. Essencial comando/obediencia.',
+    },
+]);
+
+// ATUALIDADES - questoes gerais
+registerQuestions(['Atualidades'], [
+    {
+        id: 'exp2-atual-1',
+        exams: ['pmdf', 'camara dos deputados'],
+        topic: 'Reforma tributaria',
+        text: 'A reforma tributaria (PEC 45/2023) propoe principalmente:',
+        options: buildOptions([
+            ['a', 'Eliminar todos tributos.'],
+            ['b', 'Substituir multiplos tributos (ICMS, ISS, PIS, COFINS, IPI) por IVA dual (CBS + IBS).'],
+            ['c', 'Aumentar 100% todos impostos.'],
+            ['d', 'Dispensar arrecadacao.'],
+            ['e', 'Manter sistema tributario inalterado.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Reforma: simplificacao, IVA dual (CBS federal + IBS estadual/municipal), transicao, cashback, regimes diferenciados.',
+    },
+    {
+        id: 'exp2-atual-2',
+        exams: ['camara dos deputados'],
+        topic: 'Agenda 2030',
+        text: 'Os Objetivos Desenvolvimento Sustentavel (ODS) da ONU totalizam:',
+        options: buildOptions([
+            ['a', '5 objetivos.'],
+            ['b', '10 objetivos.'],
+            ['c', '17 objetivos.'],
+            ['d', '25 objetivos.'],
+            ['e', '50 objetivos.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Agenda 2030: 17 ODS (Objetivos Desenvolvimento Sustentavel). Erradicar pobreza, igualdade, clima, etc.',
+    },
+]);
+
+// PRIMEIROS SOCORROS - questoes praticas
+registerQuestions(['Primeiros Socorros'], [
+    {
+        id: 'exp2-ps-1',
+        exams: ['pmdf', 'detran df'],
+        topic: 'RCP',
+        text: 'Na RCP (adulto), a sequencia correta e:',
+        options: buildOptions([
+            ['a', '2 ventilacoes + 30 compressoes.'],
+            ['b', '30 compressoes + 2 ventilacoes.'],
+            ['c', 'Somente ventilacoes.'],
+            ['d', 'Somente compressoes sem ventilacao (nao recomendado - ideal: ambas).'],
+            ['e', 'Nao fazer nada.'],
+        ]),
+        correctId: 'b',
+        explanation: 'RCP adulto: 30 compressoes (5-6cm profundidade) + 2 ventilacoes. Ritmo: 100-120/min.',
+    },
+    {
+        id: 'exp2-ps-2',
+        exams: ['detran df'],
+        topic: 'Hemorragia',
+        text: 'Em hemorragia externa, a primeira medida e:',
+        options: buildOptions([
+            ['a', 'Aplicar garrote imediatamente.'],
+            ['b', 'Pressao direta no ferimento com pano limpo, elevar membro.'],
+            ['c', 'Remover corpo estranho cravado.'],
+            ['d', 'Dar liquidos para beber.'],
+            ['e', 'Ignorar sangramento.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Hemorragia: pressao direta, eleva membro, compressao pontos arteriais. Garrote: ultimo recurso.',
+    },
+]);
+
+// SINALIZACAO VIARIA - questoes visuais
+registerQuestions(['Sinalizacao Viaria'], [
+    {
+        id: 'exp2-sin-1',
+        exams: ['detran df'],
+        topic: 'Placas regulamentacao',
+        text: 'Placa PARE (R-1) tem formato:',
+        options: buildOptions([
+            ['a', 'Circulo.'],
+            ['b', 'Triangulo.'],
+            ['c', 'Octogono (8 lados).'],
+            ['d', 'Losango.'],
+            ['e', 'Retangulo.'],
+        ]),
+        correctId: 'c',
+        explanation: 'PARE: octogono vermelho. DE PREFERENCIA: triangulo invertido. Demais regulamentacao: circulo.',
+    },
+    {
+        id: 'exp2-sin-2',
+        exams: ['detran df'],
+        topic: 'Sinalizacao horizontal',
+        text: 'Linha continua amarela separa:',
+        options: buildOptions([
+            ['a', 'Faixas mesmo sentido; permitido mudar faixa.'],
+            ['b', 'Fluxos opostos; PROIBIDO ultrapassar/transpor.'],
+            ['c', 'Nada; e decoracao.'],
+            ['d', 'Apenas estacionamentos.'],
+            ['e', 'Ciclovia de calcada.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Amarela continua: separa opostos, PROIBIDO ultrapassar. Amarela tracejada: PERMITIDO (se seguro).',
+    },
+]);
+
+// PROCESSO LEGISLATIVO - questoes especificas
+registerQuestions(['Processo Legislativo'], [
+    {
+        id: 'exp2-pl-1',
+        exams: ['camara dos deputados'],
+        topic: 'Iniciativa popular',
+        text: 'Iniciativa popular de lei exige:',
+        options: buildOptions([
+            ['a', '100 assinaturas.'],
+            ['b', '≥1% eleitorado nacional, min 5 estados, min 0,3% eleitores/estado.'],
+            ['c', 'Apenas vontade de 1 deputado.'],
+            ['d', 'Aprovacao STF previa.'],
+            ['e', 'Nao existe iniciativa popular.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Iniciativa popular (CF 61, §2º): ≥1% eleitorado, ≥5 estados, ≥0,3% cada. Projeto lei ordinaria.',
+    },
+    {
+        id: 'exp2-pl-2',
+        exams: ['camara dos deputados'],
+        topic: 'Medida Provisoria',
+        text: 'Medida Provisoria perde eficacia se nao convertida em lei em:',
+        options: buildOptions([
+            ['a', '30 dias.'],
+            ['b', '60 dias prorrogaveis + 60 (total 120 dias).'],
+            ['c', '180 dias.'],
+            ['d', '1 ano.'],
+            ['e', 'Nunca perde eficacia.'],
+        ]),
+        correctId: 'b',
+        explanation: 'MP: 60d + 60d prorrogacao = max 120 dias. Se nao convertida: perde eficacia, Congresso disciplina efeitos.',
+    },
+]);
+
+// GESTAO CONTRATOS (Lei 14.133/21) - questoes praticas
+registerQuestions(['Gestao de Contratos', 'Lei 14.133'], [
+    {
+        id: 'exp2-gc-1',
+        exams: ['camara dos deputados'],
+        topic: 'Dispensa de licitacao',
+        text: 'Dispensa de licitacao por valor (Lei 14.133) permite, para OBRAS/SERVICOS ENGENHARIA:',
+        options: buildOptions([
+            ['a', 'Ate R$10.000.'],
+            ['b', 'Ate R$50.000.'],
+            ['c', 'Ate R$100.000.'],
+            ['d', 'Ate R$500.000.'],
+            ['e', 'Ate R$1.000.000.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Dispensa valor (Lei 14.133, art. 75, I e II): obras/servicos engenharia <R$100k; compras/servicos <R$50k.',
+    },
+    {
+        id: 'exp2-gc-2',
+        exams: ['camara dos deputados'],
+        topic: 'Pregao eletronico',
+        text: 'Pregao eletronico e PREFERENCIAL porque:',
+        options: buildOptions([
+            ['a', 'Aumenta custos e burocracia.'],
+            ['b', 'Transparencia, celeridade, economicidade, ampla concorrencia via plataforma digital.'],
+            ['c', 'Dispensa publicacao.'],
+            ['d', 'Elimina habilitacao.'],
+            ['e', 'E obrigatorio apenas para Uniao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Pregao eletronico: + transparencia, - tempo, - custos, lances tempo real, + participacao.',
+    },
+]);
+
+// IMPROBIDADE ADMINISTRATIVA (Lei 8.429/92) - questoes atualizadas
+registerQuestions(['Improbidade Administrativa', 'Lei 8.429'], [
+    {
+        id: 'exp2-imp-1',
+        exams: ['pmdf', 'policia penal mg', 'detran df', 'camara dos deputados'],
+        topic: 'Alteracao Lei 14.230/21',
+        text: 'Apos Lei 14.230/2021, violacao principios (Art. 11) exige:',
+        options: buildOptions([
+            ['a', 'Apenas culpa.'],
+            ['b', 'DOLO (intencao).'],
+            ['c', 'Responsabilidade objetiva.'],
+            ['d', 'Nao exige elemento subjetivo.'],
+            ['e', 'Presuncao absoluta.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Lei 14.230/21: Art. 11 exige DOLO. Culpa nao configura mais (maior seguranca juridica).',
+    },
+    {
+        id: 'exp2-imp-2',
+        exams: ['camara dos deputados'],
+        topic: 'Ressarcimento',
+        text: 'A acao de ressarcimento por dano ao erario e:',
+        options: buildOptions([
+            ['a', 'Prescritivel em 5 anos.'],
+            ['b', 'IMPRESCRITIVEL.'],
+            ['c', 'Prescritivel em 2 anos.'],
+            ['d', 'Nao existe ressarcimento.'],
+            ['e', 'Opcional para Administracao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'CF 37, §5º: ressarcimento IMPRESCRITIVEL. Independe outras sancoes (perda funcao, multa).',
+    },
+]);
+
+// ==========================================================
+// EXPANSAO EXTRA (todas materias/tipos) - lote 2
+// ==========================================================
+
+// DIREITO ADMINISTRATIVO - questoes adicionais
+registerQuestions(['Direito Administrativo'], [
+    {
+        id: 'exp3-adm-1',
+        exams: ['pmdf', 'detran df', 'camara dos deputados', 'policia penal mg'],
+        topic: 'Atos administrativos (requisitos e atributos)',
+        text: 'Assinale a alternativa CORRETA sobre atributos do ato administrativo.',
+        options: buildOptions([
+            ['a', 'Todo ato possui autoexecutoriedade.'],
+            ['b', 'Presuncao de legitimidade e relativa (admite prova em contrario).'],
+            ['c', 'Imperatividade so existe em contratos administrativos.'],
+            ['d', 'Tipicidade e atributo exclusivo do direito privado.'],
+            ['e', 'Motivo e sempre discricionario.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Presuncao de legitimidade/veracidade e atributo tipico, mas relativo. Autoexecutoriedade nao e universal; motivo pode ser vinculado ou discricionario.',
+    },
+    {
+        id: 'exp3-adm-2',
+        exams: ['camara dos deputados'],
+        topic: 'Poderes administrativos',
+        text: 'O poder disciplinar permite a Administracao:',
+        options: buildOptions([
+            ['a', 'Criar leis para punir particulares.'],
+            ['b', 'Aplicar sancoes a servidores e a particulares sujeitos a disciplina administrativa (ex.: contratos).'],
+            ['c', 'Julgar crimes comuns em tribunais proprios.'],
+            ['d', 'Anular atos do Legislativo.'],
+            ['e', 'Exercer jurisdicao penal.'],
+        ]),
+        correctId: 'b',
+        explanation:
+            'Poder disciplinar: apurar e sancionar infracoes administrativas no ambito da Administracao, inclusive em relacao a vinculados/contratados.',
+    },
+]);
+
+// ADMINISTRACAO PUBLICA (GESTAO) - questoes adicionais
+registerQuestions(['Administracao Publica'], [
+    {
+        id: 'exp3-ap-1',
+        exams: ['camara dos deputados'],
+        topic: 'Planejamento estrategico e indicadores',
+        text: 'Indicadores de DESEMPENHO sao usados principalmente para:',
+        options: buildOptions([
+            ['a', 'Substituir metas por opinioes.'],
+            ['b', 'Medir resultados e apoiar tomada de decisao e melhoria continua.'],
+            ['c', 'Eliminar transparencia.'],
+            ['d', 'Aumentar burocracia sem finalidade.'],
+            ['e', 'Evitar avaliacao de politicas publicas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Indicadores permitem monitorar eficiencia/eficacia/efetividade e ajustar processos e politicas.',
+    },
+    {
+        id: 'exp3-ap-2',
+        exams: ['camara dos deputados'],
+        topic: 'Gestao por processos',
+        text: 'Na gestao por processos, e CORRETO afirmar que:',
+        options: buildOptions([
+            ['a', 'O foco e a hierarquia e nao o fluxo de trabalho.'],
+            ['b', 'Mapeamento e padronizacao reduzem variabilidade e melhoram qualidade.'],
+            ['c', 'Nao se mede tempo/custo de processo.'],
+            ['d', 'Processo e igual a organograma.'],
+            ['e', 'Nao existe dono do processo.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Gestao por processos foca fluxo ponta-a-ponta, padronizacao, medicao e melhoria (PDCA/BPM).',
+    },
+]);
+
+// LEI 8.112 (RJU) - questoes adicionais
+registerQuestions(['Lei 8.112', 'RJU', 'Regime Juridico Unico'], [
+    {
+        id: 'exp3-rju-1',
+        exams: ['camara dos deputados'],
+        topic: 'Provimento e vacancia',
+        text: 'A reconducao e forma de provimento que ocorre quando o servidor:',
+        options: buildOptions([
+            ['a', 'E exonerado a pedido.'],
+            ['b', 'Retorna ao cargo anterior por inabilitacao em estagio probatorio em outro cargo ou reintegracao do anterior ocupante.'],
+            ['c', 'Se aposenta voluntariamente.'],
+            ['d', 'E removido de oficio.'],
+            ['e', 'E punido com suspensao.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Reconducao: retorno ao cargo anterior nas hipoteses legais (Lei 8.112).',
+    },
+    {
+        id: 'exp3-rju-2',
+        exams: ['camara dos deputados'],
+        topic: 'Penalidades',
+        text: 'Advertencia (Lei 8.112) e aplicada, em regra, para:',
+        options: buildOptions([
+            ['a', 'Crime contra a Administracao.'],
+            ['b', 'Inobservancia de dever funcional leve, quando nao justificar penalidade mais grave.'],
+            ['c', 'Abandono de cargo.'],
+            ['d', 'Inassiduidade habitual.'],
+            ['e', 'Improbidade administrativa.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Advertencia e penalidade leve; abandono/inassiduidade e demissao; improbidade pode gerar demissao e outras sancoes.',
+    },
+]);
+
+// ARQUIVOLOGIA - questoes adicionais
+registerQuestions(['Protocolo e Arquivo', 'Arquivologia'], [
+    {
+        id: 'exp3-arq-1',
+        exams: ['camara dos deputados'],
+        topic: 'Classificacao (tabela/planos) e temporalidade',
+        text: 'A tabela de temporalidade define, principalmente:',
+        options: buildOptions([
+            ['a', 'Somente a grafia correta dos documentos.'],
+            ['b', 'Prazos de guarda, destinação (eliminacao/guarda permanente) e valor dos documentos.'],
+            ['c', 'Apenas a ordem alfabetica de arquivamento.'],
+            ['d', 'Somente a digitalizacao obrigatoria.'],
+            ['e', 'O conteudo do regimento interno.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Temporalidade orienta ciclo de vida documental: corrente, intermediario e permanente, com prazos e destinacao.',
+    },
+    {
+        id: 'exp3-arq-2',
+        exams: ['camara dos deputados'],
+        topic: 'Protocolo e tramitacao',
+        text: 'No protocolo, a atividade que registra entrada/saida e acompanha a movimentacao do documento e:',
+        options: buildOptions([
+            ['a', 'Microfilmagem.'],
+            ['b', 'Autuacao.'],
+            ['c', 'Registratura/expedicao e controle de tramitacao.'],
+            ['d', 'Indexacao bibliografica.'],
+            ['e', 'Gestao de pessoas.'],
+        ]),
+        correctId: 'c',
+        explanation: 'Protocolo envolve recepcao, registro, classificacao basica e controle de tramitacao/expedicao.',
+    },
+]);
+
+// ADMINISTRACAO DE PESSOAS - questoes adicionais
+registerQuestions(['Administracao de Pessoas', 'Gestao de Pessoas'], [
+    {
+        id: 'exp3-gp-1',
+        exams: ['camara dos deputados'],
+        topic: 'Recrutamento e selecao',
+        text: 'Recrutamento INTERNO tende a:',
+        options: buildOptions([
+            ['a', 'Reduzir motivacao e aumentar rotatividade.'],
+            ['b', 'Valorizar carreira e reduzir custos/tempo, mas pode limitar diversidade de experiencias.'],
+            ['c', 'Eliminar necessidade de treinamento.'],
+            ['d', 'Impedir qualquer promocao.'],
+            ['e', 'Ser ilegal no setor publico.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Interno pode motivar e aproveitar talentos, mas pode reduzir entrada de novas competencias se usado isoladamente.',
+    },
+    {
+        id: 'exp3-gp-2',
+        exams: ['camara dos deputados'],
+        topic: 'Avaliacao de desempenho',
+        text: 'Uma boa avaliacao de desempenho deve ser:',
+        options: buildOptions([
+            ['a', 'Secreta e sem criterios.'],
+            ['b', 'Baseada em criterios claros, feedback e possibilidade de desenvolvimento.'],
+            ['c', 'Somente punitiva.'],
+            ['d', 'Feita apenas uma vez na carreira.'],
+            ['e', 'Sem relacao com metas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Avaliacao eficaz: criterios, metas, evidencias e feedback para melhoria, evitando vieses.',
+    },
+]);
+
+// ADMINISTRACAO DE MATERIAIS - questoes adicionais
+registerQuestions(['Administracao de Materiais', 'Gestao de Materiais'], [
+    {
+        id: 'exp3-gm-1',
+        exams: ['camara dos deputados'],
+        topic: 'Gestao de estoques',
+        text: 'A classificacao ABC em estoques ajuda a:',
+        options: buildOptions([
+            ['a', 'Tratar todos os itens com o mesmo nivel de controle.'],
+            ['b', 'Priorizar controle dos itens de maior impacto (valor/consumo) e ajustar politicas de reposicao.'],
+            ['c', 'Eliminar inventarios.'],
+            ['d', 'Aumentar rupturas.'],
+            ['e', 'Substituir compras publicas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Curva ABC: itens A exigem maior controle; B intermediario; C controle simplificado.',
+    },
+    {
+        id: 'exp3-gm-2',
+        exams: ['camara dos deputados'],
+        topic: 'Almoxarifado e armazenagem',
+        text: 'Uma pratica adequada de armazenagem e:',
+        options: buildOptions([
+            ['a', 'Misturar produtos incompatíveis para economizar espaco.'],
+            ['b', 'Aplicar FIFO/FEFO quando cabivel e identificar lotes/validade.'],
+            ['c', 'Dispensar enderecamento para ganhar velocidade.'],
+            ['d', 'Nao registrar entradas/saidas.'],
+            ['e', 'Ignorar condicoes ambientais.'],
+        ]),
+        correctId: 'b',
+        explanation: 'FIFO/FEFO e rastreabilidade reduzem perdas e melhoram controle, especialmente em itens pereciveis.',
+    },
+]);
+
+// ATUALIDADES - questoes adicionais
+registerQuestions(['Atualidades', 'Conhecimentos Gerais'], [
+    {
+        id: 'exp3-atual-1',
+        exams: ['camara dos deputados'],
+        topic: 'Governanca de dados e LGPD (noções)',
+        text: 'No contexto de governanca de dados, e CORRETO afirmar que:',
+        options: buildOptions([
+            ['a', 'LGPD so se aplica ao setor privado.'],
+            ['b', 'Governanca define papeis, politicas e controles para qualidade, seguranca e uso adequado de dados.'],
+            ['c', 'Dados publicos dispensam protecao.'],
+            ['d', 'Nao existem responsabilidades por vazamentos.'],
+            ['e', 'Governanca e sinônimo de backup.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Governanca envolve regras e responsabilidades; LGPD se aplica ao poder publico com bases legais e deveres de transparencia/seguranca.',
+    },
+    {
+        id: 'exp3-atual-2',
+        exams: ['pmdf', 'detran df', 'policia penal mg'],
+        topic: 'Transparencia e controle social',
+        text: 'Uma medida que fortalece transparencia e controle social e:',
+        options: buildOptions([
+            ['a', 'Restringir dados publicos sem justificativa.'],
+            ['b', 'Publicar dados/relatorios e facilitar canais de ouvidoria e acesso a informacao.'],
+            ['c', 'Eliminar auditorias internas.'],
+            ['d', 'Proibir participacao social.'],
+            ['e', 'Dispensar prestacao de contas.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Transparencia ativa e canais de participacao/controle social fortalecem accountability e qualidade dos servicos.',
+    },
+]);
+
+// CRIMES HEDIONDOS / ABUSO / DESARMAMENTO / MARIA PENHA / TORTURA - questoes adicionais
+registerQuestions(['Crimes Hediondos', 'Lei 8.072'], [
+    {
+        id: 'exp3-hed-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Efeitos principais',
+        text: 'Em linhas gerais, crimes hediondos se caracterizam por regime mais severo, incluindo:',
+        options: buildOptions([
+            ['a', 'Proibicao absoluta de progressao.'],
+            ['b', 'Regras especificas de progressao e maior rigor na execucao penal.'],
+            ['c', 'Extincao de punibilidade automatica.'],
+            ['d', 'Imunidade penal.'],
+            ['e', 'Inexistencia de pena privativa de liberdade.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A lei estabelece maior rigor (prazos/percentuais e condicoes), mas nao impede automaticamente toda progressao.',
+    },
+]);
+
+registerQuestions(['Abuso de Autoridade', 'Lei 13.869'], [
+    {
+        id: 'exp3-abuso-1',
+        exams: ['pmdf', 'policia penal mg', 'detran df'],
+        topic: 'Elemento subjetivo (dolo)',
+        text: 'Em regra, o crime de abuso de autoridade (Lei 13.869/2019) exige:',
+        options: buildOptions([
+            ['a', 'Culpa simples.'],
+            ['b', 'Dolo e finalidade especifica prevista em lei (ex.: prejudicar outrem/beneficiar a si ou a terceiro).'],
+            ['c', 'Responsabilidade objetiva.'],
+            ['d', 'Presuncao absoluta de intencao.'],
+            ['e', 'Apenas erro de proibição.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A lei descreve condutas e exige dolo com especial fim de agir (na forma legal), nao sendo em regra crime culposo.',
+    },
+]);
+
+registerQuestions(['Estatuto do Desarmamento', 'Lei 10.826'], [
+    {
+        id: 'exp3-des-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Porte x posse (noções)',
+        text: 'Diferenca basica entre POSSE e PORTE de arma:',
+        options: buildOptions([
+            ['a', 'Posse e levar arma em via publica; porte e manter em casa.'],
+            ['b', 'Posse e manter arma no interior da residencia/local de trabalho (condicoes legais); porte e transportar/portar fora desses locais.'],
+            ['c', 'Sao sinonimos.'],
+            ['d', 'Porte e sempre permitido sem autorizacao.'],
+            ['e', 'Posse so existe para arma branca.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Posse: dentro de casa/local de trabalho (regras); porte: fora, com autorizacao/hipoteses legais.',
+    },
+]);
+
+registerQuestions(['Lei Maria da Penha', 'Lei 11.340'], [
+    {
+        id: 'exp3-lmp-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Medidas protetivas',
+        text: 'Medidas protetivas de urgencia podem incluir:',
+        options: buildOptions([
+            ['a', 'Obrigar a vitima a sair de casa sempre.'],
+            ['b', 'Afastamento do agressor do lar e proibicao de aproximacao/contato.'],
+            ['c', 'Anistia penal ao agressor.'],
+            ['d', 'Suspensao de direitos politicos da vitima.'],
+            ['e', 'Extincao automatica do processo.'],
+        ]),
+        correctId: 'b',
+        explanation: 'Medidas visam proteger a vitima (afastamento, proibicao de contato, restricoes etc.), conforme a lei.',
+    },
+]);
+
+registerQuestions(['Lei de Tortura', 'Lei 9.455'], [
+    {
+        id: 'exp3-tort-1',
+        exams: ['pmdf', 'policia penal mg'],
+        topic: 'Tipos e consequencias (noções)',
+        text: 'Caracteriza tortura (Lei 9.455/1997), em linhas gerais:',
+        options: buildOptions([
+            ['a', 'Qualquer dor decorrente de acidente.'],
+            ['b', 'Constranger com violencia/ameaca causando sofrimento intenso para obter informacao/confissao, castigo ou por discriminacao.'],
+            ['c', 'Somente lesao corporal leve.'],
+            ['d', 'Apenas ofensa verbal.'],
+            ['e', 'Apenas crimes praticados por particular.'],
+        ]),
+        correctId: 'b',
+        explanation: 'A lei descreve modalidades (informacao/confissao, castigo, discriminacao etc.), com sofrimento intenso e condutas tipicas.',
+    },
+]);
+
 const isUsed = (used, id) => {
     if (!used) return false;
     if (used instanceof Set) {
@@ -4218,24 +5609,36 @@ const cloneQuestion = (question) => ({
     options: question.options.map((opt) => ({ ...opt })),
 });
 
-function pickAvailable(slug, used, examSlug) {
+function pickAvailable(slug, used, examSlug, allowedTopics) {
     const pool = QUESTION_BANK[slug];
     if (!pool || pool.length === 0) return null;
     const available = pool.filter((question) => !isUsed(used, question.id) && questionMatchesExam(question, examSlug));
     if (available.length === 0) return null;
-    const index = Math.floor(Math.random() * available.length);
-    return available[index];
+
+    const normalizedAllowedTopics =
+        allowedTopics && Array.isArray(allowedTopics) && allowedTopics.length
+            ? new Set(allowedTopics.map((topic) => slugify(topic)).filter(Boolean))
+            : null;
+
+    const topicMatches =
+        normalizedAllowedTopics && normalizedAllowedTopics.size
+            ? available.filter((question) => question.topic && normalizedAllowedTopics.has(slugify(question.topic)))
+            : [];
+
+    const candidates = topicMatches.length ? topicMatches : available;
+    const index = Math.floor(Math.random() * candidates.length);
+    return candidates[index];
 }
 
-export function getQuestionFromBank(subjectName, used, examName) {
+export function getQuestionFromBank(subjectName, used, examName, allowedTopics) {
     const slug = slugify(subjectName) || 'geral';
     const examSlug = slugify(examName) || 'geral';
-    const subjectQuestion = pickAvailable(slug, used, examSlug);
+    const subjectQuestion = pickAvailable(slug, used, examSlug, allowedTopics);
     if (subjectQuestion) {
         return cloneQuestion(subjectQuestion);
     }
     if (slug !== 'geral') {
-        const fallback = pickAvailable('geral', used, examSlug);
+        const fallback = pickAvailable('geral', used, examSlug, allowedTopics);
         if (fallback) {
             return cloneQuestion(fallback);
         }

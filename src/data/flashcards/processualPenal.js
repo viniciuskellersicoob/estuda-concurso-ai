@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const direitoProcessualPenal = {
     name: 'Direito Processual Penal',
@@ -27,5 +27,42 @@ export const direitoProcessualPenal = {
         ['Habeas corpus no processo: quando?', 'Coação ilegal à liberdade de locomoção (preventivo ou repressivo).'],
         ['Recursos: apelação serve para?', 'Impugnar sentença (condenatória/absolutória) e certas decisões, conforme CPP.'],
         ['Coisa julgada (noção)?', 'Imutabilidade da decisão final; impede novo julgamento do mesmo fato (com limites).'],
+
+        // PMDF - cards âncora por tópico do edital (1+ por tópico)
+        [
+            'PMDF: Inquérito policial e ação penal — o básico?',
+            'Inquérito apura autoria/materialidade; ação penal pode ser pública (MP) ou privada (ofendido), conforme caso.',
+            'Inquérito policial e ação penal',
+        ],
+        [
+            'PMDF: Prisões e liberdade provisória — mapa?',
+            'Flagrante, preventiva e temporária; liberdade provisória/medidas cautelares substituem prisão quando suficientes.',
+            'Prisões (flagrante, preventiva, temporária) e liberdade provisória',
+        ],
+        [
+            'PMDF: Provas e cadeia de custódia — ponto-chave?',
+            'Prova deve ser lícita; cadeia de custódia registra coleta/manuseio para garantir integridade e rastreabilidade.',
+            'Provas, cadeia de custódia',
+        ],
+        [
+            'PMDF: Procedimentos, competência e recursos — noções?',
+            'Competência (regra do lugar) e recursos básicos (apelação, RESE) conforme hipóteses do CPP.',
+            'Procedimentos, competência, recursos (noções usuais)',
+        ],
+        [
+            'PMDF: Procedimentos especiais (júri, crimes funcionais, drogas) — ideia?',
+            'Júri julga dolosos contra a vida; crimes funcionais e drogas têm regras/ritos específicos (noções).',
+            'Procedimentos especiais (Tribunal do Júri, crimes funcionais, Lei de Drogas)',
+        ],
+        [
+            'PMDF: Acordos penais (noções) — quais aparecem?',
+            'ANPP e colaboração premiada são cobrados como conceitos e requisitos gerais; “plea bargain” pode aparecer como noção.',
+            'Acordos penais: acordo de não persecução, colaboração premiada e plea bargain',
+        ],
+        [
+            'PMDF: Recursos recorrentes — quais?',
+            'Apelação, recurso em sentido estrito e habeas corpus (cabimento e finalidade em linhas gerais).',
+            'Recursos penais recorrentes (apelação, recurso em sentido estrito, habeas corpus)',
+        ],
     ]),
 };

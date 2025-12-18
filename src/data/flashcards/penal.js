@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const direitoPenal = {
     name: 'Direito Penal',
@@ -31,5 +31,42 @@ export const direitoPenal = {
         ['Prevaricação (ideia)?', 'Retardar/deixar de praticar ato por interesse/sentimento pessoal.'],
         ['Pena: espécies (macro)?', 'Privativa de liberdade, restritiva de direitos e multa.'],
         ['Regimes de pena (macro)?', 'Fechado, semiaberto e aberto (conforme critérios legais).'],
+
+        // PMDF - cards âncora por tópico do edital (1+ por tópico)
+        [
+            'PMDF: Teoria do crime — estrutura?',
+            'Fato típico (conduta/nexo/resultado/tipicidade), ilicitude (excludentes) e culpabilidade (imputabilidade etc.).',
+            'Teoria do crime: fato típico, ilicitude, culpabilidade',
+        ],
+        [
+            'PMDF: Concurso de pessoas e de crimes — diferença?',
+            'Concurso de pessoas = coautoria/participação; concurso de crimes = material/formal/continuado.',
+            'Concurso de pessoas e de crimes',
+        ],
+        [
+            'PMDF: Penas — o que revisar?',
+            'Espécies, dosimetria (noções), substituição por restritivas e sursis (quando cabível).',
+            'Penas: espécies, aplicação, substituição, suspensão condicional',
+        ],
+        [
+            'PMDF: Crimes em espécie — mais cobrados?',
+            'Contra a pessoa e patrimônio (furto/roubo) e contra a Adm. Pública (peculato, concussão, corrupção, prevaricação).',
+            'Crimes em espécie (contra pessoa, patrimônio, administração pública)',
+        ],
+        [
+            'PMDF: Fé pública e dignidade sexual — atenção?',
+            'Falsificação/uso de documento e noções de crimes sexuais (consentimento, vulnerabilidade e tipificação).',
+            'Crimes contra a fé pública, dignidade sexual e administração militar',
+        ],
+        [
+            'PMDF: Exclusão da culpabilidade — principais?',
+            'Inimputabilidade, erro de proibição inevitável e inexigibilidade de conduta diversa (noções).',
+            'Elementos subjetivos e causas de exclusão da culpabilidade',
+        ],
+        [
+            'PMDF: Penal em leis especiais — como cai?',
+            'Conceitos e pontos-chave de desarmamento e drogas; cuidado com diferenças entre posse/porte e uso/tráfico.',
+            'Aspectos penais ligados a leis especiais (desarmamento, drogas)',
+        ],
     ]),
 };

@@ -1,9 +1,9 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const atualidades = {
     name: 'Atualidades',
     icon: '🌍',
-    exams: ['pmdf', 'camara-deputados'],
+    exams: ['camara-deputados'],
     cards: makeCards('atual', [
         ['Agenda 2030 (ONU): o que é?', 'Conjunto de 17 ODS para desenvolvimento sustentável até 2030.'],
         ['COP: o que é?', 'Conferência das Partes (negociações climáticas internacionais).'],
@@ -17,4 +17,3 @@ export const atualidades = {
         ['Amazônia: tópicos recorrentes?', 'Desmatamento, fiscalização, povos indígenas e créditos de carbono.'],
     ]),
 };
-

@@ -50,7 +50,8 @@ export function QuestionScreen() {
         setLoading(true);
         setError(null);
 
-        const bankQuestion = getQuestionFromBank(currentSubject, usedBankIdsRef.current, exam);
+        const allowedTopics = topics?.[currentSubject] || [];
+        const bankQuestion = getQuestionFromBank(currentSubject, usedBankIdsRef.current, exam, allowedTopics);
         if (bankQuestion) {
             usedBankIdsRef.current.add(bankQuestion.id);
             setQuestions((prev) => [
@@ -59,6 +60,7 @@ export function QuestionScreen() {
                     ...bankQuestion,
                     subject: currentSubject,
                     exam: exam || 'Geral',
+                    topic: bankQuestion.topic || null,
                 },
             ]);
             setLoading(false);
@@ -66,7 +68,13 @@ export function QuestionScreen() {
         }
 
         try {
-            const newQuestion = await generateQuestion(currentSubject, exam);
+            const selectedTopic =
+                allowedTopics && allowedTopics.length
+                    ? allowedTopics[Math.floor(Math.random() * allowedTopics.length)]
+                    : null;
+
+            const aiSubject = selectedTopic ? `${currentSubject} — Tópico: ${selectedTopic}` : currentSubject;
+            const newQuestion = await generateQuestion(aiSubject, exam, selectedTopic);
             newQuestion.id = newQuestion.id || Date.now().toString();
             setQuestions((prev) => [
                 ...prev,
@@ -74,6 +82,7 @@ export function QuestionScreen() {
                     ...newQuestion,
                     subject: currentSubject,
                     exam: exam || 'Geral',
+                    topic: newQuestion.topic || selectedTopic || null,
                 },
             ]);
             return true;
@@ -221,6 +230,11 @@ export function QuestionScreen() {
                             {(currentQuestion.exam || exam) && (
                                 <span className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-full uppercase tracking-wide">
                                     {currentQuestion.exam || exam}
+                                </span>
+                            )}
+                            {currentQuestion.topic && (
+                                <span className="inline-block px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-xs font-semibold rounded-full uppercase tracking-wide">
+                                    {currentQuestion.topic}
                                 </span>
                             )}
                         </div>

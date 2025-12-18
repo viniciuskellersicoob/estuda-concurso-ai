@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const abusoAutoridade = {
     name: 'Abuso de Autoridade (Lei 13.869/2019)',
@@ -13,4 +13,3 @@ export const abusoAutoridade = {
         ['Esferas de responsabilização?', 'Penal, administrativa e civil podem coexistir.'],
     ]),
 };
-

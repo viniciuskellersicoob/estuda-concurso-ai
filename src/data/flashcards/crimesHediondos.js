@@ -1,17 +1,32 @@
-import { makeCards } from './utils';
-
 export const crimesHediondos = {
-    name: 'Crimes Hediondos (Lei 8.072/1990)',
-    icon: '🚫',
+    name: 'Crimes Hediondos',
+    icon: '🔒',
     exams: ['policia-penal-mg'],
-    cards: makeCards('hed', [
-        ['Crime hediondo: rol é aberto?', 'Não. É rol taxativo previsto em lei.'],
-        ['Hediondo x equiparado?', 'Alguns crimes são equiparados por lei (ex.: tortura e tráfico), com efeitos específicos.'],
-        ['Progressão em hediondos: por que é pegadinha?', 'Frações e requisitos variam conforme tipo de crime e condição do condenado (tema recorrente).'],
-        ['“Regime inicial sempre fechado” (cuidado)?', 'Pegadinha histórica: regras evoluíram por decisões e reformas; atenção ao enunciado.'],
-        ['Indulto/anistia/graça: como cai?', 'Há restrições relevantes para hediondos/equiparados; banca cobra “pode/não pode”.'],
-        ['Tráfico privilegiado é hediondo?', 'Tese comum: quando reconhecido o privilégio, não se equipara a hediondo (tema cobrado).'],
-        ['Reincidência em hediondos: efeito?', 'Pode agravar requisitos para benefícios e execução, conforme lei.'],
-    ]),
+    cards: [
+        { id: 'hed-1', front: 'Lei Hediondos?', back: 'Lei 8.072/1990. Define crimes hediondos, equiparados. Tratamento rigoroso.', topic: 'Fundamentos' },
+        { id: 'hed-2', front: 'Rol hediondos (Art. 1º)?', back: 'Homicídio qualificado (grupo extermínio/milícia/paga), latrocínio, extorsão sequestro qualificada, estupro, epidemia morte, falsificação remédios, genocídio.', topic: 'Rol' },
+        { id: 'hed-3', front: 'Homicídio simples é hediondo?', back: 'NÃO. Só qualificado: grupo extermínio, milícia privada, paga/promessa recompensa.', topic: 'Rol' },
+        { id: 'hed-4', front: 'Latrocínio?', back: 'Roubo morte. SEMPRE hediondo (mesmo tentativa). Não precisa qualificadora.', topic: 'Rol' },
+        { id: 'hed-5', front: 'Extorsão sequestro?', back: 'Só versão qualificada: morte, lesão grave/gravíssima, >24h. Simples: NÃO hediondo.', topic: 'Rol' },
+        { id: 'hed-6', front: 'Estupro?', back: 'SEMPRE hediondo (213 CP + 217-A vulnerável). Importunação sexual: NÃO.', topic: 'Rol' },
+        { id: 'hed-7', front: 'Equiparados hediondos?', back: 'Tráfico drogas, tortura, terrorismo, organização criminosa, posse/porte uso restrito (divergência STF).', topic: 'Equiparados' },
+        { id: 'hed-8', front: 'Fiança?', back: 'VEDADA (Art. 2º, II).', topic: 'Vedações' },
+        { id: 'hed-9', front: 'Graça?', back: 'Vedada.', topic: 'Vedações' },
+        { id: 'hed-10', front: 'Anistia?', back: 'Vedada.', topic: 'Vedações' },
+        { id: 'hed-11', front: 'Indulto?', back: 'Permitido após cumprir: 2/5 (primário) ou 3/5 (reincidente).', topic: 'Vedações' },
+        { id: 'hed-12', front: 'Liberdade provisória?', back: 'Vedada (Art. 2º, II). STF: permite excepcionalmente fundamentado.', topic: 'Liberdade' },
+        { id: 'hed-13', front: 'Progressão regime?', back: '2/5 pena (primário) ou 3/5 (reincidente) + mérito. Antes: 1/6.', topic: 'Progressão' },
+        { id: 'hed-14', front: 'Regime inicial?', back: 'Obrigatório FECHADO.', topic: 'Regime' },
+        { id: 'hed-15', front: 'Regime semiaberto possível?', back: 'SIM, após progressão cumprindo requisitos (2/5 ou 3/5).', topic: 'Regime' },
+        { id: 'hed-16', front: 'Regime aberto possível?', back: 'SIM, após nova progressão.', topic: 'Regime' },
+        { id: 'hed-17', front: 'Sursis (suspensão condicional)?', back: 'PROIBIDO hediondos.', topic: 'Vedações' },
+        { id: 'hed-18', front: 'Livramento condicional?', back: 'Hediondo sem violência: 2/3. Com violência/grave ameaça: vedado (divergência - some aceitam após cumprir).', topic: 'Livramento' },
+        { id: 'hed-19', front: 'Inquérito preso?', back: '30 dias + 30 prorrogáveis (Art. 2º, §4º).', topic: 'Processual' },
+        { id: 'hed-20', front: 'Prisão temporária?', back: '30 dias prorrogáveis + 30 (Art. 2º, §5º).', topic: 'Processual' },
+        { id: 'hed-21', front: 'Conversão pena?', back: 'Vedado converter reclusão em restritivas direitos.', topic: 'Vedações' },
+        { id: 'hed-22', front: 'Exame criminológico?', back: 'Facultativo (STF: pode exigir fundamentadamente).', topic: 'Progressão' },
+        { id: 'hed-23', front: 'Reincidência específica agrava?', back: 'SIM. Exige cumprimento 3/5 (não 2/5).', topic: 'Agravantes' },
+        { id: 'hed-24', front: 'Prescrição hediondos?', back: 'Regra  normal CP (não tem prescrição diferenciada).', topic: 'Processual' },
+        { id: 'hed-25', front: 'Tentativa?', back: 'Redução pena 1/3 a 2/3 (regra geral CP). Latrocínio tentado: hediondo.', topic: 'Tentativa' }
+    ],
 };
-

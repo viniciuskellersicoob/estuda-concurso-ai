@@ -1,4 +1,4 @@
-import { makeCards } from './utils';
+import { makeCards } from './utils.js';
 
 export const constituicaoMG = {
     name: 'Constituição do Estado de MG (Noções)',
@@ -13,4 +13,3 @@ export const constituicaoMG = {
         ['Controle e fiscalização: noção?', 'Assembleia, tribunal de contas e controle interno.'],
     ]),
 };
-

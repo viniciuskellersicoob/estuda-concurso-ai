@@ -1,18 +1,32 @@
-import { makeCards } from './utils';
-
 export const eca = {
-    name: 'ECA (Noções)',
-    icon: '🧒',
-    exams: ['pmdf', 'detran-df'],
-    cards: makeCards('eca', [
-        ['Proteção integral: ideia?', 'Criança e adolescente como sujeitos de direitos, com prioridade absoluta.'],
-        ['Criança x adolescente?', 'Criança: até 12 incompletos. Adolescente: 12 a 18 incompletos.'],
-        ['Ato infracional?', 'Conduta descrita como crime/contravenção praticada por adolescente.'],
-        ['Medidas socioeducativas: exemplos?', 'Advertência, reparação, PSC, LA, semiliberdade, internação.'],
-        ['Internação: regra em prova?', 'Excepcional, por tempo determinado e com requisitos legais.'],
-        ['Conselho Tutelar: função?', 'Órgão de proteção e atendimento, não jurisdicional.'],
-        ['Prioridade absoluta: efeitos?', 'Preferência em políticas públicas, atendimento e proteção.'],
-        ['Vitimização secundária (criança/adolescente)?', 'Evitar repetição de relatos e atendimento inadequado; proteger dignidade.'],
-    ]),
+    name: 'ECA - Estatuto da Criança e Adolescente',
+    icon: '👶',
+    exams: ['detran-df'],
+    cards: [
+        { id: 'eca-1', front: 'ECA?', back: 'Lei 8.069/1990. Criança: <12 anos. Adolescente: 12-18 anos incompletos.', topic: 'Fundamentos' },
+        { id: 'eca-2', front: 'Princípios ECA?', back: 'Proteção integral, prioridade absoluta, condição peculiar pessoa desenvolvimento, melhor interesse.', topic: 'Fundamentos' },
+        { id: 'eca-3', front: 'Prioridade absoluta (Art. 4º)?', back: 'Preferência formulação políticas, precedência atendimento, proteção socorro, destinação recursos públicos.', topic: 'Fundamentos' },
+        { id: 'eca-4', front: 'Direitos fundamentais?', back: 'Vida, saúde, liberdade, respeito, dignidade, convivência familiar/comunitária, educação, cultura, esporte, lazer, profissionalização.', topic: 'Direitos' },
+        { id: 'eca-5', front: 'Direito convivência familiar?', back: 'Família natural (prioridade). Família extensa. Adoção: último caso. Vedado separar irmãos.', topic: 'Direitos' },
+        { id: 'eca-6', front: 'Direito educação?', back: 'Ensino fundamental obrigatório, gratuito. Progressiva universalização médio. Acesso próximo residência.', topic: 'Direitos' },
+        { id: 'eca-7', front: 'Direito saúde?', back: 'SUS garante. Pré-natal, parto, pós-parto. Aleitamento materno. Vacinação. Atendimento especializado.', topic: 'Direitos' },
+        { id: 'eca-8', front: 'Medidas proteção (Art. 101)?', back: 'Encaminhamento responsável, orientação/apoio, matrícula escola, tratamento saúde, inclusão programa, abrigo, colocação família.', topic: 'Proteção' },
+        { id: 'eca-9', front: 'Acolhimento institucional?', back: 'Medida excepcional, provisória (max 18 meses). Não implica suspensão poder familiar.', topic: 'Proteção' },
+        { id: 'eca-10', front: 'Ato infracional?', back: 'Conduta descrita como crime/contravenção praticada por criança/adolescente. Inimputáveis (<18a).', topic: 'Atos Infracionais' },
+        { id: 'eca-11', front: 'Criança pratica ato infracional?', back: 'Só medidas proteção (Art. 105). Adolescente: medidas socioeducativas.', topic: 'Atos Infracionais' },
+        { id: 'eca-12', front: 'Medidas socioeducativas (Art. 112)?', back: 'Advertência, obrigação reparar dano, prestação serviços, liberdade assistida, semi-liberdade, internação.', topic: 'Atos Infracionais' },
+        { id: 'eca-13', front: 'Advertência?', back: 'Admoestação verbal reduzida termo, assinada. Atos leves, primários.', topic: 'Atos Infracionais' },
+        { id: 'eca-14', front: 'Prestação serviços comunidade?', back: 'Tarefas gratuitas interesse geral. Max 6 meses. Jornada max 8h semanais (não prejudica escola).', topic: 'Atos Infracionais' },
+        { id: 'eca-15', front: 'Liberdade assistida?', back: 'Acompanhamento orientador. Min 6 meses. Promover social, escola, trabalho, família.', topic: 'Atos Infracionais' },
+        { id: 'eca-16', front: 'Internação: princípios?', back: 'Brevidade, excepcionalidade, respeito condição peculiar. ÚLTIMA medida. Max 3 anos.', topic: 'Internação' },
+        { id: 'eca-17', front: 'Internação: hipóteses (Art. 122)?', back: 'Ato grave violência/ameaça pessoa, reiteração infrações graves, descumprimento reiterado medida anterior.', topic: 'Internação' },
+        { id: 'eca-18', front: 'Internação: prazo?', back: 'Max 3 anos. Reavaliação obrigatória 6 em 6 meses. Liberação compulsória 21 anos.', topic: 'Internação' },
+        { id: 'eca-19', front: 'Internação provisória?', back: 'Antes sentença. Max 45 dias. Decisão fundamentada. Indícios autoria, materialidade, necessidade.', topic: 'Internação' },
+        { id: 'eca-20', front: 'Trabalho infantil?', back: 'Proibido <16 anos. Exceção: aprendiz ≥14 anos. Noturno/insalubre/perigoso: proibido <18a.', topic: 'Trabalho' },
+        { id: 'eca-21', front: 'Aprendizagem?', back: 'Formação técnico-profissional. Contrato especial. 14-24 anos. Jornada max 6h. Bolsa. Direitos trabalhistas.', topic: 'Trabalho' },
+        { id: 'eca-22', front: 'Conselho Tutelar?', back: 'Órgão municipal permanente, autônomo, não jurisdicional. 5 membros. Mandato 4 anos, 1 recondução. Aplica medidas proteção.', topic: 'Órgãos' },
+        { id: 'eca-23', front: 'Justiça Infância/Juventude?', back: 'Vara especializada. Competência: atos infracionais, medidas proteção, adoção, infrações ECA.', topic: 'Órgãos' },
+        { id: 'eca-24', front: 'Crime: vender bebida?', back: 'Vender/fornecer bebida alcoólica <18a. 2-4 anos + multa (Art. 243).', topic: 'Crimes' },
+        { id: 'eca-25', front: 'Crime: vender arma/fogo', back: 'Vender/fornecer arma/fogo/munição/explosivo <18a. 3-6 anos + multa (Art. 242).', topic: 'Crimes' }
+    ],
 };
-

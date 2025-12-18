@@ -82,9 +82,14 @@ export async function checkConnection() {
     }
 }
 
-export async function generateQuestion(subject, exam) {
+export async function generateQuestion(subject, exam, topic = null) {
     const provider = getProvider();
+    const topicLine = topic
+        ? `\nTÓPICO ESPECÍFICO (obrigatório): "${topic}". A questão DEVE cobrar exatamente esse tópico.`
+        : '';
     const prompt = `
+    ${topicLine}
+    Varie o estilo entre: caso pratico/situacao-problema, assertivas (I/II/III), conceito direto, interpretacao, pegadinha de banca.
     Aja como um COACH especialista em concursos públicos. O aluno está estudando "${subject}" para o concurso "${exam || 'Geral'}".
     
     Crie uma questão inédita, desafiadora e inteligente sobre o tema.

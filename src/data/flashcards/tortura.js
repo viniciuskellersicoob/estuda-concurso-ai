@@ -1,14 +1,27 @@
-import { makeCards } from './utils';
-
 export const leiTortura = {
-    name: 'Lei de Tortura (Lei 9.455/1997) - Noções',
-    icon: '⛔',
+    name: 'Lei de Tortura',
+    icon: '🚫',
     exams: ['policia-penal-mg'],
-    cards: makeCards('tort', [
-        ['Tortura: núcleo?', 'Constranger com violência/grave ameaça causando sofrimento físico/mental para fins específicos (confissão, castigo, discriminação etc.).'],
-        ['Tortura x maus-tratos (diferença)?', 'Tortura exige finalidade específica e sofrimento intenso; maus-tratos tem outra estrutura típica.'],
-        ['Tortura é equiparada a hediondo?', 'É tratada como equiparada para vários efeitos (tema de prova).'],
-        ['“Obediência hierárquica” justifica tortura?', 'Não. Vedação absoluta e responsabilização.'],
-    ]),
+    cards: [
+        { id: 'tort-1', front: 'Lei Tortura?', back: 'Lei 9.455/1997. Crime hediondo equiparado. Tratamento rigoroso.', topic: 'Fundamentos' },
+        { id: 'tort-2', front: 'Pena tortura (caput)?', back: '2-8 anos reclusão + multa. Qualificadas: 4-10a ou 8-16a ou 12-32a.', topic: 'Penas' },
+        { id: 'tort-3', front: 'Tortura confissão (Art. 1º, I, a)?', back: 'Constranger com violência/ameaça grave para obter informação, declaração, confissão (vítima/3º).', topic: 'Modalidades' },
+        { id: 'tort-4', front: 'Tortura crime (Art. 1º, I, b)?', back: 'Submeter sofrimento físico/mental como forma provocar ação/omissão crime.', topic: 'Modalidades' },
+        { id: 'tort-5', front: 'Tortura discriminação (Art. 1º, I, c)?', back: 'Submeter sofrimento físico/mental por discriminação racial/religiosa.', topic: 'Modalidades' },
+        { id: 'tort-6', front: 'Tortura preso (Art. 1º, §1º)?', back: 'Submeter pessoa presa/sujeita medida segurança a sofrimento físico/mental (violência/ameaça grave/constrangimento). 2-8a.', topic: 'Modalidades' },
+        { id: 'tort-7', front: 'Sujeito ativo?', back: 'Crime comum (qualquer pessoa). Agente público (maioria casos): agrava responsabilidade ética.', topic: 'Sujeitos' },
+        { id: 'tort-8', front: 'Sujeito passivo?', back: 'Qualquer pessoa. Vítima ou 3º (confissão 3º).', topic: 'Sujeitos' },
+        { id: 'tort-9', front: 'Omissão tortura (Art. 1º, §2º)?', back: 'Autoridade que tinha dever/poder EVITAR/IMPEDIR e se omitiu. Pena: METADE (1-4 anos).', topic: 'Omissão' },
+        { id: 'tort-10', front: 'Lesão grave culposa (Art. 1º, §3º)?', back: 'Tortura resulta lesão corporal GRAVE/GRAVÍSSIMA. 4-10 anos + multa.', topic: 'Qualificadas' },
+        { id: 'tort-11', front: 'Morte culposa (Art. 1º, §4º)?', back: 'Tortura resulta MORTE não intencional. 8-16 anos + multa.', topic: 'Qualificadas' },
+        { id: 'tort-12', front: 'Morte dolosa (Art. 1º, §5º)?', back: 'Tortura COM intenção matar (dolo). 12-32 anos (homicídio qualificado + tortura).', topic: 'Qualificadas' },
+        { id: 'tort-13', front: 'Tortura <18 ou >60?', back: 'Agrava pena. 4-10 anos (ao invés 2-8a).', topic: 'Causas Aumento' },
+        { id: 'tort-14', front: 'Tortura gestante?', back: 'Agrava pena. 4-10 anos.', topic: 'Causas Aumento' },
+        { id: 'tort-15', front: 'Efeitos condenação (Art. 1º, §5º)?', back: 'Perda cargo/função + interdição exercê-los 2x tempo pena. Cassação aposentadoria. Proibição perceber vencimentos/subsídios.', topic: 'Efeitos' },
+        { id: 'tort-16', front: 'Progressão regime?', back: '2/5 primário, 3/5 reincidente (hediondo equiparado).', topic: 'Execução' },
+        { id: 'tort-17', front: 'Regime inicial?', back: 'Fechado obrigatório (hediondo).', topic: 'Execução' },
+        { id: 'tort-18', front: 'Fiança/liberdade provisória?', back: 'VEDADAS (hediondo equiparado).', topic: 'Vedações' },
+        { id: 'tort-19', front: 'Graça/anistia?', back: 'Vedadas. Indulto: após 2/5 ou 3/5.', topic: 'Vedações' },
+        { id: 'tort-20', front: 'Convenção ONU?', back: 'Brasil ratificou Convenção Contra Tortura (1989). Proibição absoluta (não admite exceções - nem guerra).', topic: 'Internacional' }
+    ],
 };
-
