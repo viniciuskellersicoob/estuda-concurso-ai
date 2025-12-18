@@ -105,11 +105,14 @@ export function getExamSubjects(examId) {
     Object.keys(FLASHCARD_DATABASE).forEach((subjectKey) => {
         const subject = FLASHCARD_DATABASE[subjectKey];
         if (subject.exams.includes(examId)) {
+            const eligible = subject.cards.filter((card) => !card.exams || card.exams.includes(examId));
+            const examTagged = eligible.filter((card) => card.exams && card.exams.includes(examId));
+            const cardCount = (examTagged.length ? examTagged : eligible).length;
             subjects.push({
                 id: subjectKey,
                 name: subject.name,
                 icon: subject.icon,
-                cardCount: subject.cards.length,
+                cardCount,
             });
         }
     });
@@ -119,7 +122,9 @@ export function getExamSubjects(examId) {
 export function getFlashcards(examId, subjectId) {
     const subject = FLASHCARD_DATABASE[subjectId];
     if (!subject || !subject.exams.includes(examId)) return [];
-    return subject.cards;
+    const eligible = subject.cards.filter((card) => !card.exams || card.exams.includes(examId));
+    const examTagged = eligible.filter((card) => card.exams && card.exams.includes(examId));
+    return examTagged.length ? examTagged : eligible;
 }
 
 export function shuffleFlashcards(cards) {
