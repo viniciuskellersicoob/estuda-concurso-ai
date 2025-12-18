@@ -17,7 +17,7 @@ function App() {
     <ThemeProvider>
       <GamificationProvider>
         <AuthProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/study" element={<StudySetup />} />
