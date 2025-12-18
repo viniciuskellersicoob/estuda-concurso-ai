@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, ChevronRight, Wifi, WifiOff, Loader2, Zap, Target, Sparkles, NotebookPen } from 'lucide-react';
 import { Layout } from '../components/Layout';
@@ -8,12 +8,14 @@ import { isGroqConfigured } from '../config/groq';
 import { useGamification } from '../context/GamificationContext';
 import { clsx } from 'clsx';
 import { useAuth } from '../context/AuthContext';
+import WelcomePopup from '../components/WelcomePopup';
 
 export function Home() {
     const navigate = useNavigate();
     const [groqStatus, setGroqStatus] = useState(null);
     const [checkingGroq, setCheckingGroq] = useState(false);
     const [credential, setCredential] = useState('');
+    const [showWelcome, setShowWelcome] = useState(false);
     const { xp, level, streak } = useGamification();
     const {
         isAuthenticated,
@@ -26,6 +28,13 @@ export function Home() {
     } = useAuth();
 
     const profile = selectedUser ? userProfiles[selectedUser] : null;
+
+    // Detecta quando Luana seleciona o perfil
+    useEffect(() => {
+        if (selectedUser && selectedUser.toLowerCase() === 'luana') {
+            setShowWelcome(true);
+        }
+    }, [selectedUser]);
 
     const handleLogin = () => {
         if (login(credential)) {
@@ -288,9 +297,17 @@ export function Home() {
 
                 {/* Footer */}
                 <div className="mt-auto pt-4 md:pt-6 text-center">
-                    <p className="text-xs text-slate-400 dark:text-slate-500">EstudaConcurso AI • v2.0</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">EstudaConcurso AI • v3.0</p>
                 </div>
             </div>
+
+            {/* Popup de boas-vindas para Luana */}
+            {showWelcome && selectedUser && (
+                <WelcomePopup
+                    userName={selectedUser}
+                    onClose={() => setShowWelcome(false)}
+                />
+            )}
         </Layout>
     );
 }
