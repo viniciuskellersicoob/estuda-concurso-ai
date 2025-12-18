@@ -5587,6 +5587,325 @@ registerQuestions(['Lei de Tortura', 'Lei 9.455'], [
     },
 ]);
 
+// ==========================================================
+// PMDF (CEBRASPE) - Itens de CERTO/ERRADO (estilo Cespe/Cebraspe)
+// ==========================================================
+
+const cebraspeOptions = () =>
+    buildOptions([
+        ['c', 'Certo'],
+        ['e', 'Errado'],
+    ]);
+
+const cebraspeItem = ({ id, exams, topic, statement, correctId, correctWhy, wrongWhy }) =>
+    withFeedback(
+        {
+            id,
+            exams,
+            topic,
+            text: `Julgue o item (C/E): ${statement}`,
+            options: cebraspeOptions(),
+            correctId,
+            explanation: correctWhy,
+        },
+        {
+            c: correctId === 'c' ? `Correto: ${correctWhy}` : `Errado: ${wrongWhy || correctWhy}`,
+            e: correctId === 'e' ? `Correto: ${correctWhy}` : `Errado: ${wrongWhy || correctWhy}`,
+        }
+    );
+
+// Língua Portuguesa (PMDF)
+registerQuestions(['Lingua Portuguesa', 'Língua Portuguesa', 'La ngua Portuguesa'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-lp-1',
+        exams: ['pmdf'],
+        topic: 'Pontuação',
+        statement: 'A vírgula pode separar sujeito de verbo quando o sujeito é longo.',
+        correctId: 'e',
+        correctWhy: 'Regra geral: não se separa sujeito de verbo por vírgula; “sujeito longo” não autoriza a quebra.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-lp-2',
+        exams: ['pmdf'],
+        topic: 'Regência',
+        statement: 'No sentido de “ver”, o verbo assistir rege a preposição “a” (assistir a algo).',
+        correctId: 'c',
+        correctWhy: 'Em norma-padrão, “assistir” = ver/presenciar exige preposição: “assistir ao filme”.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-lp-3',
+        exams: ['pmdf'],
+        topic: 'Crase',
+        statement: 'Há crase em “Refiro-me a aquela situação” quando o verbo exige preposição “a”.',
+        correctId: 'c',
+        correctWhy: 'Se houver regência de “a”, ocorre crase em “àquela” (a + aquela).',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-lp-4',
+        exams: ['pmdf'],
+        topic: 'Concordância',
+        statement: 'O verbo haver, no sentido de existir, admite plural: “Houveram muitos incidentes”.',
+        correctId: 'e',
+        correctWhy: '“Haver” impessoal (existir) fica no singular: “Houve muitos incidentes”.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-lp-5',
+        exams: ['pmdf'],
+        topic: 'Coesão e coerência',
+        statement: 'Coesão textual refere-se ao sentido global do texto; coerência, aos mecanismos linguísticos de ligação.',
+        correctId: 'e',
+        correctWhy: 'É o inverso: coesão = ligações linguísticas; coerência = sentido global e lógica.',
+    }),
+]);
+
+// Raciocínio Lógico-Matemático (PMDF)
+registerQuestions(['Raciocinio Logico', 'Matematica e Raciocinio Logico', 'Raciocinio Logico-Matematico'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-rl-1',
+        exams: ['pmdf'],
+        topic: 'Proposições e implicação',
+        statement: 'A proposição “p → q” é falsa somente quando p é verdadeira e q é falsa.',
+        correctId: 'c',
+        correctWhy: 'Na implicação, o único caso de falsidade é V → F.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-rl-2',
+        exams: ['pmdf'],
+        topic: 'Negação',
+        statement: 'A negação de “p → q” é “¬p ∧ q”.',
+        correctId: 'e',
+        correctWhy: 'A negação de (p → q) é (p ∧ ¬q).',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-rl-3',
+        exams: ['pmdf'],
+        topic: 'Porcentagem',
+        statement: 'Aumentar 10% e depois diminuir 10% sempre retorna ao valor inicial.',
+        correctId: 'e',
+        correctWhy: 'Operações percentuais sucessivas não são simétricas: 10% de aumento e 10% de desconto não se anulam.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-rl-4',
+        exams: ['pmdf'],
+        topic: 'Probabilidade',
+        statement: 'Se A e B são eventos independentes, então P(A∩B) = P(A)·P(B).',
+        correctId: 'c',
+        correctWhy: 'Independência implica multiplicação das probabilidades.',
+    }),
+]);
+
+// Noções de Informática (PMDF)
+registerQuestions(['Nocoes de Informatica', 'Informatica'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-inf-1',
+        exams: ['pmdf'],
+        topic: 'Segurança da informação',
+        statement: 'Phishing é uma técnica de engenharia social usada para obter credenciais e dados por meio de mensagens fraudulentas.',
+        correctId: 'c',
+        correctWhy: 'Phishing tenta induzir a vítima a revelar informações sensíveis (senhas, códigos etc.).',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-inf-2',
+        exams: ['pmdf'],
+        topic: 'Backup',
+        statement: 'Backup incremental copia todos os arquivos novamente a cada execução, independentemente de alterações.',
+        correctId: 'e',
+        correctWhy: 'Incremental copia apenas o que mudou desde o último backup (geralmente desde o último backup, seja full ou incremental).',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-inf-3',
+        exams: ['pmdf'],
+        topic: 'Navegação e segurança',
+        statement: 'HTTPS indica uso de criptografia no canal e reduz risco de interceptação do tráfego entre cliente e servidor.',
+        correctId: 'c',
+        correctWhy: 'HTTPS usa TLS/SSL para cifrar a comunicação, mitigando sniffing e adulteração.',
+    }),
+]);
+
+// Direito Constitucional (PMDF)
+registerQuestions(['Direito Constitucional'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-const-1',
+        exams: ['pmdf'],
+        topic: 'Segurança pública (art. 144)',
+        statement: 'A segurança pública é dever do Estado, direito e responsabilidade de todos.',
+        correctId: 'c',
+        correctWhy: 'Texto do art. 144 da CF: dever do Estado, direito e responsabilidade de todos.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-const-2',
+        exams: ['pmdf'],
+        topic: 'Direitos fundamentais',
+        statement: 'Os direitos e garantias fundamentais podem ser restringidos por lei em qualquer hipótese, desde que haja interesse público.',
+        correctId: 'e',
+        correctWhy: 'Restrições devem respeitar limites constitucionais (reserva legal, proporcionalidade, núcleo essencial etc.); não é “qualquer hipótese”.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-const-3',
+        exams: ['pmdf'],
+        topic: 'Administração pública (art. 37)',
+        statement: 'Legalidade, impessoalidade, moralidade, publicidade e eficiência são princípios expressos aplicáveis à administração pública.',
+        correctId: 'c',
+        correctWhy: 'LIMPE é o núcleo do art. 37, caput.',
+    }),
+]);
+
+// Direito Penal (PMDF)
+registerQuestions(['Direito Penal'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-pen-1',
+        exams: ['pmdf'],
+        topic: 'Princípio da legalidade',
+        statement: 'Não há crime sem lei anterior que o defina, nem pena sem prévia cominação legal.',
+        correctId: 'c',
+        correctWhy: 'Princípio da legalidade (nullum crimen, nulla poena sine lege).',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-pen-2',
+        exams: ['pmdf'],
+        topic: 'Excludentes de ilicitude',
+        statement: 'No estado de necessidade, o agente sacrifica bem de maior valor para salvar bem de menor valor.',
+        correctId: 'e',
+        correctWhy: 'No estado de necessidade, em regra, busca-se preservar bem próprio/alheio diante de perigo atual, com ponderação; “maior por menor” contraria a lógica típica da excludente.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-pen-3',
+        exams: ['pmdf'],
+        topic: 'Concurso de pessoas',
+        statement: 'Em concurso de pessoas, a regra é que todos respondem na medida de sua culpabilidade.',
+        correctId: 'c',
+        correctWhy: 'A responsabilização considera a participação e o grau de culpabilidade.',
+    }),
+]);
+
+// Direito Processual Penal (PMDF)
+registerQuestions(['Direito Processual Penal'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-pp-1',
+        exams: ['pmdf'],
+        topic: 'Inquérito policial',
+        statement: 'O inquérito policial é procedimento administrativo investigativo que subsidia a ação penal.',
+        correctId: 'c',
+        correctWhy: 'É investigação preliminar, com finalidade de colher elementos informativos.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-pp-2',
+        exams: ['pmdf'],
+        topic: 'Prisão cautelar',
+        statement: 'A prisão preventiva pode ser decretada sem decisão judicial, por ato exclusivo da autoridade policial.',
+        correctId: 'e',
+        correctWhy: 'Prisão preventiva exige decisão judicial fundamentada (hipóteses e requisitos legais).',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-pp-3',
+        exams: ['pmdf'],
+        topic: 'Prova',
+        statement: 'A cadeia de custódia busca assegurar rastreabilidade e integridade da evidência, desde a coleta até o descarte.',
+        correctId: 'c',
+        correctWhy: 'Cadeia de custódia documenta manuseio/transferências para garantir confiabilidade.',
+    }),
+]);
+
+// Direitos Humanos (PMDF)
+registerQuestions(['Direitos Humanos'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-dh-1',
+        exams: ['pmdf'],
+        topic: 'Uso da força',
+        statement: 'Os princípios da legalidade, necessidade e proporcionalidade orientam o uso da força pelo Estado.',
+        correctId: 'c',
+        correctWhy: 'Padrão de DH: uso da força deve ser legal, necessário e proporcional, com responsabilização.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-dh-2',
+        exams: ['pmdf'],
+        topic: 'Tratamento de presos',
+        statement: 'É vedado tratamento cruel, desumano ou degradante, inclusive em ambiente prisional.',
+        correctId: 'c',
+        correctWhy: 'A proteção à integridade física e moral é regra constitucional e de DH.',
+    }),
+]);
+
+// Criminologia (PMDF)
+registerQuestions(['Criminologia'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-crim-1',
+        exams: ['pmdf'],
+        topic: 'Cifra negra',
+        statement: 'Cifra negra corresponde aos crimes não registrados nas estatísticas oficiais.',
+        correctId: 'c',
+        correctWhy: 'São ocorrências não notificadas/registradas.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-crim-2',
+        exams: ['pmdf'],
+        topic: 'Labeling (etiquetamento)',
+        statement: 'A teoria do etiquetamento enfatiza que o rótulo social pode reforçar exclusão e carreiras criminais.',
+        correctId: 'c',
+        correctWhy: 'Labeling destaca estigmatização e reação social como parte do fenômeno criminal.',
+    }),
+]);
+
+// Estatuto PMDF (Noções) (PMDF)
+registerQuestions(['Estatuto dos Policiais Militares do DF', 'Estatuto PMDF'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-est-1',
+        exams: ['pmdf'],
+        topic: 'Hierarquia e disciplina',
+        statement: 'Hierarquia e disciplina são bases estruturantes das instituições militares.',
+        correctId: 'c',
+        correctWhy: 'São pilares do regime militar: cadeia de comando e observância de normas/ordens legais.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-est-2',
+        exams: ['pmdf'],
+        topic: 'Responsabilidades',
+        statement: 'A responsabilização do militar restringe-se à esfera disciplinar, não alcançando esferas civil e penal.',
+        correctId: 'e',
+        correctWhy: 'Há responsabilização disciplinar/administrativa e, conforme o fato, também civil e penal.',
+    }),
+]);
+
+// Regulamento Disciplinar da PMDF (PMDF)
+registerQuestions(['Regulamento Disciplinar da PMDF', 'RDP/PMDF'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-rdp-1',
+        exams: ['pmdf'],
+        topic: 'Devido processo',
+        statement: 'Mesmo no processo disciplinar, deve-se assegurar defesa e decisão motivada.',
+        correctId: 'c',
+        correctWhy: 'Garantias procedimentais (defesa/motivação) são ponto recorrente de prova.',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-rdp-2',
+        exams: ['pmdf'],
+        topic: 'Proporcionalidade',
+        statement: 'A aplicação de sanções disciplinares deve observar proporcionalidade.',
+        correctId: 'c',
+        correctWhy: 'É princípio básico em regime disciplinar (evita punição excessiva).',
+    }),
+]);
+
+// Legislação Penal Especial (PMDF)
+registerQuestions(['Legislacao Penal Especial'], [
+    cebraspeItem({
+        id: 'pmdf-ceb-lpe-1',
+        exams: ['pmdf'],
+        topic: 'Lei 11.343/2006 (drogas)',
+        statement: 'A distinção entre uso e tráfico depende apenas da quantidade de droga apreendida, fixada em lei.',
+        correctId: 'e',
+        correctWhy: 'Não há quantidade fixa universal na lei; a distinção considera o caso concreto (circunstâncias, local, conduta etc.).',
+    }),
+    cebraspeItem({
+        id: 'pmdf-ceb-lpe-2',
+        exams: ['pmdf'],
+        topic: 'Maria da Penha',
+        statement: 'Medidas protetivas podem incluir afastamento do agressor e proibição de aproximação/contato.',
+        correctId: 'c',
+        correctWhy: 'Medidas protetivas visam proteção imediata da vítima, com restrições ao agressor.',
+    }),
+]);
+
 const isUsed = (used, id) => {
     if (!used) return false;
     if (used instanceof Set) {

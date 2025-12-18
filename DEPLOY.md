@@ -36,7 +36,8 @@ git push -u origin main
    - **Install Command**: `npm install`
 
 5. **Variáveis de Ambiente** (se usar IA):
-   - Adicione: `VITE_GEMINI_API_KEY` com sua chave da API
+   - Adicione: `VITE_GROQ_API_KEY` (padrão) **ou** `VITE_DEEPSEEK_API_KEY` com sua chave da API
+   - (Opcional) `VITE_AI_PROVIDER=deepseek` para usar DeepSeek em vez de Groq
 
 6. Clique em "Deploy"
 
@@ -89,7 +90,9 @@ Após deploy, você pode:
 ## ⚙️ Variáveis de Ambiente Necessárias
 
 Se usar geração de questões por IA:
-- `VITE_GEMINI_API_KEY` - Chave da API Gemini
+- `VITE_GROQ_API_KEY` - Chave da API Groq (padrão)
+- `VITE_DEEPSEEK_API_KEY` - Chave da API DeepSeek (opcional)
+- `VITE_AI_PROVIDER` - `groq` ou `deepseek`
 
 ---
 

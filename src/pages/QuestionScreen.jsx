@@ -4,7 +4,7 @@ import { ArrowLeft, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { Button } from '../components/Button';
 import { StudyControls } from '../components/StudyControls';
-import { generateQuestion } from '../services/ai';
+import { generateCoachExplanationStep, generateQuestion } from '../services/ai';
 import { getQuestionFromBank } from '../data/questionBank';
 import { addErrorEntry } from '../data/errorNotebook';
 import { useGamification } from '../context/GamificationContext';
@@ -32,6 +32,11 @@ export function QuestionScreen() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const usedBankIdsRef = useRef(new Set());
+    const [coachIndex, setCoachIndex] = useState(null);
+    const [coachItems, setCoachItems] = useState({});
+    const [coachStep, setCoachStep] = useState(0);
+    const [coachLoading, setCoachLoading] = useState(false);
+    const [coachError, setCoachError] = useState(null);
 
     const { addXp } = useGamification();
 
@@ -96,6 +101,114 @@ export function QuestionScreen() {
     };
 
     const currentQuestion = questions[currentIndex];
+    const isCorrect = isAnswered && selectedOption === currentQuestion?.correctId;
+    const isWrong = isAnswered && selectedOption && currentQuestion && selectedOption !== currentQuestion.correctId;
+
+    useEffect(() => {
+        setCoachIndex(null);
+        setCoachItems({});
+        setCoachStep(0);
+        setCoachLoading(false);
+        setCoachError(null);
+    }, [currentQuestion?.id]);
+
+    const getCoachCacheKey = (step) => {
+        const questionId = currentQuestion?.id || 'unknown';
+        const selected = selectedOption || 'none';
+        const examId = exam || 'geral';
+        return `coach_expl_v1:${examId}:${questionId}:${selected}:${step}`;
+    };
+
+    const readCoachCache = (step) => {
+        if (typeof window === 'undefined') return null;
+        const raw = window.localStorage.getItem(getCoachCacheKey(step));
+        if (!raw) return null;
+        try {
+            return JSON.parse(raw);
+        } catch {
+            return null;
+        }
+    };
+
+    const writeCoachCache = (step, payload) => {
+        if (typeof window === 'undefined') return;
+        try {
+            window.localStorage.setItem(getCoachCacheKey(step), JSON.stringify(payload));
+        } catch {
+            // ignore
+        }
+    };
+
+    const ensureCoachIndex = async () => {
+        if (!currentQuestion || !selectedOption) return;
+        if (coachIndex && Array.isArray(coachIndex) && coachIndex.length) return;
+
+        const cached = readCoachCache(0);
+        if (cached?.index?.length) {
+            setCoachIndex(cached.index);
+            setCoachStep(0);
+            return;
+        }
+
+        setCoachLoading(true);
+        setCoachError(null);
+        try {
+            const payload = await generateCoachExplanationStep({
+                question: currentQuestion,
+                selectedOptionId: selectedOption,
+                subject: currentQuestion.subject || currentSubject,
+                exam,
+                step: 0,
+            });
+
+            if (!payload?.index?.length) throw new Error('Resposta inesperada da IA.');
+            setCoachIndex(payload.index);
+            setCoachStep(0);
+            writeCoachCache(0, payload);
+        } catch (e) {
+            setCoachError(e.message || 'Erro ao gerar explicação.');
+        } finally {
+            setCoachLoading(false);
+        }
+    };
+
+    const loadCoachStep = async (step) => {
+        if (!currentQuestion || !selectedOption) return;
+        if (!coachIndex || !coachIndex.length) await ensureCoachIndex();
+
+        if (coachItems[step]) {
+            setCoachStep(step);
+            return;
+        }
+
+        const cached = readCoachCache(step);
+        if (cached?.content) {
+            setCoachItems((prev) => ({ ...prev, [step]: cached }));
+            setCoachStep(step);
+            return;
+        }
+
+        setCoachLoading(true);
+        setCoachError(null);
+        try {
+            const payload = await generateCoachExplanationStep({
+                question: currentQuestion,
+                selectedOptionId: selectedOption,
+                subject: currentQuestion.subject || currentSubject,
+                exam,
+                step,
+                index: coachIndex,
+            });
+            if (!payload?.content) throw new Error('Resposta inesperada da IA.');
+            setCoachItems((prev) => ({ ...prev, [step]: payload }));
+            setCoachStep(step);
+            writeCoachCache(step, payload);
+        } catch (e) {
+            setCoachError(e.message || 'Erro ao gerar explicação.');
+        } finally {
+            setCoachLoading(false);
+        }
+    };
 
     const handleOptionSelect = (optionId) => {
         if (isAnswered) return;
@@ -173,8 +286,6 @@ export function QuestionScreen() {
             </Layout>
         );
     }
-
-    const isCorrect = isAnswered && selectedOption === currentQuestion.correctId;
 
     return (
         <Layout>
@@ -312,6 +423,139 @@ export function QuestionScreen() {
                                             </p>
                                         </div>
                                     ))}
+                                </div>
+                            )}
+
+                            {isWrong && (
+                                <div className="mt-6 border-t border-slate-200 dark:border-slate-800 pt-4 space-y-3">
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div>
+                                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                                Coach IA (passo a passo)
+                                            </p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                Gera um guia bem organizado para entender o erro e fixar o conteúdo.
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            {!coachIndex?.length && (
+                                                <Button
+                                                    variant="outline"
+                                                    className="h-10 px-4 text-sm"
+                                                    disabled={coachLoading}
+                                                    onClick={ensureCoachIndex}
+                                                    type="button"
+                                                >
+                                                    {coachLoading ? 'Gerando...' : 'Gerar índice'}
+                                                </Button>
+                                            )}
+                                            {!!coachIndex?.length && coachStep === 0 && (
+                                                <Button
+                                                    variant="primary"
+                                                    className="h-10 px-4 text-sm"
+                                                    disabled={coachLoading}
+                                                    onClick={() => loadCoachStep(1)}
+                                                    type="button"
+                                                >
+                                                    {coachLoading ? 'Carregando...' : 'Começar item 1'}
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {coachError && (
+                                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-200">
+                                            {coachError}
+                                            <div className="mt-2 text-xs opacity-80">
+                                                Dica: configure `VITE_GROQ_API_KEY` no `.env`.
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {!!coachIndex?.length && (
+                                        <div className="space-y-2">
+                                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                                Índice
+                                            </p>
+                                            <ol className="space-y-2">
+                                                {coachIndex.map((item, idx) => {
+                                                    const step = idx + 1;
+                                                    const isActive = coachStep === step;
+                                                    return (
+                                                        <li key={`coach-index-${step}`}>
+                                                            <button
+                                                                type="button"
+                                                                disabled={coachLoading}
+                                                                onClick={() => loadCoachStep(step)}
+                                                                className={clsx(
+                                                                    "w-full text-left rounded-xl border px-4 py-3 text-sm transition-colors",
+                                                                    isActive
+                                                                        ? "border-blue-300 bg-blue-50 text-blue-900 dark:border-blue-900/40 dark:bg-blue-900/20 dark:text-blue-100"
+                                                                        : "border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/30 dark:hover:bg-slate-900/40 text-slate-700 dark:text-slate-200",
+                                                                    coachLoading && "opacity-70"
+                                                                )}
+                                                            >
+                                                                {item}
+                                                            </button>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ol>
+                                        </div>
+                                    )}
+
+                                    {coachStep > 0 && coachItems?.[coachStep]?.content && (
+                                        <div className="mt-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/30 p-4 space-y-3">
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-800 dark:text-white">
+                                                    {coachItems[coachStep].title || coachIndex?.[coachStep - 1]}
+                                                </p>
+                                                {coachItems[coachStep].question && (
+                                                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                                        {coachItems[coachStep].question}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <pre className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                                                {coachItems[coachStep].content}
+                                            </pre>
+
+                                            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                                                <Button
+                                                    variant="ghost"
+                                                    className="h-10 px-4 text-sm"
+                                                    type="button"
+                                                    disabled={coachLoading}
+                                                    onClick={() => setCoachStep(0)}
+                                                >
+                                                    Voltar ao índice
+                                                </Button>
+
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="h-10 px-4 text-sm"
+                                                        type="button"
+                                                        disabled={coachLoading || coachStep <= 1}
+                                                        onClick={() => loadCoachStep(coachStep - 1)}
+                                                    >
+                                                        Anterior
+                                                    </Button>
+                                                    <Button
+                                                        variant="primary"
+                                                        className="h-10 px-4 text-sm"
+                                                        type="button"
+                                                        disabled={coachLoading || coachStep >= (coachIndex?.length || 6)}
+                                                        onClick={() => loadCoachStep(coachStep + 1)}
+                                                    >
+                                                        Próximo
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

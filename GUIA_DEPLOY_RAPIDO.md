@@ -101,8 +101,9 @@ git push -u origin main
    - Output Directory: `dist`
 6. **Variáveis de Ambiente** (SOMENTE SE USAR IA):
    - Click "Environment Variables"
-   - Name: `VITE_GEMINI_API_KEY`
+   - Name: `VITE_GROQ_API_KEY` (padrão) **ou** `VITE_DEEPSEEK_API_KEY`
    - Value: `sua_chave_aqui`
+   - (Opcional) `VITE_AI_PROVIDER=deepseek` para usar DeepSeek em vez de Groq
 7. Click **"Deploy"**
 8. ⏱️ Aguarde 2-3 minutos
 9. 🎉 **PRONTO!** Link: `https://seu-projeto.vercel.app`
@@ -123,7 +124,11 @@ vercel
 # - Want to override settings? → No
 
 # Se usar IA, adicionar variável:
-vercel env add VITE_GEMINI_API_KEY
+vercel env add VITE_GROQ_API_KEY
+
+# (Opcional) para usar DeepSeek:
+vercel env add VITE_DEEPSEEK_API_KEY
+vercel env add VITE_AI_PROVIDER
 
 # Deploy para produção
 vercel --prod
@@ -213,7 +218,7 @@ npm run build
 - Se problema persistir, verifique se arquivo commitado
 
 ### IA não funciona
-- Certifique-se de adicionar `VITE_GEMINI_API_KEY`
+- Certifique-se de adicionar `VITE_GROQ_API_KEY` (ou `VITE_DEEPSEEK_API_KEY`)
 - Variáveis de ambiente precisam começar com `VITE_`
 - Após adicionar variável, redeploy
 
@@ -228,10 +233,8 @@ npm run build
 - ✅ Deploy automático
 - ✅ Preview deployments
 
-**Gemini API (se usar):**
-- ✅ 60 requisições/minuto (grátis)
-- ✅ Suficiente para uso pessoal/pequeno grupo
-- ⚠️ Monitore uso em: https://console.cloud.google.com
+**Groq/DeepSeek (se usar IA):**
+- ✅ Veja limites e preços no painel do provedor
 
 **Total: R$ 0,00** para uso normal! 🎉
 

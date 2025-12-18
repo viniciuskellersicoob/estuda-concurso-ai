@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, ChevronRight, Wifi, WifiOff, Loader2, Zap, Target, Sparkles, NotebookPen, Brain } from 'lucide-react';
+import { BarChart3, ChevronRight, Wifi, WifiOff, Loader2, Zap, Target, Sparkles, NotebookPen } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { Header } from '../components/Header';
-import { checkConnection } from '../services/ai';
+import { testGroqConnection } from '../services/groqService';
+import { isGroqConfigured } from '../config/groq';
 import { useGamification } from '../context/GamificationContext';
 import { clsx } from 'clsx';
 import { useAuth } from '../context/AuthContext';
 
 export function Home() {
     const navigate = useNavigate();
-    const [apiStatus, setApiStatus] = useState(null);
-    const [checking, setChecking] = useState(false);
+    const [groqStatus, setGroqStatus] = useState(null);
+    const [checkingGroq, setCheckingGroq] = useState(false);
     const [credential, setCredential] = useState('');
     const { xp, level, streak } = useGamification();
     const {
@@ -32,15 +33,21 @@ export function Home() {
         }
     };
 
-    const handleCheckApi = async () => {
-        setChecking(true);
+    const handleCheckGroq = async () => {
+        setCheckingGroq(true);
         try {
-            const status = await checkConnection();
-            setApiStatus(status);
+            const result = await testGroqConnection();
+            setGroqStatus({
+                ok: result.success,
+                message: result.message,
+            });
         } catch (error) {
-            setApiStatus({ ok: false, message: 'Falha ao verificar IA' });
+            setGroqStatus({
+                ok: false,
+                message: error.message || 'Erro ao testar Groq',
+            });
         } finally {
-            setChecking(false);
+            setCheckingGroq(false);
         }
     };
 
@@ -180,33 +187,33 @@ export function Home() {
                     </div>
                 </div>
 
-                {/* API Status */}
+                {/* Status IA - Groq */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-white/20">
                     <div className="flex items-center gap-3 flex-1">
                         <div className={clsx("p-2 rounded-xl transition-all duration-300",
-                            apiStatus?.ok ? "bg-green-500/20 text-green-600 dark:text-green-400" :
-                                apiStatus?.ok === false ? "bg-red-500/20 text-red-600 dark:text-red-400" :
+                            groqStatus?.ok ? "bg-green-500/20 text-green-600 dark:text-green-400" :
+                                groqStatus?.ok === false ? "bg-red-500/20 text-red-600 dark:text-red-400" :
                                     "bg-slate-200 dark:bg-slate-700 text-slate-500"
                         )}>
-                            {apiStatus?.ok ? <Wifi size={16} className="md:w-5 md:h-5" /> : <WifiOff size={16} className="md:w-5 md:h-5" />}
+                            {groqStatus?.ok ? <Wifi size={16} className="md:w-5 md:h-5" /> : <WifiOff size={16} className="md:w-5 md:h-5" />}
                         </div>
                         <div className="flex-1">
-                            <p className="text-xs text-slate-500 dark:text-slate-400">Status IA</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Status IA (Groq)</p>
                             <p className={clsx("text-xs md:text-sm font-semibold",
-                                apiStatus?.ok ? "text-green-700 dark:text-green-400" :
-                                    apiStatus?.ok === false ? "text-red-700 dark:text-red-400" :
+                                groqStatus?.ok ? "text-green-700 dark:text-green-400" :
+                                    groqStatus?.ok === false ? "text-red-700 dark:text-red-400" :
                                         "text-slate-600 dark:text-slate-400"
                             )}>
-                                {checking ? "Verificando..." : (apiStatus?.message || "Não verificado")}
+                                {checkingGroq ? "Testando..." : (groqStatus?.message || (isGroqConfigured() ? "Clique para testar" : "Não configurado"))}
                             </p>
                         </div>
                     </div>
                     <button
-                        onClick={handleCheckApi}
-                        disabled={checking}
-                        className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 shadow-lg shadow-blue-500/30"
+                        onClick={handleCheckGroq}
+                        disabled={checkingGroq || !isGroqConfigured()}
+                        className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/30"
                     >
-                        {checking ? <Loader2 size={16} className="animate-spin mx-auto" /> : "Testar"}
+                        {checkingGroq ? <Loader2 size={16} className="animate-spin mx-auto" /> : "Testar IA"}
                     </button>
                 </div>
 
@@ -231,28 +238,6 @@ export function Home() {
                                 </p>
                             </div>
                             <ChevronRight className="w-5 h-5 text-blue-500 group-hover:translate-x-1 transition-transform shrink-0" />
-                        </div>
-                    </button>
-
-                    <button
-                        onClick={() => navigate('/flashcards')}
-                        className="group relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 backdrop-blur-xl border border-purple-500/20 p-4 md:p-6 text-left transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:shadow-2xl md:hover:shadow-purple-500/20"
-                    >
-                        <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all duration-300"></div>
-
-                        <div className="relative z-10 flex items-start gap-3 md:gap-4">
-                            <div className="p-2.5 md:p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl shadow-lg shrink-0">
-                                <Brain className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-base md:text-lg font-bold text-slate-800 dark:text-white mb-1">
-                                    Flashcards
-                                </h3>
-                                <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">
-                                    Revise conceitos-chave de todas as matérias com cards interativos.
-                                </p>
-                            </div>
-                            <ChevronRight className="w-5 h-5 text-purple-500 group-hover:translate-x-1 transition-transform shrink-0" />
                         </div>
                     </button>
 

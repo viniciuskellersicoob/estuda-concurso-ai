@@ -6,7 +6,6 @@ import { QuestionSetup } from './pages/QuestionSetup';
 import { QuestionScreen } from './pages/QuestionScreen';
 import { ErrorNotebook } from './pages/ErrorNotebook';
 import { Progress } from './pages/Progress';
-import { Flashcards } from './pages/Flashcards';
 
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
@@ -25,7 +24,6 @@ function App() {
               <Route path="/question" element={<QuestionScreen />} />
               <Route path="/progress" element={<Progress />} />
               <Route path="/errors" element={<ErrorNotebook />} />
-              <Route path="/flashcards" element={<Flashcards />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>
