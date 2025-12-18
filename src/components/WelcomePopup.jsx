@@ -54,7 +54,7 @@ export default function WelcomePopup({ userName, onClose }) {
 
                     {/* Título */}
                     <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-                        Olá, {userName}! 💖
+                        Olá, {userName}! ❤️
                     </h2>
 
                     {/* Mensagem especial */}
@@ -63,16 +63,16 @@ export default function WelcomePopup({ userName, onClose }) {
                             Eu te amo muito e <strong className="text-pink-600 dark:text-pink-400">acredito profundamente no seu potencial!</strong>
                         </p>
 
-                        <div className="flex items-center justify-center gap-2 text-purple-600 dark:text-purple-400">
-                            <Sparkles className="w-5 h-5" />
-                            <p className="text-sm font-medium">
-                                Você é capaz de conquistar tudo que desejar!
-                            </p>
-                            <Sparkles className="w-5 h-5" />
-                        </div>
+                        <p className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                            Você é capaz de conquistar tudo que desejar!
+                        </p>
 
                         <p className="text-base text-gray-600 dark:text-gray-400 italic">
-                            Este app foi feito com muito carinho para te ajudar a alcançar seus sonhos. Você vai arrasar! 🚀
+                            Este app foi feito com muito carinho para te ajudar a alcançar seus sonhos. Você vai arrasar!
+                        </p>
+
+                        <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-6 pt-4 border-t border-pink-200 dark:border-pink-500/30">
+                            by: <span className="font-semibold text-pink-600 dark:text-pink-400">Keller</span> ❤️
                         </p>
                     </div>
 
@@ -83,7 +83,7 @@ export default function WelcomePopup({ userName, onClose }) {
                     >
                         <Heart className="w-5 h-5 fill-white" />
                         Vamos começar!
-                        <Sparkles className="w-5 h-5" />
+                        <Heart className="w-5 h-5 fill-white" />
                     </button>
                 </div>
             </div>

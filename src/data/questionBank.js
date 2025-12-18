@@ -5931,10 +5931,23 @@ const cloneQuestion = (question) => ({
     options: question.options.map((opt) => ({ ...opt })),
 });
 
-function pickAvailable(slug, used, examSlug, allowedTopics) {
+function questionMatchesStyle(question, style) {
+    if (!style || style === 'mixed') return true;
+    const count = question?.options?.length || 0;
+    if (style === 'ce') return count === 2;
+    if (style === 'mc') return count >= 4;
+    return true;
+}
+
+function pickAvailable(slug, used, examSlug, allowedTopics, style) {
     const pool = QUESTION_BANK[slug];
     if (!pool || pool.length === 0) return null;
-    const available = pool.filter((question) => !isUsed(used, question.id) && questionMatchesExam(question, examSlug));
+    const available = pool.filter(
+        (question) =>
+            !isUsed(used, question.id) &&
+            questionMatchesExam(question, examSlug) &&
+            questionMatchesStyle(question, style)
+    );
     if (available.length === 0) return null;
 
     const normalizedAllowedTopics =
@@ -5952,15 +5965,15 @@ function pickAvailable(slug, used, examSlug, allowedTopics) {
     return candidates[index];
 }
 
-export function getQuestionFromBank(subjectName, used, examName, allowedTopics) {
+export function getQuestionFromBank(subjectName, used, examName, allowedTopics, style = 'mixed') {
     const slug = slugify(subjectName) || 'geral';
     const examSlug = slugify(examName) || 'geral';
-    const subjectQuestion = pickAvailable(slug, used, examSlug, allowedTopics);
+    const subjectQuestion = pickAvailable(slug, used, examSlug, allowedTopics, style);
     if (subjectQuestion) {
         return cloneQuestion(subjectQuestion);
     }
     if (slug !== 'geral') {
-        const fallback = pickAvailable('geral', used, examSlug, allowedTopics);
+        const fallback = pickAvailable('geral', used, examSlug, allowedTopics, style);
         if (fallback) {
             return cloneQuestion(fallback);
         }

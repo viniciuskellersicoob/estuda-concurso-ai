@@ -6,23 +6,36 @@ import { Button } from '../components/Button';
 import { StudyControls } from '../components/StudyControls';
 import { generateCoachExplanationStep, generateQuestion } from '../services/ai';
 import { getQuestionFromBank } from '../data/questionBank';
-import { addErrorEntry } from '../data/errorNotebook';
+import { addErrorEntry, resolveErrorByQuestionId } from '../data/errorNotebook';
 import { useGamification } from '../context/GamificationContext';
 import { clsx } from 'clsx';
 import { useRequireAuth } from '../hooks/useRequireAuth';
+import { usePreferences } from '../context/PreferencesContext';
+import { isTtsSupported, speak, stopTts } from '../utils/tts';
 
 export function QuestionScreen() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { exam, position, subjects, topics } = location.state || {};
+    const {
+        exam,
+        position,
+        subjects,
+        topics,
+        questionStyle = 'mixed',
+        mode = 'normal',
+        errorQueue,
+    } = location.state || {};
     const profile = useRequireAuth();
+    const { preferences, toggleFocusMode, toggleSimpleLanguage, setFontScale } = usePreferences();
+    const [ttsOn, setTtsOn] = useState(false);
 
     // Redirect to setup if no configuration
     React.useEffect(() => {
+        if (mode === 'errors') return;
         if (!exam || !subjects || subjects.length === 0) {
             navigate('/question/setup');
         }
-    }, [exam, subjects, navigate]);
+    }, [exam, subjects, navigate, mode]);
 
     const [currentSubjectIndex, setCurrentSubjectIndex] = useState(0);
     const [questions, setQuestions] = useState([]);
@@ -32,6 +45,7 @@ export function QuestionScreen() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const usedBankIdsRef = useRef(new Set());
+    const errorQueueRef = useRef(null);
     const [coachIndex, setCoachIndex] = useState(null);
     const [coachItems, setCoachItems] = useState({});
     const [coachStep, setCoachStep] = useState(0);
@@ -43,8 +57,32 @@ export function QuestionScreen() {
     // Get current subject
     const currentSubject = subjects?.[currentSubjectIndex] || 'Conhecimentos Gerais';
 
+    useEffect(() => {
+        if (mode !== 'errors') return;
+        const queue = Array.isArray(errorQueue) ? errorQueue : [];
+        errorQueueRef.current = queue.map((entry, idx) => ({
+            id: entry.questionId || entry.id || `error-${idx + 1}`,
+            subject: entry.subject || 'Geral',
+            exam: entry.exam || exam || 'Geral',
+            topic: entry.topic || null,
+            text: entry.text,
+            options: entry.options,
+            correctId: entry.correctId,
+            explanation: entry.explanation || '',
+            optionExplanations: entry.optionExplanations || null,
+        }));
+        setQuestions(errorQueueRef.current);
+        setCurrentIndex(0);
+        setSelectedOption('');
+        setIsAnswered(false);
+        setLoading(false);
+        setError(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mode]);
+
     // Initial load
     useEffect(() => {
+        if (mode === 'errors') return;
         if (currentSubject) {
             loadNewQuestion();
         }
@@ -56,7 +94,13 @@ export function QuestionScreen() {
         setError(null);
 
         const allowedTopics = topics?.[currentSubject] || [];
-        const bankQuestion = getQuestionFromBank(currentSubject, usedBankIdsRef.current, exam, allowedTopics);
+        const bankQuestion = getQuestionFromBank(
+            currentSubject,
+            usedBankIdsRef.current,
+            exam,
+            allowedTopics,
+            questionStyle
+        );
         if (bankQuestion) {
             usedBankIdsRef.current.add(bankQuestion.id);
             setQuestions((prev) => [
@@ -78,8 +122,9 @@ export function QuestionScreen() {
                     ? allowedTopics[Math.floor(Math.random() * allowedTopics.length)]
                     : null;
 
-            const aiSubject = selectedTopic ? `${currentSubject} — Tópico: ${selectedTopic}` : currentSubject;
-            const newQuestion = await generateQuestion(aiSubject, exam, selectedTopic);
+            const aiSubject = selectedTopic ? `${currentSubject} ? T?pico: ${selectedTopic}` : currentSubject;
+            const effectiveStyle = questionStyle === 'mixed' ? 'mc' : questionStyle;
+            const newQuestion = await generateQuestion(aiSubject, exam, selectedTopic, effectiveStyle, preferences.simpleLanguage);
             newQuestion.id = newQuestion.id || Date.now().toString();
             setQuestions((prev) => [
                 ...prev,
@@ -110,6 +155,10 @@ export function QuestionScreen() {
         setCoachStep(0);
         setCoachLoading(false);
         setCoachError(null);
+        if (ttsOn) {
+            stopTts();
+            setTtsOn(false);
+        }
     }, [currentQuestion?.id]);
 
     const getCoachCacheKey = (step) => {
@@ -159,6 +208,7 @@ export function QuestionScreen() {
                 subject: currentQuestion.subject || currentSubject,
                 exam,
                 step: 0,
+                simpleLanguage: preferences.simpleLanguage,
             });
 
             if (!payload?.index?.length) throw new Error('Resposta inesperada da IA.');
@@ -198,6 +248,7 @@ export function QuestionScreen() {
                 exam,
                 step,
                 index: coachIndex,
+                simpleLanguage: preferences.simpleLanguage,
             });
             if (!payload?.content) throw new Error('Resposta inesperada da IA.');
             setCoachItems((prev) => ({ ...prev, [step]: payload }));
@@ -227,6 +278,7 @@ export function QuestionScreen() {
                 questionId: currentQuestion.id,
                 subject: currentQuestion.subject || currentSubject,
                 exam: currentQuestion.exam || exam || 'Geral',
+                topic: currentQuestion.topic || null,
                 text: currentQuestion.text,
                 options: currentQuestion.options,
                 correctId: currentQuestion.correctId,
@@ -238,6 +290,20 @@ export function QuestionScreen() {
     };
 
     const handleNext = async () => {
+        if (mode === 'errors') {
+            if (isCorrect && currentQuestion?.id) {
+                resolveErrorByQuestionId(currentQuestion.id);
+            }
+            if (currentIndex >= questions.length - 1) {
+                navigate('/errors');
+                return;
+            }
+            setCurrentIndex((prev) => prev + 1);
+            setSelectedOption('');
+            setIsAnswered(false);
+            return;
+        }
+
         if (currentIndex === questions.length - 1) {
             const success = await loadNewQuestion();
             if (success) {
@@ -259,6 +325,25 @@ export function QuestionScreen() {
             setSelectedOption('');
             setIsAnswered(true); // Review mode
         }
+    };
+
+    const handleToggleAudio = () => {
+        if (!preferences.audioEnabled || !isTtsSupported()) return;
+        if (ttsOn) {
+            stopTts();
+            setTtsOn(false);
+            return;
+        }
+        const parts = [currentQuestion?.subject || currentSubject, currentQuestion?.text].filter(Boolean);
+        if (isAnswered && currentQuestion?.explanation) parts.push(`Explicação: ${currentQuestion.explanation}`);
+        speak(parts.join('. '));
+        setTtsOn(true);
+    };
+
+    const handleCycleFontScale = () => {
+        const current = Number(preferences.fontScale || 1);
+        const next = current < 1.12 ? 1.15 : current < 1.25 ? 1.3 : 1;
+        setFontScale(next);
     };
 
     if (loading && !currentQuestion) {
@@ -287,6 +372,21 @@ export function QuestionScreen() {
         );
     }
 
+    if (mode === 'errors' && !currentQuestion) {
+        return (
+            <Layout>
+                <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+                    <AlertCircle size={48} className="text-slate-400 mb-4" />
+                    <p className="text-slate-800 dark:text-white font-bold mb-2">Nenhum erro para treinar</p>
+                    <p className="text-slate-500 dark:text-slate-400 mb-6">
+                        Volte ao caderno de erros e selecione um tópico.
+                    </p>
+                    <Button onClick={() => navigate('/errors')}>Voltar ao caderno</Button>
+                </div>
+            </Layout>
+        );
+    }
+
     return (
         <Layout>
             {/* Header with Progress Bar */}
@@ -299,6 +399,57 @@ export function QuestionScreen() {
                         className="h-full bg-blue-500 transition-all duration-300"
                         style={{ width: `100%` }}
                     />
+                </div>
+                <div className="flex items-center gap-1">
+                    <button
+                        type="button"
+                        onClick={toggleFocusMode}
+                        className={clsx(
+                            "px-2 py-1 rounded-md text-[11px] font-semibold border transition-colors",
+                            preferences.focusMode
+                                ? "bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 dark:border-white"
+                                : "bg-transparent text-slate-600 border-slate-200 dark:text-slate-300 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900"
+                        )}
+                        title="Modo foco"
+                    >
+                        Foco
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleCycleFontScale}
+                        className="px-2 py-1 rounded-md text-[11px] font-semibold border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+                        title="Tamanho do texto"
+                    >
+                        Aa
+                    </button>
+                    <button
+                        type="button"
+                        onClick={toggleSimpleLanguage}
+                        className={clsx(
+                            "px-2 py-1 rounded-md text-[11px] font-semibold border transition-colors",
+                            preferences.simpleLanguage
+                                ? "bg-blue-600 text-white border-blue-600"
+                                : "bg-transparent text-slate-600 border-slate-200 dark:text-slate-300 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900"
+                        )}
+                        title="Linguagem simples (IA)"
+                    >
+                        Simples
+                    </button>
+                    {preferences.audioEnabled && isTtsSupported() && (
+                        <button
+                            type="button"
+                            onClick={handleToggleAudio}
+                            className={clsx(
+                                "px-2 py-1 rounded-md text-[11px] font-semibold border transition-colors",
+                                ttsOn
+                                    ? "bg-emerald-600 text-white border-emerald-600"
+                                    : "bg-transparent text-slate-600 border-slate-200 dark:text-slate-300 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900"
+                            )}
+                            title="Ler em voz alta"
+                        >
+                            {ttsOn ? 'Parar' : 'Áudio'}
+                        </button>
+                    )}
                 </div>
                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Questão {currentIndex + 1}

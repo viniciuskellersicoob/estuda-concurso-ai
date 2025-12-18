@@ -19,7 +19,13 @@ const persistNotebook = (entries) => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
 };
 
-export const getErrorEntries = () => readNotebook();
+export const getErrorEntries = ({ includeResolved = false } = {}) => {
+    const entries = readNotebook().map((entry) => ({
+        wrongCount: 1,
+        ...entry,
+    }));
+    return includeResolved ? entries : entries.filter((entry) => !entry.resolvedAt);
+};
 
 export const clearErrorNotebook = () => persistNotebook([]);
 
@@ -30,13 +36,47 @@ export const removeErrorEntry = (entryId) => {
 
 export const addErrorEntry = (entry) => {
     const notebook = readNotebook();
+    const now = new Date().toISOString();
+    const existingIndex = notebook.findIndex((item) => item.questionId === entry.questionId);
+
+    if (existingIndex >= 0) {
+        const existing = notebook[existingIndex];
+        const updated = {
+            ...existing,
+            ...entry,
+            entryId: existing.entryId || `${entry.questionId}`,
+            wrongCount: (existing.wrongCount || 1) + 1,
+            recordedAt: existing.recordedAt || now,
+            lastWrongAt: now,
+            resolvedAt: null,
+        };
+        const next = [...notebook];
+        next.splice(existingIndex, 1);
+        next.unshift(updated);
+        persistNotebook(next);
+        return updated;
+    }
+
     const newEntry = {
         ...entry,
-        entryId: `${entry.questionId}-${Date.now()}`,
-        recordedAt: new Date().toISOString(),
+        entryId: `${entry.questionId}`,
+        wrongCount: 1,
+        recordedAt: now,
+        lastWrongAt: now,
+        resolvedAt: null,
     };
-    const filtered = notebook.filter((item) => item.questionId !== entry.questionId);
-    filtered.unshift(newEntry);
-    persistNotebook(filtered);
+    persistNotebook([newEntry, ...notebook]);
     return newEntry;
+};
+
+export const resolveErrorByQuestionId = (questionId) => {
+    const notebook = readNotebook();
+    const idx = notebook.findIndex((entry) => entry.questionId === questionId);
+    if (idx < 0) return;
+    const now = new Date().toISOString();
+    const updated = { ...notebook[idx], resolvedAt: now };
+    const next = [...notebook];
+    next.splice(idx, 1);
+    next.unshift(updated);
+    persistNotebook(next);
 };

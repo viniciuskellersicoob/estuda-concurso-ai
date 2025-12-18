@@ -14,6 +14,7 @@ export function QuestionSetup() {
     const [selectedPosition, setSelectedPosition] = useState('');
     const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [selectedTopics, setSelectedTopics] = useState({});
+    const [questionStyle, setQuestionStyle] = useState('mixed'); // mixed | mc | ce
 
     // Get available exams
     const availableExams = Object.keys(EXAM_DATABASE).map(key => ({
@@ -97,7 +98,8 @@ export function QuestionSetup() {
                 exam: selectedExam,
                 position: selectedPosition,
                 subjects: selectedSubjects,
-                topics: selectedTopics
+                topics: selectedTopics,
+                questionStyle,
             }
         });
     };
@@ -328,6 +330,70 @@ export function QuestionSetup() {
                                     </div>
                                 );
                             })}
+                        </div>
+                    </div>
+                )}
+
+                {/* Step 4: Style / Banca */}
+                {selectedPosition && subjects.length > 0 && (
+                    <div className="mb-8">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">
+                                4
+                            </div>
+                            <h2 className="text-lg font-bold text-slate-800 dark:text-white">
+                                Estilo das Questões
+                            </h2>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-3">
+                            <button
+                                type="button"
+                                onClick={() => setQuestionStyle('mixed')}
+                                className={clsx(
+                                    "p-4 rounded-xl border-2 text-left transition-all",
+                                    questionStyle === 'mixed'
+                                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm"
+                                        : "border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900"
+                                )}
+                            >
+                                <p className="text-sm font-bold text-slate-800 dark:text-white">Misto</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    Mistura múltipla escolha + C/E quando disponível.
+                                </p>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setQuestionStyle('mc')}
+                                className={clsx(
+                                    "p-4 rounded-xl border-2 text-left transition-all",
+                                    questionStyle === 'mc'
+                                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm"
+                                        : "border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900"
+                                )}
+                            >
+                                <p className="text-sm font-bold text-slate-800 dark:text-white">Múltipla escolha</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    5 alternativas (A–E), estilo tradicional.
+                                </p>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setQuestionStyle('ce')}
+                                className={clsx(
+                                    "p-4 rounded-xl border-2 text-left transition-all",
+                                    questionStyle === 'ce'
+                                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm"
+                                        : "border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900"
+                                )}
+                            >
+                                <p className="text-sm font-bold text-slate-800 dark:text-white">Cebraspe (C/E)</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    Itens de Certo/Errado (estilo Cespe/Cebraspe).
+                                </p>
+                            </button>
                         </div>
                     </div>
                 )}
