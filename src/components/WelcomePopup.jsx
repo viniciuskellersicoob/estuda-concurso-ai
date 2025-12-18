@@ -5,14 +5,8 @@ export default function WelcomePopup({ userName, onClose }) {
     const [show, setShow] = useState(false);
 
     useEffect(() => {
-        // Verifica se já mostrou o popup para este usuário
-        const key = `welcome_shown_${userName.toLowerCase()}`;
-        const hasShown = localStorage.getItem(key);
-
-        if (!hasShown) {
-            setShow(true);
-            localStorage.setItem(key, 'true');
-        }
+        // Sempre mostra o popup quando o componente monta
+        setShow(true);
     }, [userName]);
 
     if (!show) return null;
